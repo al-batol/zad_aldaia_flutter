@@ -1,0 +1,23 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "zad-al-daia",
+          "appId": "1:320761724189:android:d5de73f0b10f4e932b75f4",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "zad-al-daia",
+          "configurations": {
+            "android": "1:320761724189:android:d5de73f0b10f4e932b75f4",
+            "ios": "1:320761724189:ios:bfacfc842e34c3382b75f4",
+            "web": "1:320761724189:web:a6e798dc34956ee92b75f4"
+          }
+        }
+      }
+    }
+  }
+}
