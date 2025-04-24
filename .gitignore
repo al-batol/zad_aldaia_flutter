@@ -30,6 +30,7 @@
 /build/
 
 # Android related
+/lib/firebase_options.dart
 *.jks
 **/android/app/google-services.json
 **/android/key.properties
@@ -75,4 +76,4 @@
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
-is this good gitignore file
+/lib/core/constants/firebase_constants.dart
