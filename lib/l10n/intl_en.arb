@@ -75,5 +75,7 @@
   "password": "Password",
   "pleaseEnterPassword": "Please enter your password",
   "wrongPassword": "Wrong Password",
-  "continu": "Continue"
+  "continu": "Continue",
+  "selectLanguage": "Select Language",
+  "chooseTheLanguageYouWant": "Choose the language you want to read with Zad Al-daia"
 }

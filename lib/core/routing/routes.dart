@@ -8,4 +8,5 @@ class MyRoutes{
   static const addArticleScreen = "/addArticleScreen";
   static const addItemScreen = "/addItemScreen";
   static const editItemScreen = "/editItemScreen";
+  static const languageScreen = "/languageScreen";
 }

@@ -1,18 +1,14 @@
-import 'dart:math';
-
 import 'package:defer_pointer/defer_pointer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
 import 'package:zad_aldaia/features/home/logic/home_cubit.dart';
 import 'package:zad_aldaia/features/home/ui/widgets/circular_image_button.dart';
-import 'package:zad_aldaia/features/home/ui/widgets/language_drop_down_bottom.dart';
 import 'package:zad_aldaia/generated/assets.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 
@@ -37,33 +33,23 @@ class _HomeScreenState extends State<HomeScreen> {
     _checkForDataUpdates(context);
   }
 
+  late final titles;
+
   @override
   void didChangeDependencies() {
+    var local = S.of(context);
     titles = [
-      S.of(context).introToIslam,
-      S.of(context).christiansDialog,
-      S.of(context).atheistDialog,
-      S.of(context).otherSects,
-      S.of(context).whyIslamIsTrue,
-      S.of(context).teachingNewMuslims,
-      S.of(context).questionsAboutIslam,
-      S.of(context).daiaGuide,
+      local.introToIslam,
+      local.christiansDialog,
+      local.atheistDialog,
+      local.otherSects,
+      local.whyIslamIsTrue,
+      local.teachingNewMuslims,
+      local.questionsAboutIslam,
+      local.daiaGuide,
     ];
     super.didChangeDependencies();
   }
-
-  late final titles;
-
-  final sections = const [
-    "التعريف بالإسلام",
-    "محاورة النصاري",
-    "محاورة الملحدين",
-    "الطوائف الأخرى",
-    "براهين صحة الإسلام",
-    "شبهات وأسئلة حول الإسلام",
-    "تعليم المسلم الجديد",
-    "دليل الداعية",
-  ];
 
   final colors = const [
     Color(0xff7E4D5A),
@@ -93,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
         titleTextStyle: MyTextStyle.font36primaryBold,
         title: Text(S.of(context).home),
         actions: [
@@ -156,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 borderRadius:
                                                     BorderRadius.circular(15.h),
                                               ),
-                                              hintText:  S.of(context).password,
+                                              hintText: S.of(context).password,
                                               suffixIcon: IconButton(
                                                 icon: Icon(
                                                   _obscureText
@@ -174,7 +161,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                             validator: (value) {
                                               if (value == null ||
                                                   value.isEmpty) {
-                                                return  S.of(context).pleaseEnterPassword;
+                                                return S
+                                                    .of(context)
+                                                    .pleaseEnterPassword;
                                               }
                                               return null;
                                             },
@@ -205,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     .validate()) {
                                                   setState(() {
                                                     checkingPassword = true;
-                                                  },);
+                                                  });
                                                   if (await cubit
                                                       .validatePassword(
                                                         passwordController.text,
@@ -219,7 +208,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   } else {
                                                     setState(() {
                                                       passwordError =
-                                                          S.of(context).wrongPassword;
+                                                          S
+                                                              .of(context)
+                                                              .wrongPassword;
                                                     });
                                                   }
                                                   checkingPassword = false;
@@ -235,14 +226,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         child: SizedBox(
                                                           width: 24.h,
                                                           height: 24.h,
-                                                          child: CircularProgressIndicator(
-                                                            color:
-                                                                Colors.white,
-                                                          ),
+                                                          child:
+                                                              CircularProgressIndicator(
+                                                                color:
+                                                                    Colors
+                                                                        .white,
+                                                              ),
                                                         ),
                                                       )
                                                       : Text(
-                                                    S.of(context).continu,
+                                                        S.of(context).continu,
                                                         style:
                                                             MyTextStyle
                                                                 .font16WhiteBold,
@@ -270,79 +263,43 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: DeferredPointerHandler(
-          child: Container(
-            margin: EdgeInsets.all(10.h),
-            padding: EdgeInsets.only(bottom: 170.h),
-            child: Column(
-              children: [
-                LanguageDropDownBottom(),
-                Container(
-                  margin: EdgeInsets.only(top: 180.h),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Material(
-                        color: Color(0xff453F92),
-                        elevation: 2,
-                        shape: CircleBorder(),
-                        child: Container(
-                          width: 120.w,
-                          height: 120.h,
-                          alignment: Alignment.center,
-                          child: SvgPicture.asset(
-                            Assets.svgZadLogo,
-                            width: 90.w,
-                            height: 90.h,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: GridView.builder(
+          shrinkWrap: false,
+          physics: const AlwaysScrollableScrollPhysics(),
 
-                      // Circular Positioned Items
-                      ...List.generate(8, (index) {
-                        final double angle = 2 * pi * index / 8;
-                        final double dx;
-                        final double dy;
-                        if ([1, 5].contains(index + 1)) {
-                          dx = 120 * cos(angle);
-                          dy = 120 * sin(angle);
-                        } else {
-                          dx = 150 * cos(angle);
-                          dy = 150 * sin(angle);
-                        }
-
-                        return Transform.translate(
-                          offset: Offset(dx, dy),
-                          child: DeferPointer(
-                            child: CircularImageButton(
-                              image: images[index],
-                              color: colors[index],
-                              onPressed: () {
-                                Navigator.of(context).pushNamed(
-                                  MyRoutes.sectionsScreen,
-                                  arguments: {
-                                    "title": titles[index],
-                                    "section": sections[index],
-                                    "language": cubit.language,
-                                  },
-                                );
-                              },
-                              title: titles[index],
-                            ),
-                          ),
-                        );
-                      }),
-                    ].animate(
-                      interval: .1.seconds,
-                      effects: [SlideEffect(), FadeEffect()],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          itemCount: 8,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 10.h,
+            crossAxisSpacing: 10.w,
+            childAspectRatio: 1,
           ),
+          itemBuilder: (context, index) {
+            return DeferredPointerHandler(
+              child: RectangularImageButton(
+                    image: images[index],
+                    color: colors[index],
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(
+                        MyRoutes.sectionsScreen,
+                        arguments: {
+                          "title": titles[index],
+                          "language": cubit.language,
+                        },
+                      );
+                    },
+                    title: titles[index],
+                  )
+                  .animate(delay: Duration(milliseconds: index * 100))
+                  .slide(
+                    begin: Offset(0, 0.3),
+                    duration: Duration(milliseconds: 400),
+                  )
+                  .fadeIn(duration: Duration(milliseconds: 400)),
+            );
+          },
         ),
       ),
     );

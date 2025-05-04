@@ -75,5 +75,7 @@
   "password": "كلمة المرور",
   "pleaseEnterPassword": "يرجى إدخال كلمة المرور",
   "wrongPassword": "كلمة المرور غير صحيحة",
-  "continu": "متابعة"
+  "continu": "متابعة",
+  "selectLanguage": "اختر اللغه",
+  "chooseTheLanguageYouWant": "اختر اللغة التي تريد قراءتها مع زاد الداعيه"
 }

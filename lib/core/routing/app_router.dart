@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
+import 'package:zad_aldaia/core/models/languge.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/add_article/logic/add_article_cubit.dart';
 import 'package:zad_aldaia/features/add_article/ui/add_article_screen.dart';
@@ -16,6 +17,7 @@ import 'package:zad_aldaia/features/edit_item/logic/edit_item_cubit.dart';
 import 'package:zad_aldaia/features/edit_item/ui/edit_item_screen.dart';
 import 'package:zad_aldaia/features/home/logic/home_cubit.dart';
 import 'package:zad_aldaia/features/home/ui/home_screen.dart';
+import 'package:zad_aldaia/features/language/ui/language_screen.dart';
 import 'package:zad_aldaia/features/search/logic/search_cubit.dart';
 import 'package:zad_aldaia/features/search/ui/search_screen.dart';
 
@@ -33,7 +35,15 @@ class AppRouter {
                 create: (context) => getIt<HomeCubit>(),
                 child: HomeScreen(),
               ),
+        );  case MyRoutes.languageScreen:
+        return MaterialPageRoute(
+          builder:
+              (context) => BlocProvider(
+                create: (context) => getIt<HomeCubit>(),
+                child: LanguageScreen(),
+              ),
         );
+
       case MyRoutes.sectionsScreen:
         return MaterialPageRoute(
           builder:
@@ -101,6 +111,7 @@ class AppRouter {
             child: EditItemScreen(),
           ),
         );
+
       default:
         return null;
     }

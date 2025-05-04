@@ -13,8 +13,6 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-
-
   intl: ^0.19.0
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.0.17
@@ -48,19 +46,18 @@ dependencies:
   image_downloader_web: ^2.0.6
   firebase_storage: ^12.4.5
   image_picker: ^1.1.2
-
-
+  provider: ^6.1.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^5.0.0
   drift_dev: ^2.26.0
   retrofit_generator: '>=8.0.0 <10.0.0'
   build_runner: ^2.3.3
   json_serializable: ^6.8.0
   flutter_launcher_icons: "^0.14.3"
+
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
@@ -69,32 +66,34 @@ flutter_launcher_icons:
   adaptive_icon_foreground: assets/images/png/zad_logo.png
   min_sdk_android: 21
 
-
 flutter:
   generate: true
-
   uses-material-design: true
-
 
   assets:
     - assets/
     - assets/images/
+    - assets/flags/
     - assets/images/png/
     - assets/images/svg/
     - web/sqlite3.wasm
     - web/drift_worker.js
 
-
-
   fonts:
-     - family: almarai_bold
-       fonts:
-         - asset: assets/fonts/almarai_bold.ttf
-     - family: pin_icon
-       fonts:
-         - asset: assets/fonts/PinIcon.ttf
-     - family: search_icon
-       fonts:
-         - asset: assets/fonts/search_icon.ttf
+    - family: almarai_bold
+      fonts:
+        - asset: assets/fonts/almarai_bold.ttf
+    - family: pin_icon
+      fonts:
+        - asset: assets/fonts/PinIcon.ttf
+    - family: search_icon
+      fonts:
+        - asset: assets/fonts/search_icon.ttf
+
 flutter_intl:
   enabled: true
+  class_name: S
+  main_locale: en
+  arb_dir: lib/l10n
+  output_dir: lib/generated
+  locales: [en, ar, fr, es, fil, pt]
