@@ -7,6 +7,7 @@ import 'package:zad_aldaia/core/routing/app_router.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:zad_aldaia/firebase_options.dart';
 import 'core/di/dependency_injection.dart';
 import 'generated/l10n.dart';
 import 'dart:ui';
@@ -22,22 +23,24 @@ void main() async {
   runApp(const MyApp());
 }
 
- initializeFirebase() async{
+initializeFirebase() async {
   if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: FirebaseOptions(
-        apiKey: "AIzaSyBl2QCp40V8U0LM17x42YaRC7tE2aowqaw",
-        authDomain: "zad-al-daia.firebaseapp.com",
-        databaseURL: "https://zad-al-daia-default-rtdb.firebaseio.com",
-        projectId: "zad-al-daia",
-        storageBucket: "zad-al-daia.firebasestorage.app",
-        messagingSenderId: "320761724189",
-        appId: "1:320761724189:web:a6e798dc34956ee92b75f4",
-        measurementId: "G-9Q1F2200H1",
-      ),
-    );
+    // await Firebase.initializeApp(
+    //   options: FirebaseOptions(
+    //     apiKey: "AIzaSyBl2QCp40V8U0LM17x42YaRC7tE2aowqaw",
+    //     authDomain: "zad-al-daia.firebaseapp.com",
+    //     databaseURL: "https://zad-al-daia-default-rtdb.firebaseio.com",
+    //     projectId: "zad-al-daia",
+    //     storageBucket: "zad-al-daia.firebasestorage.app",
+    //     messagingSenderId: "320761724189",
+    //     appId: "1:320761724189:web:a6e798dc34956ee92b75f4",
+    //     measurementId: "G-9Q1F2200H1",
+    //   ),
+    // );
   } else {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
   setupFirebaseCrashlytics();
 }
