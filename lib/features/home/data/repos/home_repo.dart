@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drift/drift.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/constants/firebase_constants.dart';
 import 'package:zad_aldaia/core/constants/shared_preferences_keys.dart';
 import 'package:zad_aldaia/core/database/my_database.dart';
@@ -9,17 +10,19 @@ import 'package:zad_aldaia/core/models/article_type.dart';
 class HomeRepo {
   final MyDatabase _dp;
   final SharedPreferences sp;
-  final fireStore = FirebaseFirestore.instance;
+  final SupabaseClient _supabase;
 
-  HomeRepo(this._dp, this.sp);
+  HomeRepo(this._dp, this.sp, this._supabase);
 
   Future<int> getLastVersion() async {
-    var result =
-        await fireStore
-            .collection(FirebaseConstants.fireStoreVersionCollection)
-            .doc(FirebaseConstants.fireStoreVersionCollection)
-            .get();
-    return result["version"];
+    try {
+      final result = await _supabase.from('version').select('version').single();
+
+      return result['version'] as int;
+    } catch (e) {
+      print('Error getting version: $e');
+      return 0;
+    }
   }
 
   updateData(int version) async {
@@ -28,30 +31,40 @@ class HomeRepo {
     await saveDataVersion(version);
   }
 
-  saveItems() async {
-    DocumentSnapshot? lastDocument;
-    var query = fireStore
-        .collection(FirebaseConstants.fireStoreDataCollection)
-        .orderBy("id")
-        .limit(100);
+  Future<void> saveItems() async {
+    int offset = 0;
+    const limit = 100;
 
     while (true) {
-      if (lastDocument != null) {
-        query = query.startAfterDocument(lastDocument);
-      }
-      var result = await query.get();
-      if (result.docs.isEmpty) {
-        break;
-      }
-      final articleItems =
-          result.docs.map((doc) => articleFromFirestore(doc.data())).toList();
-      await Future.wait(
-        articleItems.map((articleItem) async {
-          await _saveArticleItem(articleItem);
-        }),
-      );
-      lastDocument = result.docs.lastOrNull;
-      if (lastDocument == null) {
+      try {
+        final result = await _supabase
+            .from('article_items')
+            .select()
+            .order('id')
+            .range(offset, offset + limit - 1);
+
+        if (result.isEmpty) {
+          break;
+        }
+
+        final articleItems =
+            (result as List<dynamic>)
+                .map((data) => articleFromFirestore(data))
+                .toList();
+
+        await Future.wait(
+          articleItems.map((articleItem) async {
+            await _saveArticleItem(articleItem);
+          }),
+        );
+
+        offset += limit;
+
+        if (result.length < limit) {
+          break; // No more items to fetch
+        }
+      } catch (e) {
+        print('Error saving items: $e');
         break;
       }
     }
@@ -80,14 +93,20 @@ class HomeRepo {
         .insert(articleItem, onConflict: DoUpdate((old) => articleItem));
   }
 
-  checkDeletes() async {
-    var result =
-        await fireStore
-            .collection(FirebaseConstants.fireStoreDeletesCollection)
-            .get();
-    if (result.docs.isNotEmpty) {
-      var deletesId = result.docs.map((e) => e["id"] as String).toList();
-      await Future.wait(deletesId.map((id) async => await deleteArticle(id)));
+  Future<void> checkDeletes() async {
+    try {
+      final result = await _supabase.from('deleted_items').select('id');
+
+      if (result.isNotEmpty) {
+        final deletesId =
+            (result as List<dynamic>)
+                .map((item) => item['id'] as String)
+                .toList();
+
+        await Future.wait(deletesId.map((id) async => await deleteArticle(id)));
+      }
+    } catch (e) {
+      print('Error checking deletes: $e');
     }
   }
 
@@ -100,17 +119,21 @@ class HomeRepo {
     sp.setInt(SpKeys.dataVersionKey, version);
   }
 
-  Future<bool> validatePassword(String password) async {
+  Future<bool> signIn(String password) async {
     try {
-      bool isCorrect =
-          (await fireStore
-                  .collection(FirebaseConstants.fireStoreAdminCollection)
-                  .doc(password)
-                  .get())
-              .exists;
-      return isCorrect;
+      final response = await _supabase.auth.signInWithPassword(
+        email: '$password@admin.com',
+        password: password,
+      );
+
+      return response.user != null;
     } catch (e) {
+      print('Error signing in: $e');
       return false;
     }
+  }
+
+  Future<bool> isAuthenticated() async {
+    return _supabase.auth.currentUser != null;
   }
 }

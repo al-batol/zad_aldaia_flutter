@@ -67,6 +67,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
       TextEditingController();
   final TextEditingController _orderController = TextEditingController();
   late String _section = sections.first;
+  late String _title = titles.first;
   String _language = Language.english;
   File? _image;
   String? _category;
@@ -92,7 +93,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).addItem, style: MyTextStyle.font20primaryBold),
+        title: Text(
+          S.of(context).addItem,
+          style: MyTextStyle.font20primaryBold,
+        ),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -119,6 +123,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     ],
                     onSelected: (val) {
                       _section = val;
+                      _title = titles[sections.indexOf(val)];
                     },
                   ),
                   SizedBox(height: 15.h),
@@ -165,7 +170,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                               e.section == _section,
                                         ) ==
                                         false) {
-                                  return S.of(context).chooseCategoryFromSuggestions;
+                                  return S
+                                      .of(context)
+                                      .chooseCategoryFromSuggestions;
                                 }
                                 return null;
                               },
@@ -224,7 +231,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                               e.category == _category,
                                         ) ==
                                         false) {
-                                  return S.of(context).chooseArticleFromSuggestions;
+                                  return S
+                                      .of(context)
+                                      .chooseArticleFromSuggestions;
                                 }
                                 return null;
                               },
@@ -346,7 +355,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       widthFactor: .8,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10.h)),
+                          padding: WidgetStatePropertyAll(
+                            EdgeInsets.symmetric(vertical: 10.h),
+                          ),
                           backgroundColor: WidgetStatePropertyAll(
                             MyColors.primaryColor,
                           ),
@@ -381,7 +392,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 } else {
                                   String? url = await cubit.uploadImage(
                                     _image!,
-                                    "$_section/$_category/$_article",
+                                    "$_title/$_category/$_article",
                                   );
                                   if (url == null) {
                                     return;
@@ -418,8 +429,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         child: BlocConsumer<AddItemCubit, AddItemState>(
                           listenWhen:
                               (previous, current) =>
-                          previous.runtimeType !=
-                              current.runtimeType,
+                                  previous.runtimeType != current.runtimeType,
                           listener: (context, state) {
                             if (state is UploadingState) {
                               showDialog(
@@ -439,17 +449,20 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                       ),
                                     ),
                               );
-                            }
-                           else if (state is UploadFailedState) {
-                             Navigator.of(context).pop();
+                            } else if (state is UploadFailedState) {
+                              Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(S.of(context).addingItemFailed)),
+                                SnackBar(
+                                  content: Text(S.of(context).addingItemFailed),
+                                ),
                               );
                             } else if (state is UploadedState) {
                               Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(S.of(context).addingItemSuccess),
+                                  content: Text(
+                                    S.of(context).addingItemSuccess,
+                                  ),
                                 ),
                               );
                             }

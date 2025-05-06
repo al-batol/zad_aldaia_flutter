@@ -80,7 +80,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 },
               )
               : IconButton(
-                icon:  Icon(
+                icon: Icon(
                   const IconData(0xe802, fontFamily: "search_icon"),
                   color: MyColors.primaryColor,
                   size: 30.h,

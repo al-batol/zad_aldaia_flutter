@@ -3,6 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/routing/app_router.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
@@ -19,8 +20,17 @@ void main() async {
   await getIt.allReady();
   var widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await initializeSupabase();
   await initializeFirebase();
   runApp(const MyApp());
+}
+
+Future<void> initializeSupabase() async {
+  await Supabase.initialize(
+    url: "https://ehzdtklsgztuglrljgdd.supabase.co",
+    anonKey:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoemR0a2xzZ3p0dWdscmxqZ2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1NDAwMTgsImV4cCI6MjA2MjExNjAxOH0.eqJK4bhQUV7mzgLcXE30r2bWk-tDyXtSKpVE5wVfqk8",
+  );
 }
 
 initializeFirebase() async {

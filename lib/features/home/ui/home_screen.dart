@@ -109,155 +109,185 @@ class _HomeScreenState extends State<HomeScreen> {
               return [
                 PopupMenuItem(
                   child: Text(S.of(context).admin),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder:
-                          (context) => BlocProvider.value(
-                            value: cubit,
-                            child: Dialog(
-                              backgroundColor: Colors.white,
-                              child: Container(
-                                padding: EdgeInsetsDirectional.symmetric(
-                                  vertical: 10.h,
-                                  horizontal: 20.w,
-                                ),
-                                child: StatefulBuilder(
-                                  builder: (builderContext, setState) {
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          S.of(context).enterPassword,
-                                          style: MyTextStyle.font18BlackBold,
-                                        ),
-                                        SizedBox(height: 20.h),
-                                        Form(
-                                          key: adminPasswordFormKey,
-                                          child: TextFormField(
-                                            controller: passwordController,
-                                            obscureText: _obscureText,
-                                            decoration: InputDecoration(
-                                              errorText: passwordError,
-                                              contentPadding:
-                                                  EdgeInsetsDirectional.only(
-                                                    start: 16.0,
-                                                    end: 4.0,
+                  onTap: () async {
+                    if (await cubit.isAuthenticated()) {
+                      passwordError = null;
+                      if (context.mounted) {
+                        Navigator.of(context).pushNamed(MyRoutes.adminScreen);
+                      }
+                    } else {
+                      if (context.mounted) {
+                        showDialog(
+                          context: context,
+                          builder:
+                              (context) => BlocProvider.value(
+                                value: cubit,
+                                child: Dialog(
+                                  backgroundColor: Colors.white,
+                                  child: Container(
+                                    padding: EdgeInsetsDirectional.symmetric(
+                                      vertical: 10.h,
+                                      horizontal: 20.w,
+                                    ),
+                                    child: StatefulBuilder(
+                                      builder: (builderContext, setState) {
+                                        return Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              S.of(context).enterPassword,
+                                              style:
+                                                  MyTextStyle.font18BlackBold,
+                                            ),
+                                            SizedBox(height: 20.h),
+                                            Form(
+                                              key: adminPasswordFormKey,
+                                              child: TextFormField(
+                                                controller: passwordController,
+                                                obscureText: _obscureText,
+                                                decoration: InputDecoration(
+                                                  errorText: passwordError,
+                                                  contentPadding:
+                                                      EdgeInsetsDirectional.only(
+                                                        start: 16.0,
+                                                        end: 4.0,
+                                                      ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                          color:
+                                                              MyColors
+                                                                  .primaryColor,
+                                                          style:
+                                                              BorderStyle.solid,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              15.h,
+                                                            ),
+                                                      ),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          15.h,
+                                                        ),
                                                   ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: MyColors.primaryColor,
-                                                  style: BorderStyle.solid,
+                                                  hintText:
+                                                      S.of(context).password,
+                                                  suffixIcon: IconButton(
+                                                    icon: Icon(
+                                                      _obscureText
+                                                          ? Icons.visibility_off
+                                                          : Icons.visibility,
+                                                    ),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _obscureText =
+                                                            !_obscureText;
+                                                      });
+                                                    },
+                                                  ),
                                                 ),
-                                                borderRadius:
-                                                    BorderRadius.circular(15.h),
-                                              ),
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(15.h),
-                                              ),
-                                              hintText:  S.of(context).password,
-                                              suffixIcon: IconButton(
-                                                icon: Icon(
-                                                  _obscureText
-                                                      ? Icons.visibility_off
-                                                      : Icons.visibility,
-                                                ),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _obscureText =
-                                                        !_obscureText;
-                                                  });
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return S
+                                                        .of(context)
+                                                        .pleaseEnterPassword;
+                                                  }
+                                                  return null;
                                                 },
                                               ),
                                             ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return  S.of(context).pleaseEnterPassword;
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(height: 20.h),
-                                        Row(
-                                          children: [
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    MyColors.primaryColor,
-                                              ),
-                                              child: Text(
-                                                S.of(context).dismiss,
-                                                style:
-                                                    MyTextStyle.font16WhiteBold,
-                                              ),
-                                            ),
-                                            SizedBox(width: 15.w),
-                                            ElevatedButton(
-                                              onPressed: () async {
-                                                if (adminPasswordFormKey
-                                                    .currentState!
-                                                    .validate()) {
-                                                  setState(() {
-                                                    checkingPassword = true;
-                                                  },);
-                                                  if (await cubit
-                                                      .validatePassword(
+                                            SizedBox(height: 20.h),
+                                            Row(
+                                              children: [
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            MyColors
+                                                                .primaryColor,
+                                                      ),
+                                                  child: Text(
+                                                    S.of(context).dismiss,
+                                                    style:
+                                                        MyTextStyle
+                                                            .font16WhiteBold,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 15.w),
+                                                ElevatedButton(
+                                                  onPressed: () async {
+                                                    if (adminPasswordFormKey
+                                                        .currentState!
+                                                        .validate()) {
+                                                      setState(() {
+                                                        checkingPassword = true;
+                                                      });
+                                                      if (await cubit.signIn(
                                                         passwordController.text,
                                                       )) {
-                                                    passwordError = null;
-                                                    Navigator.of(
-                                                      context,
-                                                    ).popAndPushNamed(
-                                                      MyRoutes.adminScreen,
-                                                    );
-                                                  } else {
-                                                    setState(() {
-                                                      passwordError =
-                                                          S.of(context).wrongPassword;
-                                                    });
-                                                  }
-                                                  checkingPassword = false;
-                                                }
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    MyColors.primaryColor,
-                                              ),
-                                              child:
-                                                  checkingPassword == true
-                                                      ? Center(
-                                                        child: SizedBox(
-                                                          width: 24.h,
-                                                          height: 24.h,
-                                                          child: CircularProgressIndicator(
-                                                            color:
-                                                                Colors.white,
-                                                          ),
-                                                        ),
-                                                      )
-                                                      : Text(
-                                                    S.of(context).continu,
-                                                        style:
-                                                            MyTextStyle
-                                                                .font16WhiteBold,
+                                                        passwordError = null;
+                                                        Navigator.of(
+                                                          context,
+                                                        ).popAndPushNamed(
+                                                          MyRoutes.adminScreen,
+                                                        );
+                                                      } else {
+                                                        setState(() {
+                                                          passwordError =
+                                                              S
+                                                                  .of(context)
+                                                                  .wrongPassword;
+                                                        });
+                                                      }
+                                                      checkingPassword = false;
+                                                    }
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            MyColors
+                                                                .primaryColor,
                                                       ),
+                                                  child:
+                                                      checkingPassword == true
+                                                          ? Center(
+                                                            child: SizedBox(
+                                                              width: 24.h,
+                                                              height: 24.h,
+                                                              child: CircularProgressIndicator(
+                                                                color:
+                                                                    Colors
+                                                                        .white,
+                                                              ),
+                                                            ),
+                                                          )
+                                                          : Text(
+                                                            S
+                                                                .of(context)
+                                                                .continu,
+                                                            style:
+                                                                MyTextStyle
+                                                                    .font16WhiteBold,
+                                                          ),
+                                                ),
+                                              ],
                                             ),
                                           ],
-                                        ),
-                                      ],
-                                    );
-                                  },
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                    );
+                        );
+                      }
+                    }
                   },
                 ),
               ];

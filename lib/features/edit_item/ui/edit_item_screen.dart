@@ -65,6 +65,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
       TextEditingController();
   final TextEditingController _orderController = TextEditingController();
   late String _section = sections.first;
+  late final String _title = titles.first;
   String _language = Language.english;
   File? _image;
   String? _category;
@@ -90,9 +91,16 @@ class _EditItemScreenState extends State<EditItemScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl =
+        (_item != null && _item is ImageArticle)
+            ? (_item! as ImageArticle).url
+            : null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).editItem, style: MyTextStyle.font20primaryBold),
+        title: Text(
+          S.of(context).editItem,
+          style: MyTextStyle.font20primaryBold,
+        ),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -220,7 +228,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                                     e.section == _section,
                                               ) ==
                                               false) {
-                                        return S.of(context).chooseCategoryFromSuggestions;
+                                        return S
+                                            .of(context)
+                                            .chooseCategoryFromSuggestions;
                                       }
                                       return null;
                                     },
@@ -281,7 +291,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                                     e.category == _category,
                                               ) ==
                                               false) {
-                                        return S.of(context).chooseArticleFromSuggestions;
+                                        return S
+                                            .of(context)
+                                            .chooseArticleFromSuggestions;
                                       }
                                       return null;
                                     },
@@ -338,10 +350,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
                               case ArticleType.Image:
                                 return ImageItemLayout(
                                   image: _image,
-                                  url:
-                                      (_item != null && _item is ImageArticle)
-                                          ? (_item! as ImageArticle).url
-                                          : null,
+                                  url: imageUrl,
                                   imageItemNoteController:
                                       _imageItemNoteController,
                                   onImagePicked: (image) {
@@ -374,7 +383,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                             widthFactor: .8,
                             child: ElevatedButton(
                               style: ButtonStyle(
-                                padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10.h)),
+                                padding: WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(vertical: 10.h),
+                                ),
                                 backgroundColor: WidgetStatePropertyAll(
                                   MyColors.primaryColor,
                                 ),
@@ -399,11 +410,13 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                         ),
                                       );
                                     case ArticleType.Image:
+                                      print(_title);
                                       String? url =
                                           _image != null
                                               ? await cubit.uploadImage(
                                                 _image!,
-                                                "$_section/$_category/$_article",
+                                                "$_title/$_category/$_article",
+                                                imageUrl ?? '',
                                               )
                                               : (_item as ImageArticle).url;
                                       if (url == null) {
@@ -471,7 +484,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                     Navigator.of(context).pop();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(S.of(context).editingItemFailed),
+                                        content: Text(
+                                          S.of(context).editingItemFailed,
+                                        ),
                                       ),
                                     );
                                   } else if (state is UploadedState) {
@@ -501,7 +516,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                             widthFactor: .8,
                             child: ElevatedButton(
                               style: ButtonStyle(
-                                padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10.h)),
+                                padding: WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(vertical: 10.h),
+                                ),
                                 backgroundColor: WidgetStatePropertyAll(
                                   MyColors.primaryColor,
                                 ),
@@ -535,7 +552,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                     Navigator.of(context).pop();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(S.of(context).deletingItemFailed),
+                                        content: Text(
+                                          S.of(context).deletingItemFailed,
+                                        ),
                                       ),
                                     );
                                   } else if (state is DeletedState) {

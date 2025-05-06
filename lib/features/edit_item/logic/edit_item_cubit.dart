@@ -7,11 +7,10 @@ import 'package:zad_aldaia/features/article/data/models/article_item.dart';
 import 'package:zad_aldaia/features/edit_item/data/repos/edit_item_repo.dart';
 import 'package:zad_aldaia/features/edit_item/logic/edit_item_state.dart';
 
-class EditItemCubit extends Cubit<EditItemState>{
-
+class EditItemCubit extends Cubit<EditItemState> {
   final EditItemRepo _repo;
 
-  EditItemCubit(this._repo):super(InitialState());
+  EditItemCubit(this._repo) : super(InitialState());
 
   Future<List<FireStoreCategory>> getCategories() async {
     return await _repo.getCategoriesList();
@@ -32,21 +31,22 @@ class EditItemCubit extends Cubit<EditItemState>{
     }
   }
 
-  Future<String?> uploadImage(File image, String path) async {
+  Future<String?> uploadImage(File image, String path, String oldPath) async {
     print("ssssssssssssssssssssssssssss");
+    print('test');
     emit(UploadingState());
-    var url = await _repo.uploadImage(image, path);
+    var url = await _repo.uploadImage(image, path, oldPath);
     if (url == null) {
       emit(UploadFailedState());
     }
     return url;
   }
 
- Future<ArticleItem?> getItem(String id) async{
+  Future<ArticleItem?> getItem(String id) async {
     return await _repo.getItem(id);
- }
+  }
 
-  void deleteItem(String id) async{
+  void deleteItem(String id) async {
     emit(DeletingState());
     bool isDeleted = await _repo.deleteItem(id);
     if (isDeleted) {
@@ -55,5 +55,4 @@ class EditItemCubit extends Cubit<EditItemState>{
       emit(DeletingFailedState());
     }
   }
-
 }
