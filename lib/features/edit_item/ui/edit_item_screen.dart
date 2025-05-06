@@ -410,12 +410,11 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                         ),
                                       );
                                     case ArticleType.Image:
-                                      print(_title);
                                       String? url =
                                           _image != null
                                               ? await cubit.uploadImage(
                                                 _image!,
-                                                "$_title/$_category/$_article",
+                                                _title,
                                                 imageUrl ?? '',
                                               )
                                               : (_item as ImageArticle).url;

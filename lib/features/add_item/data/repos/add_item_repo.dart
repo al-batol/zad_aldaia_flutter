@@ -40,6 +40,8 @@ class AddItemRepo {
       await updateVersion();
       return true;
     } catch (e) {
+      print('here');
+      print(e.toString());
       return false;
     }
   }
@@ -47,7 +49,7 @@ class AddItemRepo {
   Future<String?> uploadImage(File image, String path) async {
     try {
       final now = DateTime.now().toIso8601String();
-      final filePath = path + now;
+      final filePath = '$path/$now';
       await _supabase.storage
           .from('images')
           .upload(
