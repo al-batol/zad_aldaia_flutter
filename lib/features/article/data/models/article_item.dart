@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
-import 'package:zad_aldaia/core/models/languge.dart';
 
 sealed class ArticleItem{
   final String id;

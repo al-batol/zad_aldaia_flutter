@@ -1,10 +1,6 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:drift/drift.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:zad_aldaia/core/constants/firebase_constants.dart';
 import 'package:zad_aldaia/core/database/my_database.dart';
 import 'package:zad_aldaia/core/extensions/article_item_extensions.dart';
 import 'package:zad_aldaia/features/add_article/data/models/article.dart';

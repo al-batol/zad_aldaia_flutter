@@ -604,6 +604,26 @@ class S {
   String get continu {
     return Intl.message('Continue', name: 'continu', desc: '', args: []);
   }
+
+  /// `Select Language`
+  String get selectLanguage {
+    return Intl.message(
+      'Select Language',
+      name: 'selectLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose the language you want to read with Zad Al-daia`
+  String get chooseTheLanguageYouWant {
+    return Intl.message(
+      'Choose the language you want to read with Zad Al-daia',
+      name: 'chooseTheLanguageYouWant',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -613,6 +633,10 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
       Locale.fromSubtags(languageCode: 'ar'),
+      Locale.fromSubtags(languageCode: 'es'),
+      Locale.fromSubtags(languageCode: 'fil'),
+      Locale.fromSubtags(languageCode: 'fr'),
+      Locale.fromSubtags(languageCode: 'pt'),
     ];
   }
 

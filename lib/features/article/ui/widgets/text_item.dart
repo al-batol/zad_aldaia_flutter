@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
@@ -116,7 +115,7 @@ class _TextItemState extends State<TextItem> {
                 padding: EdgeInsets.symmetric(horizontal: 3.w),
                 child:
                     isTranslating
-                        ? Container(
+                        ? SizedBox(
                           width: 24.h,
                           height: 24.h,
                           child: CircularProgressIndicator(

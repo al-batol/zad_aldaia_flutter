@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/features/article/data/models/article_item.dart';
-import 'package:zad_aldaia/features/article/logic/article_cubit.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 import '../../../../core/theming/my_colors.dart';
 import '../../../../core/widgets/note_dialog.dart';

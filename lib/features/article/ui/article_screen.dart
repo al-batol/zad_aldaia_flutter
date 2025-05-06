@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
 import 'package:zad_aldaia/features/article/data/models/article_item.dart';

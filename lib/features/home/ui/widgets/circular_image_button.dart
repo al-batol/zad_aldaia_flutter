@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../../core/helpers/font_weight_helper.dart';
 
-class CircularImageButton extends StatelessWidget {
+class RectangularImageButton extends StatelessWidget {
   final String image;
   final Color color;
   final String title;
   final Function() onPressed;
 
-  const CircularImageButton({
+  const RectangularImageButton({
     super.key,
     required this.image,
     required this.color,
@@ -21,35 +19,29 @@ class CircularImageButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      onPressed: () => onPressed(),
-      elevation: 3,
+      onPressed: onPressed,
       color: color,
-      shape: CircleBorder(),
-      child: Container(
-        padding: EdgeInsets.all(5.w),
-        width: 100.w,
-        height: 100.h,
-        alignment: Alignment.center,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            SvgPicture.asset(
-              image,
-              colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
-              width: 70,
-              height: 70,
-              fit: BoxFit.cover,
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            image,
+            width: 50,
+            height: 50,
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
             ),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeightHelper.bold,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

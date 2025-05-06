@@ -66,6 +66,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "chooseCategoryFromSuggestions": MessageLookupByLibrary.simpleMessage(
       "Choose Category From Suggestions",
     ),
+    "chooseTheLanguageYouWant": MessageLookupByLibrary.simpleMessage(
+      "Choose the language you want to read with Zad Al-daia",
+    ),
     "christiansDialog": MessageLookupByLibrary.simpleMessage(
       "Christians dialog",
     ),
@@ -134,6 +137,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "russian": MessageLookupByLibrary.simpleMessage("Russian"),
     "search": MessageLookupByLibrary.simpleMessage("Search..."),
     "section": MessageLookupByLibrary.simpleMessage("Section"),
+    "selectLanguage": MessageLookupByLibrary.simpleMessage("Select Language"),
     "spanish": MessageLookupByLibrary.simpleMessage("Spanish"),
     "teachingNewMuslims": MessageLookupByLibrary.simpleMessage(
       "Teaching new muslims",

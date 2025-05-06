@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:zad_aldaia/core/constants/firebase_constants.dart';
 import 'package:zad_aldaia/core/database/my_database.dart';
 import 'package:zad_aldaia/features/add_category/data/models/firestore_category.dart';
 

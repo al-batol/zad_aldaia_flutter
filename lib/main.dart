@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -8,11 +7,9 @@ import 'package:zad_aldaia/core/routing/app_router.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:zad_aldaia/firebase_options.dart';
 import 'core/di/dependency_injection.dart';
 import 'generated/l10n.dart';
 import 'dart:ui';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   ScreenUtil.ensureScreenSize();
@@ -21,7 +18,7 @@ void main() async {
   var widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await initializeSupabase();
-  await initializeFirebase();
+  //  await initializeFirebase();
   runApp(const MyApp());
 }
 
@@ -33,8 +30,9 @@ Future<void> initializeSupabase() async {
   );
 }
 
-initializeFirebase() async {
-  if (kIsWeb) {
+/************
+    initializeFirebase() async {
+    if (kIsWeb) {
     // await Firebase.initializeApp(
     //   options: FirebaseOptions(
     //     apiKey: "AIzaSyBl2QCp40V8U0LM17x42YaRC7tE2aowqaw",
@@ -47,14 +45,14 @@ initializeFirebase() async {
     //     measurementId: "G-9Q1F2200H1",
     //   ),
     // );
-  } else {
+    } else {
     await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
     );
-  }
-  setupFirebaseCrashlytics();
-}
-
+    }
+    setupFirebaseCrashlytics();
+    }
+ ************/
 void setupFirebaseCrashlytics() {
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
@@ -93,10 +91,12 @@ class MyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             debugShowCheckedModeBanner: false,
-            initialRoute: MyRoutes.homeScreen,
+            initialRoute: MyRoutes.roleSelectionScreen,
             theme: ThemeData(
+              scaffoldBackgroundColor: Colors.white,
+
               dividerColor: Colors.transparent,
-              primaryColor: MyColors.primaryColor,
+              primaryColor: Colors.white,
               fontFamily: "almarai_bold",
             ),
             onGenerateRoute: AppRouter().generateRoutes,
