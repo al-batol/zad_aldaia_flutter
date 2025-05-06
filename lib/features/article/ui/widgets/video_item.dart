@@ -21,8 +21,9 @@ class _VideoItemState extends State<VideoItem> {
 
   @override
   void initState() {
+    final videoId = YoutubePlayerController.convertUrlToId(widget.item.videoId);
     _controller = YoutubePlayerController.fromVideoId(
-      videoId: widget.item.videoId,
+      videoId: videoId!,
       autoPlay: false,
       params: YoutubePlayerParams(
         mute: false,
