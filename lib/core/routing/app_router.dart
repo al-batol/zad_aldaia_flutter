@@ -27,23 +27,13 @@ class AppRouter {
 
     switch (settings.name) {
       case MyRoutes.homeScreen:
-        return MaterialPageRoute(
-          builder:
-              (context) => BlocProvider(
-                create: (context) => getIt<HomeCubit>(),
-                child: HomeScreen(),
-              ),
-        );
+        return MaterialPageRoute(builder: (context) => BlocProvider(create: (context) => getIt<HomeCubit>(), child: HomeScreen()));
       case MyRoutes.sectionsScreen:
         return MaterialPageRoute(
           builder:
               (context) => BlocProvider(
                 create: (context) => getIt<CategoriesCubit>(),
-                child: CategoriesScreen(
-                  title: (arguments as Map)["title"],
-                  section: arguments["section"],
-                  language: arguments["language"],
-                ),
+                child: CategoriesScreen(title: (arguments as Map)["title"], section: arguments["section"], language: arguments["language"]),
               ),
         );
       case MyRoutes.articleScreen:
@@ -51,56 +41,21 @@ class AppRouter {
           builder:
               (context) => BlocProvider(
                 create: (context) => getIt<ArticleCubit>(),
-                child: ArticleScreen(
-                  section: (arguments as Map)["section"],
-                  category: arguments["category"],
-                  article: arguments["article"],
-                  language: arguments["language"],
-                ),
+                child: ArticleScreen(section: (arguments as Map)["section"], category: arguments["category"], article: arguments["article"], language: arguments["language"]),
               ),
         );
       case MyRoutes.searchScreen:
-        return MaterialPageRoute(
-          builder:
-              (context) => BlocProvider(
-                create: (context) => getIt<SearchCubit>(),
-                child: SearchScreen(),
-              ),
-        );
+        return MaterialPageRoute(builder: (context) => BlocProvider(create: (context) => getIt<SearchCubit>(), child: SearchScreen()));
       case MyRoutes.adminScreen:
         return MaterialPageRoute(builder: (context) => AdminScreen());
       case MyRoutes.addCategoryScreen:
-        return MaterialPageRoute(
-          builder:
-              (context) => BlocProvider(
-                create: (context) => getIt<AddCategoryCubit>(),
-                child: AddCategoryScreen(),
-              ),
-        );
+        return MaterialPageRoute(builder: (context) => BlocProvider(create: (context) => getIt<AddCategoryCubit>(), child: AddCategoryScreen()));
       case MyRoutes.addArticleScreen:
-        return MaterialPageRoute(
-          builder:
-              (context) => BlocProvider(
-                create: (context) => getIt<AddArticleCubit>(),
-                child: AddArticleScreen(),
-              ),
-        );
+        return MaterialPageRoute(builder: (context) => BlocProvider(create: (context) => getIt<AddArticleCubit>(), child: AddArticleScreen()));
       case MyRoutes.addItemScreen:
-        return MaterialPageRoute(
-          builder:
-              (context) => BlocProvider(
-            create: (context) => getIt<AddItemCubit>(),
-            child: AddItemScreen(),
-          ),
-        );
+        return MaterialPageRoute(builder: (context) => BlocProvider(create: (context) => getIt<AddItemCubit>(), child: AddItemScreen()));
       case MyRoutes.editItemScreen:
-        return MaterialPageRoute(
-          builder:
-              (context) => BlocProvider(
-            create: (context) => getIt<EditItemCubit>(),
-            child: EditItemScreen(),
-          ),
-        );
+        return MaterialPageRoute(builder: (context) => BlocProvider(create: (context) => getIt<EditItemCubit>(), child: EditItemScreen(itemId: (arguments as Map)["id"])));
       default:
         return null;
     }
