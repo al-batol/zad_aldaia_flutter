@@ -53,7 +53,7 @@ class EditItemRepo {
   Future<String?> uploadImage(File image, String path, String oldPath) async {
     try {
       final currentPath = _extractFilePath(oldPath);
-      final newPath = path + DateTime.now().toIso8601String();
+      final newPath = '$path/${DateTime.now().toIso8601String()}';
       await _supabase.storage.from('images').remove([currentPath]);
       await _supabase.storage
           .from('images')

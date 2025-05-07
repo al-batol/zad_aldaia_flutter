@@ -83,6 +83,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
     "دليل الداعية",
   ];
 
+  late String? imageUrl;
   @override
   void initState() {
     cubit = context.read<EditItemCubit>();
@@ -91,10 +92,6 @@ class _EditItemScreenState extends State<EditItemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl =
-        (_item != null && _item is ImageArticle)
-            ? (_item! as ImageArticle).url
-            : null;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -144,6 +141,10 @@ class _EditItemScreenState extends State<EditItemScreen> {
                       setState(() {
                         _item = item;
                         isFetching = false;
+                        imageUrl =
+                            (_item != null && _item is ImageArticle)
+                                ? (_item! as ImageArticle).url
+                                : null;
                       });
                     },
                   ),
@@ -421,6 +422,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                       if (url == null) {
                                         return;
                                       }
+                                      imageUrl = url;
                                       cubit.updateArticleItem(
                                         ImageArticle(
                                           id: _item!.id,
