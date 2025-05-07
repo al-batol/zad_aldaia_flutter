@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/article/data/models/article_item.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 
@@ -28,14 +30,7 @@ class _YoutubePlayerWidgetState extends State<VideoItem> {
   void _initializePlayer() {
     final videoId = YoutubePlayer.convertUrlToId(widget.item.videoId)!;
 
-    _controller = YoutubePlayerController(
-      initialVideoId: videoId,
-      flags: const YoutubePlayerFlags(
-        autoPlay: false,
-        mute: false,
-        forceHD: false,
-      ),
-    );
+    _controller = YoutubePlayerController(initialVideoId: videoId, flags: const YoutubePlayerFlags(autoPlay: false, mute: false, forceHD: false));
   }
 
   @override
@@ -57,14 +52,7 @@ class _YoutubePlayerWidgetState extends State<VideoItem> {
               SizedBox(width: 14),
               CurrentPosition(),
               SizedBox(width: 8),
-              ProgressBar(
-                isExpanded: true,
-                colors: ProgressBarColors(
-                  playedColor: Colors.redAccent,
-                  handleColor: Colors.redAccent,
-                  backgroundColor: Colors.grey,
-                ),
-              ),
+              ProgressBar(isExpanded: true, colors: ProgressBarColors(playedColor: Colors.redAccent, handleColor: Colors.redAccent, backgroundColor: Colors.grey)),
               RemainingDuration(),
               PlaybackSpeedButton(),
             ],
@@ -77,33 +65,21 @@ class _YoutubePlayerWidgetState extends State<VideoItem> {
                 padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
                 child: InkWell(
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => NoteDialog(note: widget.item.note),
-                    );
+                    showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note));
                   },
-                  child: Icon(
-                    const IconData(0xe801, fontFamily: "pin_icon"),
-                    color: MyColors.primaryColor,
-                  ),
+                  child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
                 ),
               ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-              child: InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder:
-                        (context) => NoteDialog(
-                          note: widget.item.id,
-                          title: S.of(context).itemId,
-                        ),
-                  );
-                },
-                child: Icon(Icons.info_outline, color: MyColors.primaryColor),
+            if (Supabase.instance.client.auth.currentUser != null)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(MyRoutes.editItemScreen, arguments: {"id": widget.item.id});
+                  },
+                  child: Icon(Icons.edit, color: MyColors.primaryColor),
+                ),
               ),
-            ),
           ],
         ),
       ],
