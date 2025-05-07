@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
+import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
@@ -128,6 +129,10 @@ class _TextItemState extends State<TextItem> {
                             return languageMap.entries.map((e) => PopupMenuItem(value: e.value, child: Text(e.key))).toList();
                           },
                         ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w),
+                child: InkWell(onTap: () => Share.article(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
               ),
               if (Supabase.instance.client.auth.currentUser != null)
                 Padding(
