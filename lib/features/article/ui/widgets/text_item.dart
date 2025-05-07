@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:zad_aldaia/features/article/logic/article_cubit.dart';
 import '../../../../core/widgets/note_dialog.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
+import 'package:html_unescape/html_unescape.dart';
 
 class TextItem extends StatefulWidget {
   final TextArticle item;
@@ -115,9 +116,8 @@ class _TextItemState extends State<TextItem> {
                               content = widget.item.content;
                             } else {
                               var translation = await getIt<ArticleCubit>().translateText(widget.item.content, value);
-                              print(translation);
                               if (translation != null) {
-                                content = translation;
+                                content = HtmlUnescape().convert(translation);
                               }
                             }
                             setState(() {
