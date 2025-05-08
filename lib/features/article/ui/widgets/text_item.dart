@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
@@ -16,8 +15,10 @@ import 'package:html_unescape/html_unescape.dart';
 
 class TextItem extends StatefulWidget {
   final TextArticle item;
+  final bool? isSelected;
+  final Function(ArticleItem)? onSelect;
 
-  const TextItem({super.key, required this.item});
+  const TextItem({super.key, required this.item, this.onSelect, this.isSelected = false});
 
   @override
   State<TextItem> createState() => _TextItemState();
@@ -142,6 +143,14 @@ class _TextItemState extends State<TextItem> {
                       Navigator.of(context).pushNamed(MyRoutes.editItemScreen, arguments: {"id": widget.item.id});
                     },
                     child: Icon(Icons.edit, color: MyColors.primaryColor),
+                  ),
+                ),
+              if (widget.isSelected != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  child: InkWell(
+                    onTap: () => widget.onSelect?.call(widget.item),
+                    child: Icon(widget.isSelected! ? Icons.check_box_outlined : Icons.check_box_outline_blank, color: MyColors.primaryColor),
                   ),
                 ),
             ],

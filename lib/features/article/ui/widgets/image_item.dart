@@ -12,9 +12,11 @@ import '../../../../core/widgets/note_dialog.dart';
 
 class ImageItem extends StatefulWidget {
   final ImageArticle item;
+  final bool? isSelected;
+  final Function(ArticleItem)? onSelect;
   final Future Function(String) onDownloadPressed;
 
-  const ImageItem({super.key, required this.item, required this.onDownloadPressed});
+  const ImageItem({super.key, required this.item, required this.onDownloadPressed, this.onSelect, this.isSelected = false});
 
   @override
   State<ImageItem> createState() => _ImageItemState();
@@ -90,6 +92,14 @@ class _ImageItemState extends State<ImageItem> {
                         Navigator.of(context).pushNamed(MyRoutes.editItemScreen, arguments: {"id": widget.item.id});
                       },
                       child: Icon(Icons.edit, color: MyColors.primaryColor),
+                    ),
+                  ),
+                if (widget.isSelected != null)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3.w),
+                    child: InkWell(
+                      onTap: () => widget.onSelect?.call(widget.item),
+                      child: Icon(widget.isSelected! ? Icons.check_box_outlined : Icons.check_box_outline_blank, color: MyColors.primaryColor),
                     ),
                   ),
               ],
