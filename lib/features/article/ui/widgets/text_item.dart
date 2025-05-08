@@ -82,7 +82,7 @@ class _TextItemState extends State<TextItem> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (widget.item.note.isNotEmpty)
+              if (widget.item.note.trim().isNotEmpty)
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
                   child: InkWell(

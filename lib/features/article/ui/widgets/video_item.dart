@@ -63,7 +63,7 @@ class _YoutubePlayerWidgetState extends State<VideoItem> {
         ),
         Column(
           children: [
-            if (widget.item.note.isNotEmpty)
+            if (widget.item.note.trim().isNotEmpty)
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
                 child: InkWell(
