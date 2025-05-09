@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
+import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:zad_aldaia/features/article/logic/article_cubit.dart';
 import '../../../../core/widgets/note_dialog.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
+import 'package:html_unescape/html_unescape.dart';
 
 class TextItem extends StatefulWidget {
   final TextArticle item;
@@ -115,9 +117,8 @@ class _TextItemState extends State<TextItem> {
                               content = widget.item.content;
                             } else {
                               var translation = await getIt<ArticleCubit>().translateText(widget.item.content, value);
-                              print(translation);
                               if (translation != null) {
-                                content = translation;
+                                content = HtmlUnescape().convert(translation);
                               }
                             }
                             setState(() {
@@ -128,6 +129,10 @@ class _TextItemState extends State<TextItem> {
                             return languageMap.entries.map((e) => PopupMenuItem(value: e.value, child: Text(e.key))).toList();
                           },
                         ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w),
+                child: InkWell(onTap: () => Share.article(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
               ),
               if (Supabase.instance.client.auth.currentUser != null)
                 Padding(

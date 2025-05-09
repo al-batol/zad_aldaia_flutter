@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/article/data/models/article_item.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
@@ -75,6 +76,10 @@ class _ImageItemState extends State<ImageItem> {
                             },
                             child: Icon(Icons.download, color: MyColors.primaryColor),
                           ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  child: InkWell(onTap: () => Share.article(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
                 ),
                 if (Supabase.instance.client.auth.currentUser != null)
                   Padding(
