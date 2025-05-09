@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
+import 'package:zad_aldaia/features/add_article/data/models/article.dart';
 import 'package:zad_aldaia/features/article/data/models/article_item.dart';
 import 'package:zad_aldaia/features/article/logic/article_cubit.dart';
 import 'package:zad_aldaia/features/article/logic/article_state.dart';
@@ -18,7 +19,7 @@ class ArticleScreen extends StatefulWidget {
   final String section;
   final String language;
   final String category;
-  final String article;
+  final Article article;
 
   const ArticleScreen({
     super.key,
@@ -41,10 +42,11 @@ class _ArticleScreenState extends State<ArticleScreen> {
   void initState() {
     cubit = context.read<ArticleCubit>();
     cubit.getArticles(
-      widget.section,
+      widget.article.id ?? "",
+      /*widget.section,
       widget.language,
       widget.category,
-      widget.article,
+      widget.article.title,*/
     );
     super.initState();
   }
@@ -79,7 +81,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                     cubit.search(query);
                   },
                 )
-                : Text(widget.article),
+                : Text(widget.article.title),
         actions: [
           if (selectedItems.isNotEmpty)
             IconButton(
@@ -198,16 +200,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
                   if (newIndex > oldIndex) {
                     newIndex -= 1;
                     final item = cubit.items[oldIndex];
-                    cubit.updateArticleOrder(item.id, newIndex).then((_) {
-                      setState(() {
-                        cubit.getArticles(
-                          widget.section,
-                          widget.language,
-                          widget.category,
-                          widget.article,
-                        );
-                      });
-                    });
+                    // cubit.updateArticleOrder(item.id, newIndex);
+                    cubit.updateArticleItem(
+                      articleId: widget.article.id ?? "",
+                      itemId: item.id,
+                      newOrder: newIndex,
+                    );
                   }
                 },
               );

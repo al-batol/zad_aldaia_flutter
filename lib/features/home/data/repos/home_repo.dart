@@ -27,7 +27,7 @@ class HomeRepo {
 
   updateData(int version) async {
     await saveItems();
-    await checkDeletes();
+    // await checkDeletes();
     await saveDataVersion(version);
   }
 

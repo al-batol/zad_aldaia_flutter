@@ -37,18 +37,20 @@ class ArticleRepo {
 
   List<article_item.ArticleItem> _cachedItems = [];
   Future<List<article_item.ArticleItem>> getArticleItems(
-    String article,
+    String id,
+    /*String article,
     String category,
     String section,
-    String language,
+    String language,*/
   ) async {
+    print('Fetching article items for article ID: $id');
     var items =
         await (_db.select(_db.articleItems)..where(
-          (tbl) =>
-              tbl.section.equals(section) &
+          (tbl) => tbl.id.equals(id),
+          /*tbl.section.equals(section) &
               tbl.category.equals(category) &
               tbl.article.equals(article) &
-              tbl.language.equals(language),
+              tbl.language.equals(language),*/
         )).get();
     _cachedItems = items.map((e) => e.toArticleType()).toList(); // تخزينها
     return items.map((e) {
@@ -142,6 +144,31 @@ class ArticleRepo {
       return true;
     } catch (e) {
       print('❌ Error reordering article item: $e');
+      return false;
+    }
+  }
+
+  Future<bool> reOderArticleItem(
+    String articleId,
+    String itemId,
+    int newOrder,
+  ) async {
+    try {
+      print(
+        "Reordering... articleId: $articleId itemId: $itemId newOrder: $newOrder",
+      );
+      await _supabase.rpc(
+        'reorder_article_item',
+        params: {
+          'p_article_id': articleId,
+          'p_item_id': itemId,
+          'p_new_order': newOrder,
+        },
+      );
+      print("✅ Reordering completed successfully for item: $itemId");
+      return true;
+    } catch (e) {
+      print('Error deleting item: $e');
       return false;
     }
   }

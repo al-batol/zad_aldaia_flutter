@@ -11,6 +11,7 @@ import '../../../core/theming/my_text_style.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 
 import '../../../core/widgets/no_items_widget.dart';
+import '../../add_article/data/models/article.dart';
 
 class CategoriesScreen extends StatefulWidget {
   final String title;
@@ -66,7 +67,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   ),
                   style: const TextStyle(color: Colors.black),
                   onChanged: (query) {
-                    cubit.search(query);
+                    // cubit.search(query);
                   },
                 )
                 : Text(widget.title),
@@ -115,13 +116,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 return SectionItem(
                   key: ValueKey(state.categories[index]),
                   category: state.categories[index],
-                  onPressed: (String article) {
+                  onPressed: (Article article) {
                     Navigator.of(context).pushNamed(
                       MyRoutes.articleScreen,
                       arguments: {
                         "category": state.categories[index].title,
                         "section": widget.section,
-                        "article": article,
+                        "article": state.categories[index].articles[index],
                         "language": widget.language,
                       },
                     );

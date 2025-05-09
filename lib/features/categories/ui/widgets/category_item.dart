@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
 
+import '../../../add_article/data/models/article.dart';
+
 class SectionItem extends StatelessWidget {
   final Category category;
-  final Function(String) onPressed;
+  final Function(Article) onPressed;
 
   // final Widget? reorderIcon;
 
@@ -60,7 +62,7 @@ class SectionItem extends StatelessWidget {
                     onTap: () {
                       onPressed(category.articles[index]);
                     },
-                    category.articles[index],
+                    category.articles[index].title,
                     style: MyTextStyle.font16BlackRegular,
                   ),
                 ),

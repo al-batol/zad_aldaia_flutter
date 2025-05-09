@@ -11,16 +11,18 @@ class ArticleCubit extends Cubit<ArticleState> {
   ArticleCubit(this._repo) : super(LoadingState());
 
   getArticles(
-    String section,
+    String id,
+    /*String section,
     String language,
     String category,
-    String article,
+    String article,*/
   ) async {
     List<ArticleItem> items = await _repo.getArticleItems(
-      article,
+      id,
+      /*article,
       category,
       section,
-      language,
+      language,*/
     );
     items.sort((a, b) => a.order.compareTo(b.order));
     this.items = items;
@@ -72,6 +74,35 @@ class ArticleCubit extends Cubit<ArticleState> {
       }
     } catch (e) {
       print("updateArticleOrder error: $e");
+      emit(UpdateFailedState());
+      return false;
+    }
+  }
+
+  Future<bool> updateArticleItem({
+    required String articleId,
+    required String itemId,
+    required int newOrder,
+  }) async {
+    emit(UpdateLoadingState());
+    try {
+      final success = await _repo.reOderArticleItem(
+        articleId,
+        itemId,
+        newOrder,
+      );
+      if (success) {
+        print("updateArticleItem success");
+
+        emit(LoadedState(items));
+        return true;
+      } else {
+        print("updateArticleItem failed");
+        emit(UpdateFailedState());
+        return false;
+      }
+    } catch (e) {
+      print("updateArticleItem error: $e");
       emit(UpdateFailedState());
       return false;
     }
