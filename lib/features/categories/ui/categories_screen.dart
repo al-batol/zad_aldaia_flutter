@@ -98,10 +98,22 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             if (state.categories.isEmpty) {
               return NoItemsWidget();
             }
-            return ListView.builder(
+            return ReorderableListView.builder(
+              physics: const BouncingScrollPhysics(),
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) {
+                    newIndex -= 1;
+                  }
+                  final item = state.categories[oldIndex];
+                  state.categories.insert(newIndex, item);
+                });
+              },
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
               itemCount: state.categories.length,
               itemBuilder: (context, index) {
                 return SectionItem(
+                  key: ValueKey(state.categories[index]),
                   category: state.categories[index],
                   onPressed: (String article) {
                     Navigator.of(context).pushNamed(
@@ -114,6 +126,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       },
                     );
                   },
+                  /*reorderIcon: ReorderableDragStartListener(
+                    index: index,
+                    child: Icon(
+                      Icons.drag_indicator_rounded,
+                      color: MyColors.primaryColor,
+                    ),
+                  ),*/
                 );
               },
             );

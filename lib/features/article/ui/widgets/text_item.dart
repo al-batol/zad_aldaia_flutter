@@ -18,14 +18,22 @@ class TextItem extends StatefulWidget {
   final bool? isSelected;
   final Function(ArticleItem)? onSelect;
 
-  const TextItem({super.key, required this.item, this.onSelect, this.isSelected = false});
+  final Widget? reorderIcon;
+
+  const TextItem({
+    super.key,
+    required this.item,
+    this.onSelect,
+    this.isSelected = false,
+    this.reorderIcon,
+  });
 
   @override
   State<TextItem> createState() => _TextItemState();
 }
 
 class _TextItemState extends State<TextItem> {
-  late final Map<String, String> languageMap;
+  Map<String, String> languageMap = {};
   late final ExpansionTileController _controller;
 
   late String content;
@@ -72,7 +80,9 @@ class _TextItemState extends State<TextItem> {
           expandedAlignment: Alignment.topLeft,
           title: SelectableText(
             onTap: () {
-              _controller.isExpanded ? _controller.collapse() : _controller.expand();
+              _controller.isExpanded
+                  ? _controller.collapse()
+                  : _controller.expand();
             },
             widget.item.title,
             style: MyTextStyle.font18BlackBold,
@@ -84,20 +94,34 @@ class _TextItemState extends State<TextItem> {
             children: [
               if (widget.item.note.trim().isNotEmpty)
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 5.h,
+                    horizontal: 10.w,
+                  ),
                   child: InkWell(
                     onTap: () {
-                      showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note));
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => NoteDialog(note: widget.item.note),
+                      );
                     },
-                    child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
+                    child: Icon(
+                      const IconData(0xe801, fontFamily: "pin_icon"),
+                      color: MyColors.primaryColor,
+                    ),
                   ),
                 ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w),
                 child: InkWell(
                   onTap: () async {
-                    await Clipboard.setData(ClipboardData(text: widget.item.content)).then((value) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).contentCopied)));
+                    await Clipboard.setData(
+                      ClipboardData(text: widget.item.content),
+                    ).then((value) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(S.of(context).contentCopied)),
+                      );
                     });
                   },
                   child: Icon(Icons.copy, color: MyColors.primaryColor),
@@ -107,9 +131,18 @@ class _TextItemState extends State<TextItem> {
                 padding: EdgeInsets.symmetric(horizontal: 3.w),
                 child:
                     isTranslating
-                        ? Container(width: 24.h, height: 24.h, child: CircularProgressIndicator(color: MyColors.primaryColor))
+                        ? Container(
+                          width: 24.h,
+                          height: 24.h,
+                          child: CircularProgressIndicator(
+                            color: MyColors.primaryColor,
+                          ),
+                        )
                         : PopupMenuButton<String>(
-                          child: Icon(Icons.g_translate, color: MyColors.primaryColor),
+                          child: Icon(
+                            Icons.g_translate,
+                            color: MyColors.primaryColor,
+                          ),
                           onSelected: (value) async {
                             setState(() {
                               isTranslating = true;
@@ -117,7 +150,8 @@ class _TextItemState extends State<TextItem> {
                             if (value == "Original Text") {
                               content = widget.item.content;
                             } else {
-                              var translation = await getIt<ArticleCubit>().translateText(widget.item.content, value);
+                              var translation = await getIt<ArticleCubit>()
+                                  .translateText(widget.item.content, value);
                               if (translation != null) {
                                 content = HtmlUnescape().convert(translation);
                               }
@@ -127,35 +161,69 @@ class _TextItemState extends State<TextItem> {
                             });
                           },
                           itemBuilder: (BuildContext context) {
-                            return languageMap.entries.map((e) => PopupMenuItem(value: e.value, child: Text(e.key))).toList();
+                            return languageMap.entries
+                                .map(
+                                  (e) => PopupMenuItem(
+                                    value: e.value,
+                                    child: Text(e.key),
+                                  ),
+                                )
+                                .toList();
                           },
                         ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w),
-                child: InkWell(onTap: () => Share.article(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
+                child: InkWell(
+                  onTap: () => Share.article(widget.item),
+                  child: Icon(
+                    Icons.share_outlined,
+                    color: MyColors.primaryColor,
+                  ),
+                ),
               ),
               if (Supabase.instance.client.auth.currentUser != null)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.w),
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).pushNamed(MyRoutes.editItemScreen, arguments: {"id": widget.item.id});
+                      Navigator.of(context).pushNamed(
+                        MyRoutes.editItemScreen,
+                        arguments: {"id": widget.item.id},
+                      );
                     },
                     child: Icon(Icons.edit, color: MyColors.primaryColor),
                   ),
+                ),
+              if (Supabase.instance.client.auth.currentUser != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  child: widget.reorderIcon,
                 ),
               if (widget.isSelected != null)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.w),
                   child: InkWell(
                     onTap: () => widget.onSelect?.call(widget.item),
-                    child: Icon(widget.isSelected! ? Icons.check_box_outlined : Icons.check_box_outline_blank, color: MyColors.primaryColor),
+                    child: Icon(
+                      widget.isSelected!
+                          ? Icons.check_box_outlined
+                          : Icons.check_box_outline_blank,
+                      color: MyColors.primaryColor,
+                    ),
                   ),
                 ),
             ],
           ),
-          children: [Container(margin: EdgeInsets.all(10), child: SelectableText(content, style: MyTextStyle.font16BlackRegular))],
+          children: [
+            Container(
+              margin: EdgeInsets.all(10),
+              child: SelectableText(
+                content,
+                style: MyTextStyle.font16BlackRegular,
+              ),
+            ),
+          ],
         ),
       ),
     );

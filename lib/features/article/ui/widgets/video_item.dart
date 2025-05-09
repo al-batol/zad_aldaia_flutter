@@ -15,7 +15,15 @@ class VideoItem extends StatefulWidget {
   final bool? isSelected;
   final Function(ArticleItem)? onSelect;
 
-  const VideoItem({super.key, required this.item, this.onSelect, this.isSelected = false});
+  final Widget? reorderIcon;
+
+  const VideoItem({
+    super.key,
+    required this.item,
+    this.onSelect,
+    this.isSelected = false,
+    this.reorderIcon,
+  });
 
   @override
   State<VideoItem> createState() => _YoutubePlayerWidgetState();
@@ -33,7 +41,14 @@ class _YoutubePlayerWidgetState extends State<VideoItem> {
   void _initializePlayer() {
     final videoId = YoutubePlayer.convertUrlToId(widget.item.videoId)!;
 
-    _controller = YoutubePlayerController(initialVideoId: videoId, flags: const YoutubePlayerFlags(autoPlay: false, mute: false, forceHD: false));
+    _controller = YoutubePlayerController(
+      initialVideoId: videoId,
+      flags: const YoutubePlayerFlags(
+        autoPlay: false,
+        mute: false,
+        forceHD: false,
+      ),
+    );
   }
 
   @override
@@ -55,7 +70,14 @@ class _YoutubePlayerWidgetState extends State<VideoItem> {
               SizedBox(width: 14),
               CurrentPosition(),
               SizedBox(width: 8),
-              ProgressBar(isExpanded: true, colors: ProgressBarColors(playedColor: Colors.redAccent, handleColor: Colors.redAccent, backgroundColor: Colors.grey)),
+              ProgressBar(
+                isExpanded: true,
+                colors: ProgressBarColors(
+                  playedColor: Colors.redAccent,
+                  handleColor: Colors.redAccent,
+                  backgroundColor: Colors.grey,
+                ),
+              ),
               RemainingDuration(),
               PlaybackSpeedButton(),
             ],
@@ -68,31 +90,53 @@ class _YoutubePlayerWidgetState extends State<VideoItem> {
                 padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
                 child: InkWell(
                   onTap: () {
-                    showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note));
+                    showDialog(
+                      context: context,
+                      builder: (context) => NoteDialog(note: widget.item.note),
+                    );
                   },
-                  child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
+                  child: Icon(
+                    const IconData(0xe801, fontFamily: "pin_icon"),
+                    color: MyColors.primaryColor,
+                  ),
                 ),
               ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 3.w),
-              child: InkWell(onTap: () => Share.article(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
+              child: InkWell(
+                onTap: () => Share.article(widget.item),
+                child: Icon(Icons.share_outlined, color: MyColors.primaryColor),
+              ),
             ),
             if (Supabase.instance.client.auth.currentUser != null)
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed(MyRoutes.editItemScreen, arguments: {"id": widget.item.id});
+                    Navigator.of(context).pushNamed(
+                      MyRoutes.editItemScreen,
+                      arguments: {"id": widget.item.id},
+                    );
                   },
                   child: Icon(Icons.edit, color: MyColors.primaryColor),
                 ),
+              ),
+            if (Supabase.instance.client.auth.currentUser != null)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w),
+                child: widget.reorderIcon,
               ),
             if (widget.isSelected != null)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w),
                 child: InkWell(
                   onTap: () => widget.onSelect?.call(widget.item),
-                  child: Icon(widget.isSelected! ? Icons.check_box_outlined : Icons.check_box_outline_blank, color: MyColors.primaryColor),
+                  child: Icon(
+                    widget.isSelected!
+                        ? Icons.check_box_outlined
+                        : Icons.check_box_outline_blank,
+                    color: MyColors.primaryColor,
+                  ),
                 ),
               ),
           ],

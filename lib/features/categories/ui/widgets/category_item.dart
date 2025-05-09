@@ -7,10 +7,13 @@ class SectionItem extends StatelessWidget {
   final Category category;
   final Function(String) onPressed;
 
+  // final Widget? reorderIcon;
+
   const SectionItem({
     super.key,
     required this.category,
     required this.onPressed,
+    // required this.reorderIcon,
   });
 
   @override
@@ -24,6 +27,9 @@ class SectionItem extends StatelessWidget {
         color: Colors.white,
         child: ExpansionTile(
           controller: controller,
+          maintainState: true,
+          // leading: const Icon(Icons.expand_more),
+          // trailing: reorderIcon,
           title: SelectableText(
             onTap: () {
               controller.isExpanded
@@ -44,6 +50,9 @@ class SectionItem extends StatelessWidget {
                   vertical: category.articles.length - 1 == index ? 10.h : 5.h,
                 ),
                 child: MaterialButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   onPressed: () => onPressed(category.articles[index]),
                   elevation: 2,
                   color: Colors.grey.shade100,
