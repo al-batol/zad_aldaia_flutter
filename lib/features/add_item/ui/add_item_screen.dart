@@ -392,7 +392,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 } else {
                                   String? url = await cubit.uploadImage(
                                     _image!,
-                                    "$_title/$_category/$_article",
+                                    _title,
                                   );
                                   if (url == null) {
                                     return;

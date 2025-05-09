@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/article/data/models/article_item.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 
@@ -13,95 +15,74 @@ class VideoItem extends StatefulWidget {
   const VideoItem({super.key, required this.item});
 
   @override
-  State<VideoItem> createState() => _VideoItemState();
+  State<VideoItem> createState() => _YoutubePlayerWidgetState();
 }
 
-class _VideoItemState extends State<VideoItem> {
-  late final YoutubePlayerController _controller;
+class _YoutubePlayerWidgetState extends State<VideoItem> {
+  late YoutubePlayerController _controller;
 
   @override
   void initState() {
-    _controller = YoutubePlayerController.fromVideoId(
-      videoId: widget.item.videoId,
-      autoPlay: false,
-      params: YoutubePlayerParams(
-        mute: false,
-        showControls: true,
-        showFullscreenButton: false,
-      ),
-    );
     super.initState();
+    _initializePlayer();
+  }
+
+  void _initializePlayer() {
+    final videoId = YoutubePlayer.convertUrlToId(widget.item.videoId)!;
+
+    _controller = YoutubePlayerController(initialVideoId: videoId, flags: const YoutubePlayerFlags(autoPlay: false, mute: false, forceHD: false));
   }
 
   @override
   void dispose() {
-    _controller.close();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-      child: Material(
-        elevation: 2,
-        borderRadius: BorderRadius.circular(10),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(child: YoutubePlayer(controller: _controller)),
-              Column(
-                children: [
-                  if (widget.item.note.isNotEmpty)
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 5.h,
-                        horizontal: 10.w,
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder:
-                                (context) => NoteDialog(note: widget.item.note),
-                          );
-                        },
-                        child: Icon(
-                          const IconData(0xe801, fontFamily: "pin_icon"),
-                          color: MyColors.primaryColor,
-                        ),
-                      ),
-                    ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 5.h,
-                      horizontal: 10.w,
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder:
-                              (context) => NoteDialog(
-                                note: widget.item.id,
-                                title: S.of(context).itemId,
-                              ),
-                        );
-                      },
-                      child: Icon(
-                        Icons.info_outline,
-                        color: MyColors.primaryColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+    return Row(
+      children: [
+        Expanded(
+          child: YoutubePlayer(
+            controller: _controller,
+            showVideoProgressIndicator: true,
+            progressIndicatorColor: Colors.redAccent,
+            bottomActions: const [
+              SizedBox(width: 14),
+              CurrentPosition(),
+              SizedBox(width: 8),
+              ProgressBar(isExpanded: true, colors: ProgressBarColors(playedColor: Colors.redAccent, handleColor: Colors.redAccent, backgroundColor: Colors.grey)),
+              RemainingDuration(),
+              PlaybackSpeedButton(),
             ],
           ),
         ),
-      ),
+        Column(
+          children: [
+            if (widget.item.note.isNotEmpty)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                child: InkWell(
+                  onTap: () {
+                    showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note));
+                  },
+                  child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
+                ),
+              ),
+            if (Supabase.instance.client.auth.currentUser != null)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(MyRoutes.editItemScreen, arguments: {"id": widget.item.id});
+                  },
+                  child: Icon(Icons.edit, color: MyColors.primaryColor),
+                ),
+              ),
+          ],
+        ),
+      ],
     );
   }
 }

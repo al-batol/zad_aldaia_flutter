@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/article/data/models/article_item.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 import '../../../../core/theming/my_colors.dart';
 import '../../../../core/widgets/note_dialog.dart';
-
 
 class ImageItem extends StatefulWidget {
   final ImageArticle item;
@@ -19,7 +20,6 @@ class ImageItem extends StatefulWidget {
 
 class _ImageItemState extends State<ImageItem> {
   bool isDownloading = false;
-
 
   @override
   Widget build(BuildContext context) {
@@ -37,18 +37,9 @@ class _ImageItemState extends State<ImageItem> {
                 imageUrl: widget.item.url,
                 errorWidget: (context, url, error) => Icon(Icons.error),
                 progressIndicatorBuilder:
-                    (context, url, downloadProgress) =>
-                        Center(
-                          child: SizedBox(
-                            width: 50.h,
-                            height: 50.h,
-                            child: CircularProgressIndicator(
-                              color: MyColors.primaryColor,
-                              strokeWidth: 4,
-                              value: downloadProgress.progress,
-                            ),
-                          ),
-                        ),
+                    (context, url, downloadProgress) => Center(
+                      child: SizedBox(width: 50.h, height: 50.h, child: CircularProgressIndicator(color: MyColors.primaryColor, strokeWidth: 4, value: downloadProgress.progress)),
+                    ),
                 fit: BoxFit.cover,
                 width: 300,
                 height: 400,
@@ -58,38 +49,19 @@ class _ImageItemState extends State<ImageItem> {
               children: [
                 if (widget.item.note.isNotEmpty)
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 5.h,
-                      horizontal: 10.w,
-                    ),
+                    padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
                     child: InkWell(
                       onTap: () {
-                        showDialog(
-                          context: context,
-                          builder:
-                              (context) => NoteDialog(note: widget.item.note),
-                        );
+                        showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note));
                       },
-                      child: Icon(
-                        const IconData(0xe801, fontFamily: "pin_icon"),
-                        color: MyColors.primaryColor,
-                      ),
+                      child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
                     ),
                   ),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 5.h,
-                    horizontal: 10.w,
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
                   child:
                       isDownloading
-                          ? SizedBox(
-                            width: 24.h,
-                            height: 24.h,
-                            child: CircularProgressIndicator(
-                              color: MyColors.primaryColor,
-                            ),
-                          )
+                          ? SizedBox(width: 24.h, height: 24.h, child: CircularProgressIndicator(color: MyColors.primaryColor))
                           : InkWell(
                             onTap: () async {
                               setState(() {
@@ -98,43 +70,22 @@ class _ImageItemState extends State<ImageItem> {
                               await widget.onDownloadPressed(widget.item.url);
                               setState(() {
                                 isDownloading = false;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      S.of(context).imageDownloaded,
-                                    ),
-                                  ),
-                                );
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).imageDownloaded)));
                               });
                             },
-                            child: Icon(
-                              Icons.download,
-                              color: MyColors.primaryColor,
-                            ),
+                            child: Icon(Icons.download, color: MyColors.primaryColor),
                           ),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 5.h,
-                    horizontal: 10.w,
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder:
-                            (context) => NoteDialog(
-                              note: widget.item.id,
-                              title: S.of(context).itemId,
-                            ),
-                      );
-                    },
-                    child: Icon(
-                      Icons.info_outline,
-                      color: MyColors.primaryColor,
+                if (Supabase.instance.client.auth.currentUser != null)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).pushNamed(MyRoutes.editItemScreen, arguments: {"id": widget.item.id});
+                      },
+                      child: Icon(Icons.edit, color: MyColors.primaryColor),
                     ),
                   ),
-                ),
               ],
             ),
           ],
@@ -142,5 +93,4 @@ class _ImageItemState extends State<ImageItem> {
       ),
     );
   }
-
 }

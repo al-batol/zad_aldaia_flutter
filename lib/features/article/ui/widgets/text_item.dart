@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
+import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
 import 'package:zad_aldaia/features/article/data/models/article_item.dart';
@@ -19,7 +22,7 @@ class TextItem extends StatefulWidget {
 }
 
 class _TextItemState extends State<TextItem> {
-  late final Map<String, String> languageMap ;
+  late final Map<String, String> languageMap;
   late final ExpansionTileController _controller;
 
   late String content;
@@ -66,11 +69,11 @@ class _TextItemState extends State<TextItem> {
           expandedAlignment: Alignment.topLeft,
           title: SelectableText(
             onTap: () {
-              _controller.isExpanded
-                  ? _controller.collapse()
-                  : _controller.expand();
+              _controller.isExpanded ? _controller.collapse() : _controller.expand();
             },
-            widget.item.title,style: MyTextStyle.font18BlackBold,),
+            widget.item.title,
+            style: MyTextStyle.font18BlackBold,
+          ),
           controlAffinity: ListTileControlAffinity.leading,
           tilePadding: EdgeInsets.symmetric(horizontal: 5.w),
           trailing: Row(
@@ -78,34 +81,20 @@ class _TextItemState extends State<TextItem> {
             children: [
               if (widget.item.note.isNotEmpty)
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 5.h,
-                    horizontal: 10.w,
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
                   child: InkWell(
                     onTap: () {
-                      showDialog(
-                        context: context,
-                        builder:
-                            (context) => NoteDialog(note: widget.item.note),
-                      );
+                      showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note));
                     },
-                    child: Icon(
-                      const IconData(0xe801, fontFamily: "pin_icon"),
-                      color: MyColors.primaryColor,
-                    ),
+                    child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
                   ),
                 ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w),
                 child: InkWell(
                   onTap: () async {
-                    await Clipboard.setData(
-                      ClipboardData(text: widget.item.content),
-                    ).then((value) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(S.of(context).contentCopied)),
-                      );
+                    await Clipboard.setData(ClipboardData(text: widget.item.content)).then((value) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).contentCopied)));
                     });
                   },
                   child: Icon(Icons.copy, color: MyColors.primaryColor),
@@ -115,18 +104,9 @@ class _TextItemState extends State<TextItem> {
                 padding: EdgeInsets.symmetric(horizontal: 3.w),
                 child:
                     isTranslating
-                        ? SizedBox(
-                          width: 24.h,
-                          height: 24.h,
-                          child: CircularProgressIndicator(
-                            color: MyColors.primaryColor,
-                          ),
-                        )
+                        ? Container(width: 24.h, height: 24.h, child: CircularProgressIndicator(color: MyColors.primaryColor))
                         : PopupMenuButton<String>(
-                          child: Icon(
-                            Icons.g_translate,
-                            color: MyColors.primaryColor,
-                          ),
+                          child: Icon(Icons.g_translate, color: MyColors.primaryColor),
                           onSelected: (value) async {
                             setState(() {
                               isTranslating = true;
@@ -134,8 +114,7 @@ class _TextItemState extends State<TextItem> {
                             if (value == "Original Text") {
                               content = widget.item.content;
                             } else {
-                              var translation = await getIt<ArticleCubit>()
-                                  .translateText(widget.item.content, value);
+                              var translation = await getIt<ArticleCubit>().translateText(widget.item.content, value);
                               print(translation);
                               if (translation != null) {
                                 content = translation;
@@ -146,41 +125,23 @@ class _TextItemState extends State<TextItem> {
                             });
                           },
                           itemBuilder: (BuildContext context) {
-                            return languageMap.entries
-                                .map(
-                                  (e) => PopupMenuItem(
-                                    value: e.value,
-                                    child: Text(e.key),
-                                  ),
-                                )
-                                .toList();
+                            return languageMap.entries.map((e) => PopupMenuItem(value: e.value, child: Text(e.key))).toList();
                           },
                         ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder:
-                          (context) => NoteDialog(
-                            note: widget.item.id,
-                            title: S.of(context).itemId,
-                          ),
-                    );
-                  },
-                  child: Icon(Icons.info_outline, color: MyColors.primaryColor),
+              if (Supabase.instance.client.auth.currentUser != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(MyRoutes.editItemScreen, arguments: {"id": widget.item.id});
+                    },
+                    child: Icon(Icons.edit, color: MyColors.primaryColor),
+                  ),
                 ),
-              ),
             ],
           ),
-          children: [
-            Container(
-              margin: EdgeInsets.all(10),
-              child: SelectableText(content,style: MyTextStyle.font16BlackRegular,),
-            ),
-          ],
+          children: [Container(margin: EdgeInsets.all(10), child: SelectableText(content, style: MyTextStyle.font16BlackRegular))],
         ),
       ),
     );
