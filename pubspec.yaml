@@ -49,6 +49,7 @@ dependencies:
   firebase_storage: ^12.4.5
   image_picker: ^1.1.2
   supabase_flutter: ^2.9.0
+  provider: ^6.1.5
 
 
 
@@ -80,6 +81,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/flags/
     - assets/images/png/
     - assets/images/svg/
     - web/sqlite3.wasm

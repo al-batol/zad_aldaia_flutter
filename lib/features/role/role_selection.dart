@@ -41,6 +41,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var local=S.of(context);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -49,8 +51,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
           children: [
             const SizedBox(height: 120),
             Center(
-              child: const Text(
-                'Please select account type',
+              child: Text(
+                local.pleaseSelectAccountType,
                 style: TextStyle(fontWeight: FontWeight.w300, fontSize: 23),
               ),
             ),
@@ -146,6 +148,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                       ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         child: const Text('Cancel'),
+
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(

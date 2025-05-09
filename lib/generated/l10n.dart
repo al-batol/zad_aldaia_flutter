@@ -624,6 +624,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Please select account type`
+  String get pleaseSelectAccountType {
+    return Intl.message(
+      'Please select account type',
+      name: 'pleaseSelectAccountType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Speaker`
+  String get speaker {
+    return Intl.message('Speaker', name: 'speaker', desc: '', args: []);
+  }
+
+  /// `Teacher`
+  String get teacher {
+    return Intl.message('Teacher', name: 'teacher', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

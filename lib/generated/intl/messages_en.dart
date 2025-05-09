@@ -127,6 +127,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseEnterPassword": MessageLookupByLibrary.simpleMessage(
       "Please enter your password",
     ),
+    "pleaseSelectAccountType": MessageLookupByLibrary.simpleMessage(
+      "Please select account type",
+    ),
     "portugues": MessageLookupByLibrary.simpleMessage("Portuguese"),
     "portuguese": MessageLookupByLibrary.simpleMessage("Portuguese"),
     "punjabi": MessageLookupByLibrary.simpleMessage("Punjabi"),
@@ -139,6 +142,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "section": MessageLookupByLibrary.simpleMessage("Section"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("Select Language"),
     "spanish": MessageLookupByLibrary.simpleMessage("Spanish"),
+    "speaker": MessageLookupByLibrary.simpleMessage("Speaker"),
+    "teacher": MessageLookupByLibrary.simpleMessage("Teacher"),
     "teachingNewMuslims": MessageLookupByLibrary.simpleMessage(
       "Teaching new muslims",
     ),

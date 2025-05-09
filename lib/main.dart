@@ -2,12 +2,13 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/routing/app_router.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
-import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/di/dependency_injection.dart';
+import 'core/providers/local_provider.dart';
 import 'generated/l10n.dart';
 import 'dart:ui';
 
@@ -18,8 +19,16 @@ void main() async {
   var widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await initializeSupabase();
+  final localProvider = LocalProvider();
+  await localProvider.loadSavedLanguage();
+
   //  await initializeFirebase();
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => LocalProvider())],
+      child: const MyApp(),
+    ),
+  );
 }
 
 Future<void> initializeSupabase() async {
@@ -66,41 +75,46 @@ void setupFirebaseCrashlytics() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constrains) {
-        return ScreenUtilInit(
-          designSize: Size(constrains.maxWidth, constrains.maxHeight),
-          minTextAdapt: true,
-          child: MaterialApp(
-            supportedLocales: S.delegate.supportedLocales,
-            localeResolutionCallback: (locale, supportedLocales) {
-              for (var supportedLocale in supportedLocales) {
-                if (supportedLocale.languageCode == locale?.languageCode) {
-                  return supportedLocale;
-                }
-              }
-              return supportedLocales.first;
-            },
-            localizationsDelegates: [
-              S.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            debugShowCheckedModeBanner: false,
-            initialRoute: MyRoutes.roleSelectionScreen,
-            theme: ThemeData(
-              scaffoldBackgroundColor: Colors.white,
-
-              dividerColor: Colors.transparent,
-              primaryColor: Colors.white,
-              fontFamily: "almarai_bold",
-            ),
-            onGenerateRoute: AppRouter().generateRoutes,
-          ),
+    return Consumer<LocalProvider>(
+      builder: (context, localProvider, child) {
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return ScreenUtilInit(
+              designSize: Size(constraints.maxWidth, constraints.maxHeight),
+              minTextAdapt: true,
+              builder: (_, __) {
+                return MaterialApp(
+                  supportedLocales: S.delegate.supportedLocales,
+                  locale: Locale(localProvider.locale),
+                  localeResolutionCallback: (locale, supportedLocales) {
+                    for (var supportedLocale in supportedLocales) {
+                      if (supportedLocale.languageCode == locale?.languageCode) {
+                        return supportedLocale;
+                      }
+                    }
+                    return supportedLocales.first;
+                  },
+                  localizationsDelegates: [
+                    S.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  debugShowCheckedModeBanner: false,
+                  initialRoute: MyRoutes.roleSelectionScreen,
+                  theme: ThemeData(
+                    scaffoldBackgroundColor: Colors.white,
+                    dividerColor: Colors.transparent,
+                    primaryColor: Colors.white,
+                    fontFamily: "almarai_bold",
+                  ),
+                  onGenerateRoute: AppRouter().generateRoutes,
+                );
+              },
+            );
+          },
         );
       },
     );

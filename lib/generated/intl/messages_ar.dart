@@ -127,6 +127,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseEnterPassword": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال كلمة المرور",
     ),
+    "pleaseSelectAccountType": MessageLookupByLibrary.simpleMessage(
+      "اختر نوع الحساب",
+    ),
     "portugues": MessageLookupByLibrary.simpleMessage("البرتغالية"),
     "portuguese": MessageLookupByLibrary.simpleMessage("البرتغالية"),
     "punjabi": MessageLookupByLibrary.simpleMessage("البنجابية"),
@@ -139,6 +142,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "section": MessageLookupByLibrary.simpleMessage("القسم"),
     "selectLanguage": MessageLookupByLibrary.simpleMessage("اختر اللغه"),
     "spanish": MessageLookupByLibrary.simpleMessage("الإسبانية"),
+    "speaker": MessageLookupByLibrary.simpleMessage("محاور"),
+    "teacher": MessageLookupByLibrary.simpleMessage("معلم"),
     "teachingNewMuslims": MessageLookupByLibrary.simpleMessage(
       "تعليم المسلمين الجدد",
     ),
