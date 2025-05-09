@@ -8,11 +8,15 @@ class InitialState extends SearchState{
 
 }
 
-class SearchingState extends SearchState{
+class SearchingState extends SearchState {
+  final String query;
 
+  SearchingState({required this.query});
 }
 
-class LoadedState extends SearchState{
+class SearchLoadedState extends SearchState {
   final List<ArticleItem> items;
-  LoadedState(this.items);
+  final String query;
+
+  SearchLoadedState(this.items, {required this.query});
 }

@@ -81,38 +81,46 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           onSelected: onRoleSelected,
           position: PopupMenuPosition.under,
           icon: const Icon(Icons.person_2_outlined, size: 32),
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: UserRole.speaker,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          itemBuilder:
+              (context) => [
+                PopupMenuItem(
+                  value: UserRole.speaker,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                children: [
-                  Text(local.speaker),
+                    children: [
+                      Text(local.speaker),
 
-                  if (selectedRole == UserRole.speaker)
-                    const Icon(Icons.check_sharp, size: 25, color: Colors.blueAccent),
-                  if (selectedRole == UserRole.speaker)
-                    const SizedBox(width: 1),
-                ],
-              ),
-            ),
-            PopupMenuItem(
-              value: UserRole.teacher,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(local.teacher),
+                      if (selectedRole == UserRole.speaker)
+                        const Icon(
+                          Icons.check_sharp,
+                          size: 25,
+                          color: Colors.blueAccent,
+                        ),
+                      if (selectedRole == UserRole.speaker)
+                        const SizedBox(width: 1),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: UserRole.teacher,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(local.teacher),
 
-                  if (selectedRole == UserRole.teacher)
-                    const Icon(Icons.check_sharp, size: 25, color: Colors.blueAccent),
-                  if (selectedRole == UserRole.teacher)
-                    const SizedBox(width: 1),
-                ],
-              ),
-
-            ),
-          ],
+                      if (selectedRole == UserRole.teacher)
+                        const Icon(
+                          Icons.check_sharp,
+                          size: 25,
+                          color: Colors.blueAccent,
+                        ),
+                      if (selectedRole == UserRole.teacher)
+                        const SizedBox(width: 1),
+                    ],
+                  ),
+                ),
+              ],
         ),
 
         IconButton(

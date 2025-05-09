@@ -20,6 +20,8 @@ import 'package:zad_aldaia/features/search/logic/search_cubit.dart';
 import 'package:zad_aldaia/features/search/ui/search_screen.dart';
 
 import '../../features/add_category/ui/add_category_screen.dart';
+import '../../features/language/ui/language_screen.dart';
+import '../../features/role/role_selection.dart';
 
 class AppRouter {
   Route? generateRoutes(RouteSettings settings) {
@@ -42,7 +44,6 @@ class AppRouter {
               ),
         );
 
-        return MaterialPageRoute(builder: (context) => BlocProvider(create: (context) => getIt<HomeCubit>(), child: HomeScreen()));
       case MyRoutes.sectionsScreen:
         return MaterialPageRoute(
           builder:
@@ -76,13 +77,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (context) => AdminScreen());
       case MyRoutes.addCategoryScreen:
         return MaterialPageRoute(builder: (context) => BlocProvider(create: (context) => getIt<AddCategoryCubit>(), child: AddCategoryScreen()));
-        return MaterialPageRoute(
-          builder:
-              (context) => BlocProvider(
-                create: (context) => getIt<AddCategoryCubit>(),
-                child: AddCategoryScreen(),
-              ),
-        );  case MyRoutes.roleSelectionScreen:
+
+        case MyRoutes.roleSelectionScreen:
         return MaterialPageRoute(
           builder:
               (context) => BlocProvider(
@@ -108,13 +104,6 @@ class AppRouter {
         );
       case MyRoutes.editItemScreen:
         return MaterialPageRoute(builder: (context) => BlocProvider(create: (context) => getIt<EditItemCubit>(), child: EditItemScreen(itemId: (arguments as Map)["id"])));
-        return MaterialPageRoute(
-          builder:
-              (context) => BlocProvider(
-            create: (context) => getIt<EditItemCubit>(),
-            child: EditItemScreen(),
-          ),
-        );
 
       default:
         return null;

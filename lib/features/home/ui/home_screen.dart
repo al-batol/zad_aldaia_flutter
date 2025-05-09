@@ -69,6 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
       local.atheistDialog,
       local.otherSects,
       local.whyIslamIsTrue,
+      local.teachingNewMuslims,
+      local.questionsAboutIslam,
     ];
 
     teacherTitles = [

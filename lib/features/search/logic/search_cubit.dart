@@ -9,27 +9,25 @@ class SearchCubit extends Cubit<SearchState> {
   SearchCubit(this._repo) : super(InitialState());
 
   search(String query) async {
-    emit(SearchingState());
+    emit(SearchingState(query: query));
     List<ArticleItem> items = await _repo.searchArticleItems(query);
     if(query.isEmpty || items.isEmpty) {
-      emit(LoadedState([]));
+      emit(SearchLoadedState([], query: query));
     } else {
-      emit(LoadedState(items));
+      emit(SearchLoadedState(items, query: query));
     }
   }
 
   void clearResults() {
-    emit(LoadedState([]));
+    emit(SearchLoadedState([], query: ''));
   }
 
-
-  saveImageAndroid(String imageUrl,) async{
+  saveImageAndroid(String imageUrl) async {
     await _repo.saveImageAndroid(imageUrl);
   }
 
-  saveImageWeb(String imageUrl) async{
+  saveImageWeb(String imageUrl) async {
     await _repo.saveImageWeb(imageUrl);
   }
-
-
 }
+

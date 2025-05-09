@@ -3,11 +3,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
 
+import '../../features/search/ui/highlighted_text.dart';
+
 class NoteDialog extends StatelessWidget {
   final String? title;
   final String note;
+  final String searchQuery;
 
-  const NoteDialog({super.key, required this.note, this.title});
+  const NoteDialog({
+    super.key,
+    required this.note,
+    this.title,
+    this.searchQuery = '',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +26,29 @@ class NoteDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(title??"Note", style: MyTextStyle.font18BlackBold),
+            title != null
+                ? HighlightedText(
+              text: title!,
+              query: searchQuery,
+              style: MyTextStyle.font18BlackBold,
+            )
+                : Text("Note", style: MyTextStyle.font18BlackBold),
             SizedBox(height: 10.h),
-            SelectableText(note, style: MyTextStyle.font16BlackRegular),
+            Flexible(
+              child: SingleChildScrollView(
+                child: HighlightedText(
+                  text: note,
+                  query: searchQuery,
+                  style: MyTextStyle.font16BlackRegular,
+                  selectable: true,
+                  highlightStyle: TextStyle(
+                    backgroundColor: MyColors.primaryColor.withOpacity(0.3),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
             SizedBox(height: 20.h),
             MaterialButton(
               onPressed: () => Navigator.of(context).pop(),
