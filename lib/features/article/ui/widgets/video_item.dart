@@ -12,8 +12,10 @@ import '../../../../core/widgets/note_dialog.dart';
 
 class VideoItem extends StatefulWidget {
   final VideoArticle item;
+  final bool? isSelected;
+  final Function(ArticleItem)? onSelect;
 
-  const VideoItem({super.key, required this.item});
+  const VideoItem({super.key, required this.item, this.onSelect, this.isSelected = false});
 
   @override
   State<VideoItem> createState() => _YoutubePlayerWidgetState();
@@ -83,6 +85,14 @@ class _YoutubePlayerWidgetState extends State<VideoItem> {
                     Navigator.of(context).pushNamed(MyRoutes.editItemScreen, arguments: {"id": widget.item.id});
                   },
                   child: Icon(Icons.edit, color: MyColors.primaryColor),
+                ),
+              ),
+            if (widget.isSelected != null)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w),
+                child: InkWell(
+                  onTap: () => widget.onSelect?.call(widget.item),
+                  child: Icon(widget.isSelected! ? Icons.check_box_outlined : Icons.check_box_outline_blank, color: MyColors.primaryColor),
                 ),
               ),
           ],
