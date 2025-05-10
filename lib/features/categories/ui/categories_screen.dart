@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
-import 'package:zad_aldaia/features/categories/data/models/category.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_state.dart';
 import 'package:zad_aldaia/features/categories/ui/widgets/category_item.dart';
@@ -105,35 +104,36 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 setState(() {
                   if (newIndex > oldIndex) {
                     newIndex -= 1;
+                    final item = cubit.categories[oldIndex];
+                    cubit.categories.insert(newIndex, item);
+                    cubit.reOrderCategories(item.id, newIndex);
                   }
-                  final item = state.categories[oldIndex];
-                  state.categories.insert(newIndex, item);
                 });
               },
               padding: EdgeInsets.symmetric(horizontal: 10.w),
-              itemCount: state.categories.length,
+              itemCount: cubit.categories.length,
               itemBuilder: (context, index) {
                 return SectionItem(
-                  key: ValueKey(state.categories[index]),
-                  category: state.categories[index],
+                  key: ValueKey('${cubit.categories[index].id}_$index'),
+                  category: cubit.categories[index],
                   onPressed: (Article article) {
                     Navigator.of(context).pushNamed(
                       MyRoutes.articleScreen,
                       arguments: {
-                        "category": state.categories[index].title,
+                        "category": cubit.categories[index].title,
                         "section": widget.section,
-                        "article": state.categories[index].articles[index],
+                        "article": cubit.categories[index].articles[index],
                         "language": widget.language,
                       },
                     );
                   },
-                  /*reorderIcon: ReorderableDragStartListener(
+                  reorderIcon: ReorderableDragStartListener(
                     index: index,
                     child: Icon(
                       Icons.drag_indicator_rounded,
                       color: MyColors.primaryColor,
                     ),
-                  ),*/
+                  ),
                 );
               },
             );

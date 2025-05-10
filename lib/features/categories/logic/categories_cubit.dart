@@ -10,12 +10,20 @@ class CategoriesCubit extends Cubit<CategoriesState> {
   CategoriesCubit(this._repo) : super(LoadingState());
 
   getCategories(String section, String language) async {
-    var categories = await _repo.getSectionCategories(section, language);
+    var categories = await _repo.getCategoriesFromSupabase(section, language);
     this.categories = categories;
-    print(
-      "categories: ${categories.map((e) => e.title).toList()} ids: ${categories.map((e) => e.articles.map((a) => a.id).toList()).toList()} titles: ${categories.map((e) => e.articles.map((a) => a.title).toList()).toList()}",
-    );
+    print("categories: ${categories.map((e) => e.order).toList()}");
     emit(LoadedState(categories));
+  }
+
+  reOrderCategories(String id, int newIndex) async {
+    emit(LoadingState());
+    try {
+      await _repo.reOderCategories(id, newIndex);
+      emit(LoadedState(categories));
+    } catch (e) {
+      emit(ErrorState(e.toString()));
+    }
   }
 
   /*search(String query) {

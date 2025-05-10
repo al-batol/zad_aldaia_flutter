@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
 
@@ -9,13 +10,13 @@ class SectionItem extends StatelessWidget {
   final Category category;
   final Function(Article) onPressed;
 
-  // final Widget? reorderIcon;
+  final Widget? reorderIcon;
 
   const SectionItem({
     super.key,
     required this.category,
     required this.onPressed,
-    // required this.reorderIcon,
+    required this.reorderIcon,
   });
 
   @override
@@ -30,8 +31,10 @@ class SectionItem extends StatelessWidget {
         child: ExpansionTile(
           controller: controller,
           maintainState: true,
-          // leading: const Icon(Icons.expand_more),
-          // trailing: reorderIcon,
+          trailing:
+              Supabase.instance.client.auth.currentUser != null
+                  ? reorderIcon
+                  : null,
           title: SelectableText(
             onTap: () {
               controller.isExpanded
