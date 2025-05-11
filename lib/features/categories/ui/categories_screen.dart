@@ -93,130 +93,146 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
         ],
       ),
-      body: BlocBuilder<CategoriesCubit, CategoriesState>(
-        builder: (context, state) {
-          if (state is LoadedState) {
-            if (state.categories.isEmpty) {
-              return Column(
-                children: [
-                  NoItemsWidget(),
-                  const SizedBox(height: 20),
-                  Supabase.instance.client.auth.currentUser != null
-                      ? ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            MyColors.primaryColor,
-                          ),
-                          padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(
-                              vertical: 10.h,
-                              horizontal: 20.w,
+      body: SizedBox.expand(
+        child: BlocBuilder<CategoriesCubit, CategoriesState>(
+          builder: (context, state) {
+            if (state is LoadedState) {
+              if (state.categories.isEmpty) {
+                return Column(
+                  children: [
+                    NoItemsWidget(),
+                    const SizedBox(height: 20),
+                    Supabase.instance.client.auth.currentUser != null
+                        ? ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                              MyColors.primaryColor,
+                            ),
+                            padding: MaterialStateProperty.all(
+                              EdgeInsets.symmetric(
+                                vertical: 10.h,
+                                horizontal: 20.w,
+                              ),
                             ),
                           ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                            MyRoutes.addCategoryScreen,
-                            arguments: {
-                              "section": widget.section,
-                              "language": widget.language,
-                            },
-                          );
-                        },
-                        child: Text(
-                          "Add Category",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.sp,
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              MyRoutes.addCategoryScreen,
+                              arguments: {
+                                "section": widget.section,
+                                "language": widget.language,
+                              },
+                            );
+                          },
+                          child: Text(
+                            "Add Category",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                            ),
                           ),
-                        ),
-                      )
-                      : SizedBox(),
+                        )
+                        : SizedBox(),
+                  ],
+                );
+              }
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      physics:
+                          const AlwaysScrollableScrollPhysics(), // تأكد من التمرير
+                      shrinkWrap: true,
+                      itemCount: state.categories.length + 1,
+                      itemBuilder: (context, index) {
+                        /*print('length ${state.categories[index].id}');
+                        print('length ${state.categories[index].title}');
+                        print('length ${state.categories[index].order}');*/
+                        if (index == state.categories.length) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child:
+                                Supabase.instance.client.auth.currentUser !=
+                                        null
+                                    ? ElevatedButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                              MyColors.primaryColor,
+                                            ),
+                                        padding: MaterialStateProperty.all(
+                                          EdgeInsets.symmetric(
+                                            vertical: 10.h,
+                                            horizontal: 20.w,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pushNamed(
+                                          MyRoutes.addCategoryScreen,
+                                          arguments: {
+                                            "section": widget.section,
+                                            "language": widget.language,
+                                          },
+                                        );
+                                      },
+                                      child: Text(
+                                        "Add Category",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16.sp,
+                                        ),
+                                      ),
+                                    )
+                                    : null,
+                          );
+                        }
+                        return SectionItem(
+                          key: Key(state.categories[index].id),
+                          onArticleItemUp: (category) {
+                            if (index > 0) {
+                              cubit.swapCategoriesOrder(
+                                state.categories[index].id,
+                                state.categories[index - 1].id,
+                                widget.section,
+                                widget.language,
+                              );
+                            }
+                          },
+                          onArticleItemDown: (category) {
+                            if (index < state.categories.length - 1) {
+                              cubit.swapCategoriesOrder(
+                                state.categories[index].id,
+                                state.categories[index + 1].id,
+                                widget.section,
+                                widget.language,
+                              );
+                            }
+                          },
+                          category: state.categories[index],
+                          onPressed: (Article article) {
+                            print('length ${state.categories.length}');
+                            Navigator.of(context).pushNamed(
+                              MyRoutes.articleScreen,
+                              arguments: {
+                                "category": state.categories[index].title,
+                                "section": widget.section,
+                                "article": article.title ?? '',
+                                "language": widget.language,
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
                 ],
               );
+            } else {
+              return Container();
             }
-            return ListView.builder(
-              itemCount: state.categories.length + 1,
-              itemBuilder: (context, index) {
-                if (index == state.categories.length) {
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child:
-                        Supabase.instance.client.auth.currentUser != null
-                            ? ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  MyColors.primaryColor,
-                                ),
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.symmetric(
-                                    vertical: 10.h,
-                                    horizontal: 20.w,
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pushNamed(
-                                  MyRoutes.addCategoryScreen,
-                                  arguments: {
-                                    "section": widget.section,
-                                    "language": widget.language,
-                                  },
-                                );
-                              },
-                              child: Text(
-                                "Add Category",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                            )
-                            : null,
-                  );
-                }
-
-                return SectionItem(
-                  onArticleItemUp: (category) {
-                    if (index > 0) {
-                      cubit.swapCategoriesOrder(
-                        state.categories[index].id,
-                        state.categories[index - 1].id,
-                        widget.section,
-                        widget.language,
-                      );
-                    }
-                  },
-                  onArticleItemDown: (category) {
-                    if (index < state.categories.length - 1) {
-                      cubit.swapCategoriesOrder(
-                        state.categories[index].id,
-                        state.categories[index + 1].id,
-                        widget.section,
-                        widget.language,
-                      );
-                    }
-                  },
-                  category: state.categories[index],
-                  onPressed: (Article article) {
-                    print(article.title);
-                    Navigator.of(context).pushNamed(
-                      MyRoutes.articleScreen,
-                      arguments: {
-                        "category": state.categories[index].title,
-                        "section": widget.section,
-                        "article": article.title,
-                        "language": widget.language,
-                      },
-                    );
-                  },
-                );
-              },
-            );
-          } else {
-            return Container();
-          }
-        },
+          },
+        ),
       ),
     );
   }

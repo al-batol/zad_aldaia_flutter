@@ -44,7 +44,6 @@ class CategoriesRepo {
         .eq('section', section)
         .eq('lang', language)
         .order('order', ascending: true);
-
     final categories =
         response.map<Category>((item) => Category.fromJson(item)).toList();
     return categories;

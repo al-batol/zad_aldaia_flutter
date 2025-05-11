@@ -171,6 +171,17 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       child:
                           Supabase.instance.client.auth.currentUser != null
                               ? ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                    MyColors.primaryColor,
+                                  ),
+                                  padding: MaterialStateProperty.all(
+                                    EdgeInsets.symmetric(
+                                      vertical: 15.h,
+                                      horizontal: 40.w,
+                                    ),
+                                  ),
+                                ),
                                 onPressed: () {
                                   Navigator.of(context).pushNamed(
                                     MyRoutes.addItemScreen,
@@ -183,7 +194,13 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                     },
                                   );
                                 },
-                                child: Text("Add Item"),
+                                child: Text(
+                                  "Add Item",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                  ),
+                                ),
                               )
                               : null,
                     );

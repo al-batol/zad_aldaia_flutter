@@ -23,7 +23,8 @@ class SectionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var articles = category.articles;
+    print('category: ${category.title}');
+    var articles = category.articles ?? [];
     final ExpansionTileController controller = ExpansionTileController();
     return Container(
       margin: EdgeInsets.all(10),
@@ -31,55 +32,60 @@ class SectionItem extends StatelessWidget {
         elevation: 2,
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
-        child:
-            articles!.isEmpty
-                ? null
-                : ExpansionTile(
-                  controller: controller,
-                  leading: Icon(
-                    Icons.keyboard_arrow_down_outlined,
-                    color: MyColors.primaryColor,
-                  ),
-                  trailing: Column(
+        child: ExpansionTile(
+          tilePadding: EdgeInsets.zero,
+          expandedCrossAxisAlignment: CrossAxisAlignment.start,
+          controller: controller,
+          leading: Icon(
+            Icons.keyboard_arrow_down_outlined,
+            color: MyColors.primaryColor,
+          ),
+          trailing: Column(
+            children: [
+              if (Supabase.instance.client.auth.currentUser != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  child: Column(
                     children: [
-                      if (Supabase.instance.client.auth.currentUser != null)
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 3.w),
-                          child: Column(
-                            children: [
-                              InkWell(
-                                onTap: () => onArticleItemUp?.call(category),
-                                child: Icon(
-                                  Icons.arrow_circle_up,
-                                  color: MyColors.primaryColor,
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () => onArticleItemDown?.call(category),
-                                child: Icon(
-                                  Icons.arrow_circle_down,
-                                  color: MyColors.primaryColor,
-                                ),
-                              ),
-                            ],
-                          ),
+                      InkWell(
+                        onTap: () => onArticleItemUp?.call(category),
+                        child: Icon(
+                          Icons.arrow_circle_up,
+                          color: MyColors.primaryColor,
                         ),
+                      ),
+                      InkWell(
+                        onTap: () => onArticleItemDown?.call(category),
+                        child: Icon(
+                          Icons.arrow_circle_down,
+                          color: MyColors.primaryColor,
+                        ),
+                      ),
                     ],
                   ),
-                  title: SelectableText(
-                    onTap: () {
-                      controller.isExpanded
-                          ? controller.collapse()
-                          : controller.expand();
-                    },
-                    category.title,
-                    style: MyTextStyle.font18BlackRegular,
-                  ),
-                  expandedAlignment: Alignment.centerLeft,
-                  children: [
-                    ...List.generate(
-                      articles.length,
-                      (index) => Container(
+                ),
+            ],
+          ),
+          title: SelectableText(
+            onTap: () {
+              controller.isExpanded
+                  ? controller.collapse()
+                  : controller.expand();
+            },
+            category.title,
+            style: MyTextStyle.font18BlackRegular,
+          ),
+          expandedAlignment: Alignment.centerLeft,
+          children: [
+            articles.isEmpty
+                ? Container()
+                : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: articles.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () => onPressed(articles[index]),
+                      child: Container(
                         width: double.infinity,
                         margin: EdgeInsets.symmetric(
                           horizontal: 10.w,
@@ -98,41 +104,40 @@ class SectionItem extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10.h),
-                    if (Supabase.instance.client.auth.currentUser != null)
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            MyColors.primaryColor,
-                          ),
-                          padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(
-                              vertical: 10.h,
-                              horizontal: 20.w,
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                            MyRoutes.addArticleScreen,
-                            arguments: {
-                              "category": category.title,
-                              "section": category.section,
-                              "language": category.language,
-                            },
-                          );
-                        },
-                        child: Text(
-                          "Add Article",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                      ),
-                  ],
+                    );
+                  },
                 ),
+            SizedBox(height: 10.h),
+            if (Supabase.instance.client.auth.currentUser != null)
+              Center(
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                      MyColors.primaryColor,
+                    ),
+                    padding: MaterialStateProperty.all(
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 40.w),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      MyRoutes.addArticleScreen,
+                      arguments: {
+                        "category": category.title,
+                        "section": category.section,
+                        "language": category.language,
+                      },
+                    );
+                  },
+                  child: Text(
+                    "Add Article",
+                    style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                  ),
+                ),
+              ),
+            SizedBox(height: 10.h),
+          ],
+        ),
       ),
     );
   }
