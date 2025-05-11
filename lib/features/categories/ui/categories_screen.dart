@@ -108,6 +108,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     child:
                         Supabase.instance.client.auth.currentUser != null
                             ? ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                  MyColors.primaryColor,
+                                ),
+                                padding: MaterialStateProperty.all(
+                                  EdgeInsets.symmetric(
+                                    vertical: 10.h,
+                                    horizontal: 20.w,
+                                  ),
+                                ),
+                              ),
                               onPressed: () {
                                 Navigator.of(context).pushNamed(
                                   MyRoutes.addCategoryScreen,
