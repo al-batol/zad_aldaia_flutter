@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
 
+import '../../../../core/routing/routes.dart';
 import '../../../../core/theming/my_colors.dart';
 
 class SectionItem extends StatelessWidget {
@@ -11,6 +12,7 @@ class SectionItem extends StatelessWidget {
   final Function(Article) onPressed;
   final Function(Category)? onArticleItemUp;
   final Function(Category)? onArticleItemDown;
+
   const SectionItem({
     super.key,
     required this.category,
@@ -97,6 +99,38 @@ class SectionItem extends StatelessWidget {
                         ),
                       ),
                     ),
+                    SizedBox(height: 10.h),
+                    if (Supabase.instance.client.auth.currentUser != null)
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            MyColors.primaryColor,
+                          ),
+                          padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(
+                              vertical: 10.h,
+                              horizontal: 20.w,
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            MyRoutes.addArticleScreen,
+                            arguments: {
+                              "category": category.title,
+                              "section": category.section,
+                              "language": category.language,
+                            },
+                          );
+                        },
+                        child: Text(
+                          "Add Article",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
       ),

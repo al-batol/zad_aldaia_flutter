@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
@@ -116,7 +117,50 @@ class _ArticleScreenState extends State<ArticleScreen> {
           builder: (context, state) {
             if (state is LoadedState) {
               if (state.items.isEmpty) {
-                return NoItemsWidget();
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      NoItemsWidget(),
+                      SizedBox(height: 50.h),
+                      Supabase.instance.client.auth.currentUser != null
+                          ? ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                MyColors.primaryColor,
+                              ),
+                              padding: MaterialStateProperty.all(
+                                EdgeInsets.symmetric(
+                                  vertical: 10.h,
+                                  horizontal: 30.w,
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pushNamed(
+                                MyRoutes.addItemScreen,
+                                arguments: {
+                                  "section": widget.section,
+                                  "language": widget.language,
+                                  "category": widget.category,
+                                  "article": widget.article,
+                                  "order": state.items.length + 1,
+                                },
+                              );
+                            },
+                            child: Text(
+                              "Add Item",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.sp,
+                              ),
+                            ),
+                          )
+                          : SizedBox(),
+                    ],
+                  ),
+                );
               }
               return ListView.builder(
                 itemCount: state.items.length + 1,
@@ -150,7 +194,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       index < state.items.length - 1
                           ? state.items[index + 1].id
                           : null;
-
                   switch (item.type) {
                     case ArticleType.Text:
                       return TextItem(

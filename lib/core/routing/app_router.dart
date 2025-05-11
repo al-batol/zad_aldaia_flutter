@@ -85,7 +85,11 @@ class AppRouter {
           builder:
               (context) => BlocProvider(
                 create: (context) => getIt<AddArticleCubit>(),
-                child: AddArticleScreen(),
+                child: AddArticleScreen(
+                  section: (arguments as Map)["section"],
+                  category: arguments["category"],
+                  language: arguments["language"],
+                ),
               ),
         );
       case MyRoutes.addItemScreen:

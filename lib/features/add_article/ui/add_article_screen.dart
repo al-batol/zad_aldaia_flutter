@@ -13,7 +13,17 @@ import 'package:zad_aldaia/generated/l10n.dart';
 import '../../../core/theming/my_colors.dart';
 
 class AddArticleScreen extends StatefulWidget {
-  const AddArticleScreen({super.key});
+  final String section;
+
+  final String language;
+
+  final String category;
+  const AddArticleScreen({
+    super.key,
+    required this.section,
+    required this.language,
+    required this.category,
+  });
 
   @override
   State<AddArticleScreen> createState() => _AddArticleScreenState();
@@ -49,9 +59,10 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
   late final Map<String, String> langs;
   final GlobalKey<FormState> formKey = GlobalKey();
   final TextEditingController _articleController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
+
   late String _section = sections.first;
   String _language = Language.english;
-  String? _category;
   String? _categoryId;
   final sections = const [
     "التعريف بالإسلام",
@@ -67,6 +78,15 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
   @override
   void initState() {
     cubit = context.read<AddArticleCubit>();
+    if (widget.section.isNotEmpty) {
+      _section = widget.section;
+    }
+    if (widget.language.isNotEmpty) {
+      _language = widget.language;
+    }
+    if (widget.category.isNotEmpty) {
+      _categoryController.text = widget.category;
+    }
     super.initState();
   }
 
@@ -156,14 +176,24 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                                 }
                                 return null;
                               },
-                              controller: textEditingController,
+                              controller: _categoryController,
                             );
                           },
                           onSelected: (option) {
-                            _category = option.title;
+                            _categoryController.text = option.title;
                             _categoryId = option.id;
                           },
                           optionsBuilder: (textEditingValue) {
+                            if (textEditingValue.text.isEmpty &&
+                                widget.category != null) {
+                              // 4. إذا كانت هناك قيمة مبدئية، اعرضها كخيار أول
+                              return snapshot.data!.where(
+                                (element) =>
+                                    element.title == widget.category &&
+                                    element.section == _section &&
+                                    element.lang == _language,
+                              );
+                            }
                             return snapshot.data!.where(
                               (element) =>
                                   element.title.startsWith(
@@ -211,7 +241,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                               Article(
                                 title: _articleController.text,
                                 section: _section,
-                                category: _category!,
+                                category: _categoryController.text,
                                 lang: _language,
                                 categoryId: _categoryId!,
                               ),

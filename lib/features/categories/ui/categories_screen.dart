@@ -97,7 +97,43 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         builder: (context, state) {
           if (state is LoadedState) {
             if (state.categories.isEmpty) {
-              return NoItemsWidget();
+              return Column(
+                children: [
+                  NoItemsWidget(),
+                  const SizedBox(height: 20),
+                  Supabase.instance.client.auth.currentUser != null
+                      ? ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            MyColors.primaryColor,
+                          ),
+                          padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(
+                              vertical: 10.h,
+                              horizontal: 20.w,
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            MyRoutes.addCategoryScreen,
+                            arguments: {
+                              "section": widget.section,
+                              "language": widget.language,
+                            },
+                          );
+                        },
+                        child: Text(
+                          "Add Category",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                      )
+                      : SizedBox(),
+                ],
+              );
             }
             return ListView.builder(
               itemCount: state.categories.length + 1,
@@ -128,7 +164,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   },
                                 );
                               },
-                              child: Text("Add Category"),
+                              child: Text(
+                                "Add Category",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                ),
+                              ),
                             )
                             : null,
                   );
