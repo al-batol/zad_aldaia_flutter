@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
@@ -21,7 +20,13 @@ class ArticleScreen extends StatefulWidget {
   final String category;
   final String article;
 
-  const ArticleScreen({super.key, required this.section, required this.language, required this.category, required this.article});
+  const ArticleScreen({
+    super.key,
+    required this.section,
+    required this.language,
+    required this.category,
+    required this.article,
+  });
 
   @override
   State<ArticleScreen> createState() => _ArticleScreenState();
@@ -35,7 +40,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
   @override
   void initState() {
     cubit = context.read<ArticleCubit>();
-    cubit.getArticles(widget.section, widget.language, widget.category, widget.article);
+    cubit.getArticles(
+      widget.section,
+      widget.language,
+      widget.category,
+      widget.article,
+    );
     super.initState();
   }
 
@@ -60,7 +70,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
             _isSearching
                 ? TextField(
                   autofocus: true,
-                  decoration: InputDecoration(hintText: S.of(context).search, border: InputBorder.none),
+                  decoration: InputDecoration(
+                    hintText: S.of(context).search,
+                    border: InputBorder.none,
+                  ),
                   style: const TextStyle(color: Colors.black),
                   onChanged: (query) {
                     cubit.search(query);
@@ -84,7 +97,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 },
               )
               : IconButton(
-                icon: Icon(const IconData(0xe802, fontFamily: "search_icon"), color: MyColors.primaryColor),
+                icon: Icon(
+                  const IconData(0xe802, fontFamily: "search_icon"),
+                  color: MyColors.primaryColor,
+                ),
                 onPressed: () {
                   _isSearching = true;
                   setState(() {});
@@ -103,10 +119,35 @@ class _ArticleScreenState extends State<ArticleScreen> {
               return ListView.builder(
                 itemCount: state.items.length,
                 itemBuilder: (context, index) {
+                  var prevItemId = index > 0 ? state.items[index - 1].id : null;
                   var item = state.items[index];
+                  var nextItemId =
+                      index < state.items.length - 1
+                          ? state.items[index + 1].id
+                          : null;
                   switch (state.items[index].type) {
                     case ArticleType.Text:
                       return TextItem(
+                        onArticleItemUp: (item) {
+                          cubit.swapArticleItemOrders(
+                            item.id,
+                            prevItemId ?? "",
+                            widget.section,
+                            widget.language,
+                            widget.category,
+                            widget.article,
+                          );
+                        },
+                        onArticleItemDown: (item) {
+                          cubit.swapArticleItemOrders(
+                            item.id,
+                            nextItemId ?? "",
+                            widget.section,
+                            widget.language,
+                            widget.category,
+                            widget.article,
+                          );
+                        },
                         item: item as TextArticle,
                         isSelected: selectedItems.contains(item),
                         onSelect: (article) {
@@ -121,6 +162,26 @@ class _ArticleScreenState extends State<ArticleScreen> {
                     case ArticleType.Image:
                       return ImageItem(
                         item: item as ImageArticle,
+                        onArticleItemUp: (item) {
+                          cubit.swapArticleItemOrders(
+                            item.id,
+                            prevItemId ?? "",
+                            widget.section,
+                            widget.language,
+                            widget.category,
+                            widget.article,
+                          );
+                        },
+                        onArticleItemDown: (item) {
+                          cubit.swapArticleItemOrders(
+                            item.id,
+                            nextItemId ?? "",
+                            widget.section,
+                            widget.language,
+                            widget.category,
+                            widget.article,
+                          );
+                        },
                         onDownloadPressed: (url) async {
                           if (kIsWeb) {
                             await cubit.saveImageWeb(url);
@@ -141,6 +202,26 @@ class _ArticleScreenState extends State<ArticleScreen> {
                     case ArticleType.Video:
                       return VideoItem(
                         item: item as VideoArticle,
+                        onArticleItemUp: (item) {
+                          cubit.swapArticleItemOrders(
+                            item.id,
+                            prevItemId ?? "",
+                            widget.section,
+                            widget.language,
+                            widget.category,
+                            widget.article,
+                          );
+                        },
+                        onArticleItemDown: (item) {
+                          cubit.swapArticleItemOrders(
+                            item.id,
+                            nextItemId ?? "",
+                            widget.section,
+                            widget.language,
+                            widget.category,
+                            widget.article,
+                          );
+                        },
                         isSelected: selectedItems.contains(item),
                         onSelect: (article) {
                           if (selectedItems.contains(article)) {
@@ -155,7 +236,9 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 },
               );
             }
-            return Container();
+            return Center(
+              child: CircularProgressIndicator(color: MyColors.primaryColor),
+            );
           },
         ),
       ),
