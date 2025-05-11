@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
@@ -99,24 +100,49 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               return NoItemsWidget();
             }
             return ListView.builder(
-              itemCount: state.categories.length,
+              itemCount: state.categories.length + 1,
               itemBuilder: (context, index) {
+                if (index == state.categories.length) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child:
+                        Supabase.instance.client.auth.currentUser != null
+                            ? ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(
+                                  MyRoutes.addCategoryScreen,
+                                  arguments: {
+                                    "section": widget.section,
+                                    "language": widget.language,
+                                  },
+                                );
+                              },
+                              child: Text("Add Category"),
+                            )
+                            : null,
+                  );
+                }
+
                 return SectionItem(
                   onArticleItemUp: (category) {
-                    cubit.swapCategoriesOrder(
-                      state.categories[index].id,
-                      state.categories[index - 1].id,
-                      widget.section,
-                      widget.language,
-                    );
+                    if (index > 0) {
+                      cubit.swapCategoriesOrder(
+                        state.categories[index].id,
+                        state.categories[index - 1].id,
+                        widget.section,
+                        widget.language,
+                      );
+                    }
                   },
                   onArticleItemDown: (category) {
-                    cubit.swapCategoriesOrder(
-                      state.categories[index].id,
-                      state.categories[index + 1].id,
-                      widget.section,
-                      widget.language,
-                    );
+                    if (index < state.categories.length - 1) {
+                      cubit.swapCategoriesOrder(
+                        state.categories[index].id,
+                        state.categories[index + 1].id,
+                        widget.section,
+                        widget.language,
+                      );
+                    }
                   },
                   category: state.categories[index],
                   onPressed: (Article article) {

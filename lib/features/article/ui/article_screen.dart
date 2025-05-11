@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
@@ -11,6 +12,7 @@ import 'package:zad_aldaia/features/article/ui/widgets/text_item.dart';
 import 'package:zad_aldaia/features/article/ui/widgets/video_item.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../../../core/routing/routes.dart';
 import '../../../core/theming/my_colors.dart';
 import '../../../core/widgets/no_items_widget.dart';
 
@@ -117,17 +119,51 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 return NoItemsWidget();
               }
               return ListView.builder(
-                itemCount: state.items.length,
+                itemCount: state.items.length + 1,
                 itemBuilder: (context, index) {
+                  if (index == state.items.length) {
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child:
+                          Supabase.instance.client.auth.currentUser != null
+                              ? ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pushNamed(
+                                    MyRoutes.addItemScreen,
+                                    arguments: {
+                                      "section": widget.section,
+                                      "language": widget.language,
+                                      "category": widget.category,
+                                      "article": widget.article,
+                                      "order": state.items.length + 1,
+                                    },
+                                  );
+                                },
+                                child: Text("Add Item"),
+                              )
+                              : null,
+                    );
+                  }
                   var prevItemId = index > 0 ? state.items[index - 1].id : null;
                   var item = state.items[index];
                   var nextItemId =
                       index < state.items.length - 1
                           ? state.items[index + 1].id
                           : null;
-                  switch (state.items[index].type) {
+
+                  switch (item.type) {
                     case ArticleType.Text:
                       return TextItem(
+                        item: item as TextArticle,
+                        isSelected: selectedItems.contains(item),
+                        onSelect: (article) {
+                          if (selectedItems.contains(article)) {
+                            selectedItems.remove(article);
+                          } else {
+                            selectedItems.add(article);
+                          }
+                          setState(() {});
+                        },
                         onArticleItemUp: (item) {
                           cubit.swapArticleItemOrders(
                             item.id,
@@ -148,7 +184,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
                             widget.article,
                           );
                         },
-                        item: item as TextArticle,
+                      );
+                    case ArticleType.Image:
+                      return ImageItem(
+                        item: item as ImageArticle,
                         isSelected: selectedItems.contains(item),
                         onSelect: (article) {
                           if (selectedItems.contains(article)) {
@@ -158,10 +197,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
                           }
                           setState(() {});
                         },
-                      );
-                    case ArticleType.Image:
-                      return ImageItem(
-                        item: item as ImageArticle,
                         onArticleItemUp: (item) {
                           cubit.swapArticleItemOrders(
                             item.id,
@@ -189,6 +224,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
                             await cubit.saveImageAndroid(url);
                           }
                         },
+                      );
+                    case ArticleType.Video:
+                      return VideoItem(
+                        item: item as VideoArticle,
                         isSelected: selectedItems.contains(item),
                         onSelect: (article) {
                           if (selectedItems.contains(article)) {
@@ -198,10 +237,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
                           }
                           setState(() {});
                         },
-                      );
-                    case ArticleType.Video:
-                      return VideoItem(
-                        item: item as VideoArticle,
                         onArticleItemUp: (item) {
                           cubit.swapArticleItemOrders(
                             item.id,
@@ -221,15 +256,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
                             widget.category,
                             widget.article,
                           );
-                        },
-                        isSelected: selectedItems.contains(item),
-                        onSelect: (article) {
-                          if (selectedItems.contains(article)) {
-                            selectedItems.remove(article);
-                          } else {
-                            selectedItems.add(article);
-                          }
-                          setState(() {});
                         },
                       );
                   }
