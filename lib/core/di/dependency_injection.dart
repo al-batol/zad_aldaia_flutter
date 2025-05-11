@@ -36,7 +36,9 @@ setupGetIt() async {
     () => HomeRepo(getIt(), getIt(), supabaseClient),
   );
   getIt.registerFactory<HomeCubit>(() => HomeCubit(repo: getIt(), sp: getIt()));
-  getIt.registerFactory<CategoriesRepo>(() => CategoriesRepo(getIt()));
+  getIt.registerFactory<CategoriesRepo>(
+    () => CategoriesRepo(getIt(), supabaseClient),
+  );
   getIt.registerFactory<CategoriesCubit>(() => CategoriesCubit(getIt()));
   getIt.registerFactory<ApiService>(() => ApiService(dio));
   getIt.registerFactory<ArticleRepo>(

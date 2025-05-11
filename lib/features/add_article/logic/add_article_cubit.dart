@@ -4,24 +4,24 @@ import 'package:zad_aldaia/features/add_article/data/repos/add_article_repo.dart
 import 'package:zad_aldaia/features/add_article/logic/add_article_state.dart';
 import 'package:zad_aldaia/features/add_category/data/models/firestore_category.dart';
 
-class AddArticleCubit extends Cubit<AddArticleState>{
-
+class AddArticleCubit extends Cubit<AddArticleState> {
   final AddArticleRepo _repo;
 
-  AddArticleCubit(this._repo):super(InitialState());
+  AddArticleCubit(this._repo) : super(InitialState());
 
-  Future<List<FireStoreCategory>> getCategories()async{
-    return await _repo.getCategoriesList();
+  List<FireStoreCategory> categories = [];
+  Future<List<FireStoreCategory>> getCategories() async {
+    categories = await _repo.getCategoriesList();
+    return categories;
   }
 
-   addArticle(Article article)async{
+  addArticle(Article article) async {
     emit(UploadingState());
     bool isUploaded = await _repo.addArticle(article);
-    if(isUploaded){
+    if (isUploaded) {
       emit(UploadedState());
-    }else{
+    } else {
       emit(UploadFailedState());
     }
   }
-
 }

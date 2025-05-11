@@ -27,7 +27,7 @@ class ArticleCubit extends Cubit<ArticleState> {
         .eq('language', language)
         .eq('category', category)
         .eq('article', article)
-        .order('order');
+        .order('order', ascending: true);
 
     print(response);
     // تحويل البيانات إلى ArticleItem

@@ -66,7 +66,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   ),
                   style: const TextStyle(color: Colors.black),
                   onChanged: (query) {
-                    cubit.search(query);
+                    // cubit.search(query);
                   },
                 )
                 : Text(widget.title),
@@ -102,14 +102,31 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               itemCount: state.categories.length,
               itemBuilder: (context, index) {
                 return SectionItem(
+                  onArticleItemUp: (category) {
+                    cubit.swapCategoriesOrder(
+                      state.categories[index].id,
+                      state.categories[index - 1].id,
+                      widget.section,
+                      widget.language,
+                    );
+                  },
+                  onArticleItemDown: (category) {
+                    cubit.swapCategoriesOrder(
+                      state.categories[index].id,
+                      state.categories[index + 1].id,
+                      widget.section,
+                      widget.language,
+                    );
+                  },
                   category: state.categories[index],
-                  onPressed: (String article) {
+                  onPressed: (Article article) {
+                    print(article.title);
                     Navigator.of(context).pushNamed(
                       MyRoutes.articleScreen,
                       arguments: {
                         "category": state.categories[index].title,
                         "section": widget.section,
-                        "article": article,
+                        "article": article.title,
                         "language": widget.language,
                       },
                     );
