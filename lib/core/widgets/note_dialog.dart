@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
-
 import '../../features/search/ui/highlighted_text.dart';
+
 
 class NoteDialog extends StatelessWidget {
   final String? title;
@@ -42,7 +42,7 @@ class NoteDialog extends StatelessWidget {
                   style: MyTextStyle.font16BlackRegular,
                   selectable: true,
                   highlightStyle: TextStyle(
-                    backgroundColor: MyColors.primaryColor.withOpacity(0.3),
+                    backgroundColor: Colors.yellow,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
