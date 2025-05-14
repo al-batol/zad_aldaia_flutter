@@ -3,33 +3,61 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/widgets/my_text_form.dart';
 
 import '../../../../generated/l10n.dart';
+import 'color_wedgit.dart';
 
-class TextItemLayout extends StatelessWidget {
+
+
+class TextItemLayout extends StatefulWidget {
   final TextEditingController itemTitleController;
   final TextEditingController itemContentController;
   final TextEditingController itemNoteController;
-  const TextItemLayout({super.key, required this.itemTitleController, required this.itemContentController, required this.itemNoteController});
+  final Function(String) onBackgroundColorSelected;
+
+  const TextItemLayout({
+    super.key,
+    required this.itemTitleController,
+    required this.itemContentController,
+    required this.itemNoteController,
+    required this.onBackgroundColorSelected,
+  });
+
+  @override
+  State<TextItemLayout> createState() => _TextItemLayoutState();
+}
+
+class _TextItemLayoutState extends State<TextItemLayout> {
+  String selectedBackgroundColor = "#FFFFFF";
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         MyTextForm(
-          controller: itemTitleController,
+          controller: widget.itemTitleController,
           validatorMessage: S.of(context).required,
           title: S.of(context).itemTitle,
         ),
         SizedBox(height: 10.h),
         MyTextForm(
-          controller: itemContentController,
+          controller: widget.itemContentController,
           validatorMessage: S.of(context).required,
           maxLines: 10,
           title: S.of(context).itemContent,
         ),
         SizedBox(height: 10.h),
         MyTextForm(
-          controller: itemNoteController,
+          controller: widget.itemNoteController,
           title: S.of(context).itemNote,
+        ),
+        SizedBox(height: 15.h),
+        ColorPickerWidget(
+          initialColor: selectedBackgroundColor,
+          onColorSelected: (color) {
+            setState(() {
+              selectedBackgroundColor = color;
+            });
+            widget.onBackgroundColorSelected(color);
+          },
         ),
       ],
     );

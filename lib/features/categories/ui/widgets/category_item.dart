@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
 
+
 class SectionItem extends StatelessWidget {
   final Category category;
   final Function(String) onPressed;
@@ -46,7 +47,7 @@ class SectionItem extends StatelessWidget {
                 child: MaterialButton(
                   onPressed: () => onPressed(category.articles[index]),
                   elevation: 2,
-                  color: Colors.grey.shade100,
+                  //color:
                   child: SelectableText(
                     onTap: () {
                       onPressed(category.articles[index]);

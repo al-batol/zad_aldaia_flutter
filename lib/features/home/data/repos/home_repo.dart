@@ -82,6 +82,7 @@ class HomeRepo {
       videoId: data["videoId"],
       url: data["url"],
       order: data["order"],
+      backgroundColor: data["backgroundColor"],
     );
   }
 

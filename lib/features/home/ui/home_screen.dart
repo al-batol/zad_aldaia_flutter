@@ -16,7 +16,6 @@ import '../../../core/providers/local_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -24,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late final HomeCubit cubit;
   UserRole _selectedRole = UserRole.speaker;
+  late final List<String> section;
 
   @override
   void initState() {
@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   late List<String> titles;
-
+  late List<String> sections;
   late List<String> speakerTitles;
   late List<String> teacherTitles;
 
@@ -45,6 +45,8 @@ class _HomeScreenState extends State<HomeScreen> {
     {"code": "es", "label": "Español", "flag": Assets.spain},
     {"code": "en", "label": "English", "flag": Assets.unitedKingdom},
   ];
+
+
 
   void _onLanguageSelected(String langCode) {
     Navigator.of(context).pop();
@@ -72,12 +74,12 @@ class _HomeScreenState extends State<HomeScreen> {
       local.teachingNewMuslims,
       local.questionsAboutIslam,
     ];
-
     teacherTitles = [
       local.teachingNewMuslims,
       local.questionsAboutIslam,
       local.daiaGuide,
     ];
+    sections = [...speakerTitles, ...teacherTitles];
 
   }
 
@@ -107,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final currentTiles =
     _selectedRole == UserRole.speaker ? speakerTitles : teacherTitles;
+    sections = _selectedRole == UserRole.speaker ? speakerTitles : teacherTitles;
 
     final selectedLang = context.watch<LocalProvider>().locale;
     final selected = _languages.firstWhere(
@@ -151,6 +154,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         MyRoutes.sectionsScreen,
                         arguments: {
                           "title": currentTiles[index],
+                          "section": sections[index],
+
                           "language": cubit.language,
                         },
                       );
@@ -169,11 +174,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
   Future<void> _checkForDataUpdates() async {
     await cubit.checkForDataUpdates();
     FlutterNativeSplash.remove();
   }
 }
-
 enum UserRole { speaker, teacher }

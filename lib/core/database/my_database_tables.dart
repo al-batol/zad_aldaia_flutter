@@ -25,6 +25,8 @@ class ArticleItems extends Table {
 
   TextColumn get url => text().nullable()();
 
+  TextColumn get backgroundColor => text()();
+
   IntColumn get order => integer()();
 
   @override

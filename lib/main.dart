@@ -1,5 +1,6 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/routing/app_router.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:zad_aldaia/features/search/logic/search_cubit.dart';
 import 'core/di/dependency_injection.dart';
 import 'core/providers/local_provider.dart';
 import 'generated/l10n.dart';
@@ -25,7 +27,12 @@ void main() async {
   //  await initializeFirebase();
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => LocalProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => LocalProvider()),
+        BlocProvider(create: (context) => getIt<SearchCubit>()),
+
+
+      ],
       child: const MyApp(),
     ),
   );

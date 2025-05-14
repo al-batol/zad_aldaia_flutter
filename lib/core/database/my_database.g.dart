@@ -120,6 +120,17 @@ class $ArticleItemsTable extends ArticleItems
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _backgroundColorMeta = const VerificationMeta(
+    'backgroundColor',
+  );
+  @override
+  late final GeneratedColumn<String> backgroundColor = GeneratedColumn<String>(
+    'background_color',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _orderMeta = const VerificationMeta('order');
   @override
   late final GeneratedColumn<int> order = GeneratedColumn<int>(
@@ -142,6 +153,7 @@ class $ArticleItemsTable extends ArticleItems
     note,
     videoId,
     url,
+    backgroundColor,
     order,
   ];
   @override
@@ -223,6 +235,15 @@ class $ArticleItemsTable extends ArticleItems
         url.isAcceptableOrUnknown(data['url']!, _urlMeta),
       );
     }
+    if (data.containsKey('background_color')) {
+      context.handle(
+        _backgroundColorMeta,
+        backgroundColor.isAcceptableOrUnknown(
+          data['background_color']!,
+          _backgroundColorMeta,
+        ),
+      );
+    }
     if (data.containsKey('order')) {
       context.handle(
         _orderMeta,
@@ -291,6 +312,10 @@ class $ArticleItemsTable extends ArticleItems
         DriftSqlType.string,
         data['${effectivePrefix}url'],
       ),
+      backgroundColor: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}background_color'],
+      ),
       order:
           attachedDatabase.typeMapping.read(
             DriftSqlType.int,
@@ -320,6 +345,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
   final String? note;
   final String? videoId;
   final String? url;
+  final String? backgroundColor;
   final int order;
   const ArticleItem({
     required this.id,
@@ -333,6 +359,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
     this.note,
     this.videoId,
     this.url,
+    this.backgroundColor,
     required this.order,
   });
   @override
@@ -363,6 +390,9 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
     if (!nullToAbsent || url != null) {
       map['url'] = Variable<String>(url);
     }
+    if (!nullToAbsent || backgroundColor != null) {
+      map['background_color'] = Variable<String>(backgroundColor);
+    }
     map['order'] = Variable<int>(order);
     return map;
   }
@@ -387,6 +417,10 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
               ? const Value.absent()
               : Value(videoId),
       url: url == null && nullToAbsent ? const Value.absent() : Value(url),
+      backgroundColor:
+          backgroundColor == null && nullToAbsent
+              ? const Value.absent()
+              : Value(backgroundColor),
       order: Value(order),
     );
   }
@@ -410,6 +444,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
       note: serializer.fromJson<String?>(json['note']),
       videoId: serializer.fromJson<String?>(json['videoId']),
       url: serializer.fromJson<String?>(json['url']),
+      backgroundColor: serializer.fromJson<String?>(json['backgroundColor']),
       order: serializer.fromJson<int>(json['order']),
     );
   }
@@ -430,6 +465,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
       'note': serializer.toJson<String?>(note),
       'videoId': serializer.toJson<String?>(videoId),
       'url': serializer.toJson<String?>(url),
+      'backgroundColor': serializer.toJson<String?>(backgroundColor),
       'order': serializer.toJson<int>(order),
     };
   }
@@ -446,6 +482,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
     Value<String?> note = const Value.absent(),
     Value<String?> videoId = const Value.absent(),
     Value<String?> url = const Value.absent(),
+    Value<String?> backgroundColor = const Value.absent(),
     int? order,
   }) => ArticleItem(
     id: id ?? this.id,
@@ -459,6 +496,8 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
     note: note.present ? note.value : this.note,
     videoId: videoId.present ? videoId.value : this.videoId,
     url: url.present ? url.value : this.url,
+    backgroundColor:
+        backgroundColor.present ? backgroundColor.value : this.backgroundColor,
     order: order ?? this.order,
   );
   ArticleItem copyWithCompanion(ArticleItemsCompanion data) {
@@ -474,6 +513,10 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
       note: data.note.present ? data.note.value : this.note,
       videoId: data.videoId.present ? data.videoId.value : this.videoId,
       url: data.url.present ? data.url.value : this.url,
+      backgroundColor:
+          data.backgroundColor.present
+              ? data.backgroundColor.value
+              : this.backgroundColor,
       order: data.order.present ? data.order.value : this.order,
     );
   }
@@ -492,6 +535,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
           ..write('note: $note, ')
           ..write('videoId: $videoId, ')
           ..write('url: $url, ')
+          ..write('backgroundColor: $backgroundColor, ')
           ..write('order: $order')
           ..write(')'))
         .toString();
@@ -510,6 +554,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
     note,
     videoId,
     url,
+    backgroundColor,
     order,
   );
   @override
@@ -527,6 +572,7 @@ class ArticleItem extends DataClass implements Insertable<ArticleItem> {
           other.note == this.note &&
           other.videoId == this.videoId &&
           other.url == this.url &&
+          other.backgroundColor == this.backgroundColor &&
           other.order == this.order);
 }
 
@@ -542,6 +588,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
   final Value<String?> note;
   final Value<String?> videoId;
   final Value<String?> url;
+  final Value<String?> backgroundColor;
   final Value<int> order;
   final Value<int> rowid;
   const ArticleItemsCompanion({
@@ -556,6 +603,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
     this.note = const Value.absent(),
     this.videoId = const Value.absent(),
     this.url = const Value.absent(),
+    this.backgroundColor = const Value.absent(),
     this.order = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -571,6 +619,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
     this.note = const Value.absent(),
     this.videoId = const Value.absent(),
     this.url = const Value.absent(),
+    this.backgroundColor = const Value.absent(),
     required int order,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -592,6 +641,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
     Expression<String>? note,
     Expression<String>? videoId,
     Expression<String>? url,
+    Expression<String>? backgroundColor,
     Expression<int>? order,
     Expression<int>? rowid,
   }) {
@@ -607,6 +657,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
       if (note != null) 'note': note,
       if (videoId != null) 'video_id': videoId,
       if (url != null) 'url': url,
+      if (backgroundColor != null) 'background_color': backgroundColor,
       if (order != null) 'order': order,
       if (rowid != null) 'rowid': rowid,
     });
@@ -624,6 +675,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
     Value<String?>? note,
     Value<String?>? videoId,
     Value<String?>? url,
+    Value<String?>? backgroundColor,
     Value<int>? order,
     Value<int>? rowid,
   }) {
@@ -639,6 +691,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
       note: note ?? this.note,
       videoId: videoId ?? this.videoId,
       url: url ?? this.url,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
       order: order ?? this.order,
       rowid: rowid ?? this.rowid,
     );
@@ -682,6 +735,9 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
     if (url.present) {
       map['url'] = Variable<String>(url.value);
     }
+    if (backgroundColor.present) {
+      map['background_color'] = Variable<String>(backgroundColor.value);
+    }
     if (order.present) {
       map['order'] = Variable<int>(order.value);
     }
@@ -705,6 +761,7 @@ class ArticleItemsCompanion extends UpdateCompanion<ArticleItem> {
           ..write('note: $note, ')
           ..write('videoId: $videoId, ')
           ..write('url: $url, ')
+          ..write('backgroundColor: $backgroundColor, ')
           ..write('order: $order, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -736,6 +793,7 @@ typedef $$ArticleItemsTableCreateCompanionBuilder =
       Value<String?> note,
       Value<String?> videoId,
       Value<String?> url,
+      Value<String?> backgroundColor,
       required int order,
       Value<int> rowid,
     });
@@ -752,6 +810,7 @@ typedef $$ArticleItemsTableUpdateCompanionBuilder =
       Value<String?> note,
       Value<String?> videoId,
       Value<String?> url,
+      Value<String?> backgroundColor,
       Value<int> order,
       Value<int> rowid,
     });
@@ -818,6 +877,11 @@ class $$ArticleItemsTableFilterComposer
 
   ColumnFilters<String> get url => $composableBuilder(
     column: $table.url,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get backgroundColor => $composableBuilder(
+    column: $table.backgroundColor,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -891,6 +955,11 @@ class $$ArticleItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get backgroundColor => $composableBuilder(
+    column: $table.backgroundColor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get order => $composableBuilder(
     column: $table.order,
     builder: (column) => ColumnOrderings(column),
@@ -939,6 +1008,11 @@ class $$ArticleItemsTableAnnotationComposer
   GeneratedColumn<String> get url =>
       $composableBuilder(column: $table.url, builder: (column) => column);
 
+  GeneratedColumn<String> get backgroundColor => $composableBuilder(
+    column: $table.backgroundColor,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get order =>
       $composableBuilder(column: $table.order, builder: (column) => column);
 }
@@ -986,6 +1060,7 @@ class $$ArticleItemsTableTableManager
                 Value<String?> note = const Value.absent(),
                 Value<String?> videoId = const Value.absent(),
                 Value<String?> url = const Value.absent(),
+                Value<String?> backgroundColor = const Value.absent(),
                 Value<int> order = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ArticleItemsCompanion(
@@ -1000,6 +1075,7 @@ class $$ArticleItemsTableTableManager
                 note: note,
                 videoId: videoId,
                 url: url,
+                backgroundColor: backgroundColor,
                 order: order,
                 rowid: rowid,
               ),
@@ -1016,6 +1092,7 @@ class $$ArticleItemsTableTableManager
                 Value<String?> note = const Value.absent(),
                 Value<String?> videoId = const Value.absent(),
                 Value<String?> url = const Value.absent(),
+                Value<String?> backgroundColor = const Value.absent(),
                 required int order,
                 Value<int> rowid = const Value.absent(),
               }) => ArticleItemsCompanion.insert(
@@ -1030,6 +1107,7 @@ class $$ArticleItemsTableTableManager
                 note: note,
                 videoId: videoId,
                 url: url,
+                backgroundColor: backgroundColor,
                 order: order,
                 rowid: rowid,
               ),

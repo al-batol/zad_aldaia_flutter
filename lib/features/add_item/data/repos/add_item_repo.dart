@@ -33,16 +33,36 @@ class AddItemRepo {
 
   Future<bool> addArticleItem(AI.ArticleItem articleItem) async {
     try {
-      await _supabase.from('article_items').upsert(articleItem.toJson());
+      final json = articleItem.toJson();
+
+      // ✅ تحقق من أن جميع القيم الأساسية ليست null أو فاضية
+      for (final key in ['id', 'section', 'category', 'article', 'language', 'note', 'order', 'type']) {
+        if (json[key] == null || (json[key] is String && json[key].trim().isEmpty)) {
+          print('❌ Missing required field: $key');
+          return false;
+        }
+      }
+
+      if (json['type'] == 'Text') {
+        for (final key in ['title', 'content', 'backgroundColor']) {
+          if (json[key] == null || (json[key] is String && json[key].trim().isEmpty)) {
+            print('❌ Missing required TextArticle field: $key');
+            return false;
+          }
+        }
+      }
+
+      print("📦 Sending to Supabase: $json");
+      await _supabase.from('article_items').upsert(json);
       await updateVersion();
       return true;
-    } catch (e) {
-      print('here');
+    } catch (e, s) {
+      print('❌ Error in addArticleItem');
       print(e.toString());
+      print(s);
       return false;
     }
   }
-
   Future<String?> uploadImage(File image, String path) async {
     try {
       final now = DateTime.now().toIso8601String();
