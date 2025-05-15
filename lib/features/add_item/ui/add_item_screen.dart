@@ -26,7 +26,6 @@ class AddItemScreen extends StatefulWidget {
 }
 
 class _AddItemScreenState extends State<AddItemScreen> {
-
   var toggleSelections = <bool>[true, false, false];
 
   late final AddItemCubit cubit;
@@ -37,8 +36,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
   final TextEditingController _itemContentController = TextEditingController();
   final TextEditingController _videoIdController = TextEditingController();
   final TextEditingController _textItemNoteController = TextEditingController();
-  final TextEditingController _imageItemNoteController = TextEditingController();
-  final TextEditingController _videoItemNoteController = TextEditingController();
+  final TextEditingController _imageItemNoteController =
+      TextEditingController();
+  final TextEditingController _videoItemNoteController =
+      TextEditingController();
   final TextEditingController _orderController = TextEditingController();
   late List<String> section;
   late String sections;
@@ -48,7 +49,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
   String? _category;
   String? _article;
   String? _selectedBackgroundColor;
-
 
   @override
   void didChangeDependencies() {
@@ -78,7 +78,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
       "Why Islam Is True?",
       "Questions about islam",
       "Teaching new muslims",
-      "Daia guide"
+      "Daia guide",
     ];
 
     sections = section.first;
@@ -116,7 +116,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     items: [
                       ...List.generate(
                         section.length,
-                            (index) => DropdownMenuItem(
+                        (index) => DropdownMenuItem(
                           value: section[index],
                           child: Text(
                             titles[index],
@@ -132,17 +132,18 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   ),
                   SizedBox(height: 15.h),
                   MyDropdownButton(
-                    items: langs.entries
-                        .map(
-                          (e) => DropdownMenuItem(
-                        value: e.value,
-                        child: Text(
-                          e.key,
-                          style: MyTextStyle.font14BlackRegular,
-                        ),
-                      ),
-                    )
-                        .toList(),
+                    items:
+                        langs.entries
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: e.value,
+                                child: Text(
+                                  e.key,
+                                  style: MyTextStyle.font14BlackRegular,
+                                ),
+                              ),
+                            )
+                            .toList(),
                     onSelected: (val) {
                       _language = val;
                     },
@@ -152,16 +153,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   FutureBuilder(
                     future: cubit.getCategories(),
                     builder: (context, snapshot) {
-
                       if (snapshot.hasData) {
                         return Autocomplete(
                           displayStringForOption: (option) => option.title,
                           fieldViewBuilder: (
-                              context,
-                              textEditingController,
-                              focusNode,
-                              onFieldSubmitted,
-                              ) {
+                            context,
+                            textEditingController,
+                            focusNode,
+                            onFieldSubmitted,
+                          ) {
                             return MyTextForm(
                               title: S.of(context).category,
                               focusNode: focusNode,
@@ -169,10 +169,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 if (val?.isEmpty == true ||
                                     snapshot.data!.any(
                                           (e) =>
-                                      e.title == val &&
-                                          e.lang == _language &&
-                                          e.section == sections,
-                                    ) ==
+                                              e.title == val &&
+                                              e.lang == _language &&
+                                              e.section == sections,
+                                        ) ==
                                         false) {
                                   return S
                                       .of(context)
@@ -188,10 +188,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           },
                           optionsBuilder: (textEditingValue) {
                             return snapshot.data!.where(
-                                  (element) =>
-                              element.title.startsWith(
-                                textEditingValue.text,
-                              ) &&
+                              (element) =>
+                                  element.title.startsWith(
+                                    textEditingValue.text,
+                                  ) &&
                                   element.section == sections &&
                                   element.lang == _language,
                             );
@@ -217,11 +217,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         return Autocomplete(
                           displayStringForOption: (option) => option.title,
                           fieldViewBuilder: (
-                              context,
-                              textEditingController,
-                              focusNode,
-                              onFieldSubmitted,
-                              ) {
+                            context,
+                            textEditingController,
+                            focusNode,
+                            onFieldSubmitted,
+                          ) {
                             return MyTextForm(
                               title: S.of(context).article,
                               focusNode: focusNode,
@@ -229,11 +229,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 if (val?.isEmpty == true ||
                                     snapshot.data!.any(
                                           (e) =>
-                                      e.title == val &&
-                                          e.lang == _language &&
-                                          e.section == sections &&
-                                          e.category == _category,
-                                    ) ==
+                                              e.title == val &&
+                                              e.lang == _language &&
+                                              e.section == sections &&
+                                              e.category == _category,
+                                        ) ==
                                         false) {
                                   return S
                                       .of(context)
@@ -249,10 +249,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           },
                           optionsBuilder: (textEditingValue) {
                             return snapshot.data!.where(
-                                  (element) =>
-                              element.title.startsWith(
-                                textEditingValue.text,
-                              ) &&
+                              (element) =>
+                                  element.title.startsWith(
+                                    textEditingValue.text,
+                                  ) &&
                                   element.section == sections &&
                                   element.lang == _language &&
                                   element.category == _category,
@@ -339,6 +339,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 _image = image;
                               });
                             },
+
                           );
                         default:
                           return Column(
@@ -372,20 +373,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          if (_selectedBackgroundColor == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Please select background")),
-                            );
-                            return;
-                          }
-
                           if (formKey.currentState!.validate()) {
                             var id = Uuid().v4();
                             switch (toggleSelections.indexOf(true)) {
-
                               case 0:
                                 cubit.addArticleItem(
-
                                   TextArticle(
                                     id: id,
                                     section: sections,
@@ -396,7 +388,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                     note: _textItemNoteController.text,
                                     order: int.parse(_orderController.text),
                                     language: _language,
-                                    backgroundColor: _selectedBackgroundColor??"",
+                                    backgroundColor:
+                                        _selectedBackgroundColor ?? "",
                                   ),
                                 );
                                 break;
@@ -440,7 +433,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                     category: _category!,
                                     article: _article!,
                                     videoId: _videoIdController.text,
-                                    note: _videoItemNoteController.text, // Fix: Use video note controller instead of image
+                                    note: _videoItemNoteController.text,
+                                    // Fix: Use video note controller instead of image
                                     order: int.parse(_orderController.text),
                                     language: _language,
                                   ),
@@ -449,25 +443,27 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           }
                         },
                         child: BlocConsumer<AddItemCubit, AddItemState>(
-                          listenWhen: (previous, current) =>
-                          previous.runtimeType != current.runtimeType,
+                          listenWhen:
+                              (previous, current) =>
+                                  previous.runtimeType != current.runtimeType,
                           listener: (context, state) {
                             if (state is UploadingState) {
                               showDialog(
                                 barrierDismissible: false,
                                 context: context,
-                                builder: (context) => PopScope(
-                                  canPop: false,
-                                  child: Center(
-                                    child: SizedBox(
-                                      width: 50.w,
-                                      height: 50.h,
-                                      child: CircularProgressIndicator(
-                                        color: MyColors.primaryColor,
+                                builder:
+                                    (context) => PopScope(
+                                      canPop: false,
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 50.w,
+                                          height: 50.h,
+                                          child: CircularProgressIndicator(
+                                            color: MyColors.primaryColor,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
                               );
                             } else if (state is UploadFailedState) {
                               Navigator.of(context).pop();
@@ -488,12 +484,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                             }
                           },
                           builder: (context, state) {
-
                             return Text(
                               S.of(context).addItem,
                               style: MyTextStyle.font18WhiteRegular,
                             );
-
                           },
                         ),
                       ),
