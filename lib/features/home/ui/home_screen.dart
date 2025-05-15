@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final selectedLang = context.watch<LocalProvider>().locale;
     final selected = _languages.firstWhere(
-      (l) => l['code'] == selectedLang,
+          (l) => l['code'] == selectedLang,
       orElse: () => _languages.last,
     );
     return Scaffold(
@@ -147,26 +147,26 @@ class _HomeScreenState extends State<HomeScreen> {
           itemBuilder: (context, index) {
             return DeferredPointerHandler(
               child: RectangularImageButton(
-                    image: images[index],
-                    color: colors[index],
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(
-                        MyRoutes.sectionsScreen,
-                        arguments: {
-                          "title": currentTiles[index],
-                          "section": sections[index],
+                image: images[index],
+                color: colors[index],
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    MyRoutes.sectionsScreen,
+                    arguments: {
+                      "title": currentTiles[index],
+                      "section": sections[index],
 
-                          "language": cubit.language,
-                        },
-                      );
+                      "language": cubit.language,
                     },
-                    title: currentTiles[index],
-                  )
+                  );
+                },
+                title: currentTiles[index],
+              )
                   .animate(delay: Duration(milliseconds: index * 100))
                   .slide(
-                    begin: Offset(0, 0.3),
-                    duration: Duration(milliseconds: 400),
-                  )
+                begin: Offset(0, 0.3),
+                duration: Duration(milliseconds: 400),
+              )
                   .fadeIn(duration: Duration(milliseconds: 400)),
             );
           },
