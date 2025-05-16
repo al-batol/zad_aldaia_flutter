@@ -12,7 +12,13 @@ import 'package:zad_aldaia/features/add_category/logic/add_category_state.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 
 class AddCategoryScreen extends StatefulWidget {
-  const AddCategoryScreen({super.key});
+  final String section;
+  final String language;
+  const AddCategoryScreen({
+    super.key,
+    required this.section,
+    required this.language,
+  });
 
   @override
   State<AddCategoryScreen> createState() => _AddCategoryScreenState();
@@ -64,6 +70,12 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   @override
   void initState() {
     _cubit = context.read<AddCategoryCubit>();
+    if (widget.section.isNotEmpty) {
+      _section = widget.section;
+    }
+    if (widget.language.isNotEmpty) {
+      _language = widget.language;
+    }
     super.initState();
   }
 
@@ -71,7 +83,10 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).addCategoryTitle, style: MyTextStyle.font20primaryBold),
+        title: Text(
+          S.of(context).addCategoryTitle,
+          style: MyTextStyle.font20primaryBold,
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -128,12 +143,14 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                   ),
                 ),
                 SizedBox(height: 25.h),
-                 Center(
-                   child: FractionallySizedBox(
+                Center(
+                  child: FractionallySizedBox(
                     widthFactor: .8,
                     child: ElevatedButton(
                       style: ButtonStyle(
-                        padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10.h)),
+                        padding: WidgetStatePropertyAll(
+                          EdgeInsets.symmetric(vertical: 10.h),
+                        ),
                         backgroundColor: WidgetStatePropertyAll(
                           MyColors.primaryColor,
                         ),
@@ -151,38 +168,40 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                       },
                       child: BlocConsumer<AddCategoryCubit, AddCategoryState>(
                         listener: (context, state) {
-                          if(state is UploadingState)
-                            {
-                              showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder:
-                                    (context) => PopScope(
-                                  canPop: false,
-                                  child: Center(
-                                    child: SizedBox(
-                                      width: 50.w,
-                                      height: 50.h,
-                                      child:
-                                      CircularProgressIndicator(
-                                        color:
-                                        MyColors.primaryColor,
+                          if (state is UploadingState) {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder:
+                                  (context) => PopScope(
+                                    canPop: false,
+                                    child: Center(
+                                      child: SizedBox(
+                                        width: 50.w,
+                                        height: 50.h,
+                                        child: CircularProgressIndicator(
+                                          color: MyColors.primaryColor,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }
-                          else if (state is UploadFailedState) {
+                            );
+                          } else if (state is UploadFailedState) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(S.of(context).addingCategoryFailed)),
+                              SnackBar(
+                                content: Text(
+                                  S.of(context).addingCategoryFailed,
+                                ),
+                              ),
                             );
                           } else if (state is UploadedState) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(S.of(context).addingCategorySuccess),
+                                content: Text(
+                                  S.of(context).addingCategorySuccess,
+                                ),
                               ),
                             );
                           }
@@ -195,8 +214,8 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                         },
                       ),
                     ),
-                                 ),
-                 ),
+                  ),
+                ),
               ],
             ),
           ),

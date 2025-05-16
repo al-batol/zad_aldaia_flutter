@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
 import 'package:zad_aldaia/core/models/languge.dart';
 
-sealed class ArticleItem{
+sealed class ArticleItem {
   final String id;
   final String section;
   final String category;
@@ -20,11 +20,53 @@ sealed class ArticleItem{
     required this.language,
     required this.note,
     required this.type,
-    required this.order
+    required this.order,
   });
 
-  Map<String, dynamic> toJson();
+  factory ArticleItem.fromJson(Map<String, dynamic> json) {
+    final type = json['type'];
 
+    switch (type) {
+      case 'Text':
+        return TextArticle(
+          id: json['id'],
+          section: json['section'],
+          category: json['category'],
+          article: json['article'],
+          language: json['language'],
+          title: json['title'],
+          content: json['content'],
+          note: json['note'] ?? '',
+          order: json['order'] ?? 0,
+        );
+      case 'Image':
+        return ImageArticle(
+          id: json['id'],
+          section: json['section'],
+          category: json['category'],
+          article: json['article'],
+          language: json['language'],
+          url: json['url'],
+          note: json['note'] ?? '',
+          order: json['order'] ?? 0,
+        );
+      case 'Video':
+        return VideoArticle(
+          id: json['id'],
+          section: json['section'],
+          category: json['category'],
+          article: json['article'],
+          language: json['language'],
+          videoId: json['videoId'],
+          note: json['note'] ?? '',
+          order: json['order'] ?? 0,
+        );
+      default:
+        throw Exception('نوع مقال غير معروف: $type');
+    }
+  }
+
+  Map<String, dynamic> toJson();
 }
 
 class TextArticle extends ArticleItem {
@@ -40,9 +82,8 @@ class TextArticle extends ArticleItem {
     required this.title,
     required this.content,
     required super.note,
-    required super.order
+    required super.order,
   }) : super(type: ArticleType.Text);
-
 
   @override
   Map<String, dynamic> toJson() => {
@@ -57,7 +98,6 @@ class TextArticle extends ArticleItem {
     'title': title,
     'content': content,
   };
-
 }
 
 class ImageArticle extends ArticleItem {
@@ -71,7 +111,7 @@ class ImageArticle extends ArticleItem {
     required super.language,
     required this.url,
     required super.note,
-    required super.order
+    required super.order,
   }) : super(type: ArticleType.Image);
 
   @override
@@ -86,7 +126,6 @@ class ImageArticle extends ArticleItem {
     'type': 'Image',
     'url': url,
   };
-
 }
 
 class VideoArticle extends ArticleItem {
@@ -100,7 +139,7 @@ class VideoArticle extends ArticleItem {
     required super.language,
     required this.videoId,
     required super.note,
-    required super.order
+    required super.order,
   }) : super(type: ArticleType.Video);
 
   @override
@@ -115,7 +154,4 @@ class VideoArticle extends ArticleItem {
     'type': 'Video',
     'videoId': videoId,
   };
-
 }
-
-

@@ -20,7 +20,19 @@ import 'package:zad_aldaia/generated/l10n.dart';
 import '../../../core/theming/my_colors.dart';
 
 class AddItemScreen extends StatefulWidget {
-  const AddItemScreen({super.key});
+  final String? section;
+  final String? language;
+  final String? category;
+  final String? article;
+  final int? order;
+  const AddItemScreen({
+    super.key,
+    this.section,
+    this.language,
+    this.category,
+    this.article,
+    this.order,
+  });
 
   @override
   State<AddItemScreen> createState() => _AddItemScreenState();
@@ -66,12 +78,16 @@ class _AddItemScreenState extends State<AddItemScreen> {
   final TextEditingController _videoItemNoteController =
       TextEditingController();
   final TextEditingController _orderController = TextEditingController();
+
+  final TextEditingController _categoryController = TextEditingController();
+  final TextEditingController _articleController = TextEditingController();
+
   late String _section = sections.first;
   late String _title = titles.first;
   String _language = Language.english;
   File? _image;
-  String? _category;
-  String? _article;
+  /*  String? _category;
+  String? _article;*/
   final sections = const [
     "التعريف بالإسلام",
     "محاورة النصاري",
@@ -86,6 +102,25 @@ class _AddItemScreenState extends State<AddItemScreen> {
   @override
   void initState() {
     cubit = context.read<AddItemCubit>();
+    if (widget.section != null) {
+      _section = widget.section!;
+    }
+    if (widget.language != null) {
+      _language = widget.language!;
+    }
+    if (widget.category != null) {
+      print('category: ${widget.category}');
+      // _category = widget.category!;
+      _categoryController.text = widget.category!;
+    }
+    if (widget.article != null) {
+      print('article: ${widget.article}');
+      // _article = widget.article!;
+      _articleController.text = widget.article!;
+    }
+    if (widget.order != null) {
+      _orderController.text = widget.order.toString();
+    }
     super.initState();
   }
 
@@ -176,13 +211,24 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 }
                                 return null;
                               },
-                              controller: textEditingController,
+                              controller: _categoryController,
                             );
                           },
                           onSelected: (option) {
-                            _category = option.title;
+                            // _category = option.title;
+                            _categoryController.text = option.title;
                           },
                           optionsBuilder: (textEditingValue) {
+                            if (textEditingValue.text.isEmpty &&
+                                widget.category != null) {
+                              // 4. إذا كانت هناك قيمة مبدئية، اعرضها كخيار أول
+                              return snapshot.data!.where(
+                                (element) =>
+                                    element.title == widget.category &&
+                                    element.section == _section &&
+                                    element.lang == _language,
+                              );
+                            }
                             return snapshot.data!.where(
                               (element) =>
                                   element.title.startsWith(
@@ -219,7 +265,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                             onFieldSubmitted,
                           ) {
                             return MyTextForm(
-                              title: S.of(context).article,
+                              title:
+                                  widget.article != null
+                                      ? widget.article!
+                                      : S.of(context).article,
                               focusNode: focusNode,
                               validator: (val) {
                                 if (val?.isEmpty == true ||
@@ -228,7 +277,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                               e.title == val &&
                                               e.lang == _language &&
                                               e.section == _section &&
-                                              e.category == _category,
+                                              e.category ==
+                                                  _categoryController.text,
                                         ) ==
                                         false) {
                                   return S
@@ -237,13 +287,26 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 }
                                 return null;
                               },
-                              controller: textEditingController,
+                              controller: _articleController,
                             );
                           },
                           onSelected: (option) {
-                            _article = option.title;
+                            // _article = option.title;
+                            _articleController.text = option.title;
                           },
                           optionsBuilder: (textEditingValue) {
+                            if (textEditingValue.text.isEmpty &&
+                                widget.article != null) {
+                              // 4. إذا كانت هناك قيمة مبدئية، اعرضها كخيار أول
+                              return snapshot.data!.where(
+                                (element) =>
+                                    element.title == widget.article &&
+                                    element.section == _section &&
+                                    element.lang == _language &&
+                                    element.category ==
+                                        _categoryController.text,
+                              );
+                            }
                             return snapshot.data!.where(
                               (element) =>
                                   element.title.startsWith(
@@ -251,7 +314,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   ) &&
                                   element.section == _section &&
                                   element.lang == _language &&
-                                  element.category == _category,
+                                  element.category == _categoryController.text,
                             );
                           },
                         );
@@ -371,8 +434,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   TextArticle(
                                     id: id,
                                     section: _section,
-                                    category: _category!,
-                                    article: _article!,
+                                    category: _categoryController.text,
+                                    article: _articleController.text,
                                     title: _itemTitleController.text,
                                     content: _itemContentController.text,
                                     note: _textItemNoteController.text,
@@ -401,8 +464,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                     ImageArticle(
                                       id: id,
                                       section: _section,
-                                      category: _category!,
-                                      article: _article!,
+                                      category: _categoryController.text,
+                                      article: _articleController.text,
                                       url: url,
                                       note: _imageItemNoteController.text,
                                       order: int.parse(_orderController.text),
@@ -415,8 +478,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   VideoArticle(
                                     id: id,
                                     section: _section,
-                                    category: _category!,
-                                    article: _article!,
+                                    category: _categoryController.text,
+                                    article: _articleController.text,
                                     videoId: _videoIdController.text,
                                     note: _imageItemNoteController.text,
                                     order: int.parse(_orderController.text),
