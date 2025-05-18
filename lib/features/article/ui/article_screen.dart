@@ -38,7 +38,6 @@ class ArticleScreen extends StatefulWidget {
 class _ArticleScreenState extends State<ArticleScreen> {
   late ArticleCubit cubit;
   bool _isSearching = false;
-  List<ArticleItem> selectedItems = [];
 
   @override
   void initState() {
@@ -56,6 +55,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
         leading: IconButton(
           onPressed: () {
             if (_isSearching) {
@@ -84,13 +84,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 )
                 : Text(widget.article),
         actions: [
-          if (selectedItems.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.share),
-              onPressed: () {
-                Share.multi(selectedItems);
-              },
-            ),
           _isSearching
               ? IconButton(
                 icon: const Icon(Icons.close),
@@ -100,10 +93,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 },
               )
               : IconButton(
-                icon: Icon(
-                  const IconData(0xe802, fontFamily: "search_icon"),
-                  color: MyColors.primaryColor,
-                ),
+                icon: Icon(const IconData(0xe802, fontFamily: "search_icon"),color: MyColors.primaryColor,),
                 onPressed: () {
                   _isSearching = true;
                   setState(() {});

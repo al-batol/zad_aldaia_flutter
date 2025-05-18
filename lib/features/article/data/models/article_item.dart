@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
-import 'package:zad_aldaia/core/models/languge.dart';
 
 sealed class ArticleItem {
   final String id;
@@ -72,6 +70,7 @@ sealed class ArticleItem {
 class TextArticle extends ArticleItem {
   final String title;
   final String content;
+  final String backgroundColor;
 
   TextArticle({
     required super.id,
@@ -82,7 +81,8 @@ class TextArticle extends ArticleItem {
     required this.title,
     required this.content,
     required super.note,
-    required super.order,
+    required super.order, 
+    required this.backgroundColor, 
   }) : super(type: ArticleType.Text);
 
   @override
@@ -97,6 +97,7 @@ class TextArticle extends ArticleItem {
     'type': 'Text',
     'title': title,
     'content': content,
+    'backgroundColor': backgroundColor,
   };
 }
 

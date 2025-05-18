@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:drift/drift.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
@@ -25,6 +24,8 @@ class ArticleItems extends Table {
   TextColumn get videoId => text().nullable()();
 
   TextColumn get url => text().nullable()();
+
+  TextColumn get backgroundColor => text()();
 
   IntColumn get order => integer()();
 

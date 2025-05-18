@@ -82,6 +82,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
     "تعليم المسلم الجديد",
     "دليل الداعية",
   ];
+  String _selectedBackgroundColor = "#FFFFFF";
 
   String? imageUrl;
   @override
@@ -347,7 +348,11 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                 return TextItemLayout(
                                   itemTitleController: _itemTitleController,
                                   itemContentController: _itemContentController,
-                                  itemNoteController: _textItemNoteController,
+                                  itemNoteController: _textItemNoteController,  onBackgroundColorSelected: (color) {
+                                  setState(() {
+                                    _selectedBackgroundColor = color;
+                                  });
+                                },
                                 );
                               case ArticleType.Image:
                                 return ImageItemLayout(
@@ -398,6 +403,8 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                     case ArticleType.Text:
                                       cubit.updateArticleItem(
                                         TextArticle(
+                                          backgroundColor: _selectedBackgroundColor,
+
                                           id: _item!.id,
                                           section: _section,
                                           category: _category!,

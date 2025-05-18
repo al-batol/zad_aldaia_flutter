@@ -18,12 +18,7 @@ class AddArticleScreen extends StatefulWidget {
   final String language;
 
   final String category;
-  const AddArticleScreen({
-    super.key,
-    required this.section,
-    required this.language,
-    required this.category,
-  });
+  const AddArticleScreen({super.key, required this.section, required this.language, required this.category});
 
   @override
   State<AddArticleScreen> createState() => _AddArticleScreenState();
@@ -43,13 +38,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
       S.of(context).daiaGuide,
     ];
 
-    langs = Map.fromIterables([
-      S.of(context).english,
-      S.of(context).espanol,
-      S.of(context).portuguese,
-      S.of(context).francais,
-      S.of(context).filipino,
-    ], Language.values);
+    langs = Map.fromIterables([S.of(context).english, S.of(context).espanol, S.of(context).portuguese, S.of(context).francais, S.of(context).filipino], Language.values);
 
     super.didChangeDependencies();
   }
@@ -93,12 +82,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          S.of(context).addArticleTitle,
-          style: MyTextStyle.font20primaryBold,
-        ),
-      ),
+      appBar: AppBar(title: Text(S.of(context).addArticleTitle, style: MyTextStyle.font20primaryBold)),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -111,16 +95,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                   MyDropdownButton(
                     title: S.of(context).section,
                     items: [
-                      ...List.generate(
-                        sections.length,
-                        (index) => DropdownMenuItem(
-                          value: sections[index],
-                          child: Text(
-                            titles[index],
-                            style: MyTextStyle.font14BlackRegular,
-                          ),
-                        ),
-                      ),
+                      ...List.generate(sections.length, (index) => DropdownMenuItem(value: sections[index], child: Text(titles[index], style: MyTextStyle.font14BlackRegular))),
                     ],
                     onSelected: (val) {
                       _section = val;
@@ -128,18 +103,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                   ),
                   SizedBox(height: 15.h),
                   MyDropdownButton(
-                    items:
-                        langs.entries
-                            .map(
-                              (e) => DropdownMenuItem(
-                                value: e.value,
-                                child: Text(
-                                  e.key,
-                                  style: MyTextStyle.font14BlackRegular,
-                                ),
-                              ),
-                            )
-                            .toList(),
+                    items: langs.entries.map((e) => DropdownMenuItem(value: e.value, child: Text(e.key, style: MyTextStyle.font14BlackRegular))).toList(),
                     onSelected: (val) {
                       _language = val;
                     },
@@ -152,27 +116,13 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                       if (snapshot.hasData) {
                         return Autocomplete(
                           displayStringForOption: (option) => option.title,
-                          fieldViewBuilder: (
-                            context,
-                            textEditingController,
-                            focusNode,
-                            onFieldSubmitted,
-                          ) {
+                          fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
                             return MyTextForm(
                               title: S.of(context).category,
                               focusNode: focusNode,
                               validator: (val) {
-                                if (val?.isEmpty == true ||
-                                    snapshot.data!.any(
-                                          (e) =>
-                                              e.title == val &&
-                                              e.lang == _language &&
-                                              e.section == _section,
-                                        ) ==
-                                        false) {
-                                  return S
-                                      .of(context)
-                                      .chooseCategoryFromSuggestions;
+                                if (val?.isEmpty == true || snapshot.data!.any((e) => e.title == val && e.lang == _language && e.section == _section) == false) {
+                                  return S.of(context).chooseCategoryFromSuggestions;
                                 }
                                 return null;
                               },
@@ -184,67 +134,29 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                             _categoryId = option.id;
                           },
                           optionsBuilder: (textEditingValue) {
-                            if (textEditingValue.text.isEmpty &&
-                                widget.category != null) {
+                            if (textEditingValue.text.isEmpty && widget.category != null) {
                               // 4. إذا كانت هناك قيمة مبدئية، اعرضها كخيار أول
-                              return snapshot.data!.where(
-                                (element) =>
-                                    element.title == widget.category &&
-                                    element.section == _section &&
-                                    element.lang == _language,
-                              );
+                              return snapshot.data!.where((element) => element.title == widget.category && element.section == _section && element.lang == _language);
                             }
-                            return snapshot.data!.where(
-                              (element) =>
-                                  element.title.startsWith(
-                                    textEditingValue.text,
-                                  ) &&
-                                  element.section == _section &&
-                                  element.lang == _language,
-                            );
+                            return snapshot.data!.where((element) => element.title.startsWith(textEditingValue.text) && element.section == _section && element.lang == _language);
                           },
                         );
                       }
-                      return Center(
-                        child: SizedBox(
-                          height: 24.h,
-                          width: 24.w,
-                          child: CircularProgressIndicator(
-                            color: MyColors.primaryColor,
-                          ),
-                        ),
-                      );
+                      return Center(child: SizedBox(height: 24.h, width: 24.w, child: CircularProgressIndicator(color: MyColors.primaryColor)));
                     },
                   ),
                   SizedBox(height: 15.h),
-                  MyTextForm(
-                    title: S.of(context).articleTitle,
-                    validatorMessage: S.of(context).enterArticleTitle,
-                    controller: _articleController,
-                  ),
+                  MyTextForm(title: S.of(context).articleTitle, validatorMessage: S.of(context).enterArticleTitle, controller: _articleController),
                   SizedBox(height: 25.h),
                   Center(
                     child: FractionallySizedBox(
                       widthFactor: .8,
                       child: ElevatedButton(
-                        style: ButtonStyle(
-                          padding: WidgetStatePropertyAll(
-                            EdgeInsets.symmetric(vertical: 10.h),
-                          ),
-                          backgroundColor: WidgetStatePropertyAll(
-                            MyColors.primaryColor,
-                          ),
-                        ),
+                        style: ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10.h)), backgroundColor: WidgetStatePropertyAll(MyColors.primaryColor)),
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             cubit.addArticle(
-                              Article(
-                                title: _articleController.text,
-                                section: _section,
-                                category: _categoryController.text,
-                                lang: _language,
-                                categoryId: _categoryId!,
-                              ),
+                              Article(title: _articleController.text, section: _section, category: _categoryController.text, lang: _language, categoryId: _categoryId!),
                             );
                           }
                         },
@@ -257,42 +169,19 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                                 builder:
                                     (context) => PopScope(
                                       canPop: false,
-                                      child: Center(
-                                        child: SizedBox(
-                                          width: 50.w,
-                                          height: 50.h,
-                                          child: CircularProgressIndicator(
-                                            color: MyColors.primaryColor,
-                                          ),
-                                        ),
-                                      ),
+                                      child: Center(child: SizedBox(width: 50.w, height: 50.h, child: CircularProgressIndicator(color: MyColors.primaryColor))),
                                     ),
                               );
                             } else if (state is UploadFailedState) {
                               Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    S.of(context).addingArticleFailed,
-                                  ),
-                                ),
-                              );
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).addingArticleFailed)));
                             } else if (state is UploadedState) {
                               Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    S.of(context).addingArticleSuccess,
-                                  ),
-                                ),
-                              );
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).addingArticleSuccess)));
                             }
                           },
                           builder: (context, state) {
-                            return Text(
-                              S.of(context).addArticleTitle,
-                              style: MyTextStyle.font18WhiteRegular,
-                            );
+                            return Text(S.of(context).addArticleTitle, style: MyTextStyle.font18WhiteRegular);
                           },
                         ),
                       ),

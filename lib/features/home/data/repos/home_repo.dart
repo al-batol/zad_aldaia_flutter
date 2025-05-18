@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drift/drift.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:zad_aldaia/core/constants/firebase_constants.dart';
 import 'package:zad_aldaia/core/constants/shared_preferences_keys.dart';
 import 'package:zad_aldaia/core/database/my_database.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
@@ -84,6 +82,7 @@ class HomeRepo {
       videoId: data["videoId"],
       url: data["url"],
       order: data["order"],
+      backgroundColor: data["backgroundColor"],
     );
   }
 

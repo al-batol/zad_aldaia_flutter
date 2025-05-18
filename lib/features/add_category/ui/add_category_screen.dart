@@ -26,35 +26,27 @@ class AddCategoryScreen extends StatefulWidget {
 
 class _AddCategoryScreenState extends State<AddCategoryScreen> {
   late final AddCategoryCubit _cubit;
-  late final titles;
+  late List<String> section;
+  late String sections;
   late final Map<String, String> langs;
   final GlobalKey<FormState> categoryKey = GlobalKey();
   final TextEditingController _categoryController = TextEditingController();
-  late String _section = sections.first;
   String _language = Language.english;
-  final sections = const [
-    "التعريف بالإسلام",
-    "محاورة النصاري",
-    "محاورة الملحدين",
-    "الطوائف الأخرى",
-    "براهين صحة الإسلام",
-    "شبهات وأسئلة حول الإسلام",
-    "تعليم المسلم الجديد",
-    "دليل الداعية",
-  ];
 
   @override
   void didChangeDependencies() {
-    titles = [
-      S.of(context).introToIslam,
-      S.of(context).christiansDialog,
-      S.of(context).atheistDialog,
-      S.of(context).otherSects,
-      S.of(context).whyIslamIsTrue,
-      S.of(context).teachingNewMuslims,
-      S.of(context).questionsAboutIslam,
-      S.of(context).daiaGuide,
+    super.didChangeDependencies();
+    section = const [
+      "Intro to Islam",
+      "Christians dialog",
+      "Atheist dialog",
+      "Other sects",
+      "Why Islam Is True?",
+      "Questions about islam",
+      "Teaching new muslims",
+      "Daia guide"
     ];
+    sections = section.first;
 
     langs = Map.fromIterables([
       S.of(context).english,
@@ -63,8 +55,6 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
       S.of(context).francais,
       S.of(context).filipino,
     ], Language.values);
-
-    super.didChangeDependencies();
   }
 
   @override
@@ -83,10 +73,8 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          S.of(context).addCategoryTitle,
-          style: MyTextStyle.font20primaryBold,
-        ),
+        forceMaterialTransparency: true,
+        title: Text(S.of(context).addCategoryTitle, style: MyTextStyle.font20primaryBold),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -100,34 +88,35 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                   title: S.of(context).section,
                   items: [
                     ...List.generate(
-                      sections.length,
-                      (index) => DropdownMenuItem(
-                        value: sections[index],
+                      section.length,
+                          (index) => DropdownMenuItem(
+                        value: section[index],
                         child: Text(
-                          titles[index],
+                          section[index],
                           style: MyTextStyle.font14BlackRegular,
                         ),
                       ),
                     ),
                   ],
                   onSelected: (val) {
-                    _section = val;
+                    setState(() {
+                      sections = val;
+                    });
                   },
                 ),
                 SizedBox(height: 15.h),
                 MyDropdownButton(
-                  items:
-                      langs.entries
-                          .map(
-                            (e) => DropdownMenuItem(
-                              value: e.value,
-                              child: Text(
-                                e.key,
-                                style: MyTextStyle.font14BlackRegular,
-                              ),
-                            ),
-                          )
-                          .toList(),
+                  items: langs.entries
+                      .map(
+                        (e) => DropdownMenuItem(
+                      value: e.value,
+                      child: Text(
+                        e.key,
+                        style: MyTextStyle.font14BlackRegular,
+                      ),
+                    ),
+                  )
+                      .toList(),
                   onSelected: (val) {
                     _language = val;
                   },
@@ -148,19 +137,19 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                     widthFactor: .8,
                     child: ElevatedButton(
                       style: ButtonStyle(
-                        padding: WidgetStatePropertyAll(
-                          EdgeInsets.symmetric(vertical: 10.h),
-                        ),
-                        backgroundColor: WidgetStatePropertyAll(
-                          MyColors.primaryColor,
-                        ),
+                        padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10.h)),
+                        backgroundColor: WidgetStatePropertyAll(MyColors.primaryColor),
                       ),
                       onPressed: () {
                         if (categoryKey.currentState!.validate()) {
+                          print('📤 section = $sections');
+                          print('📤 lang = $_language');
+                          print('📤 title = ${_categoryController.text}');
+
                           _cubit.addCategory(
                             FireStoreCategory(
                               title: _categoryController.text,
-                              section: _section,
+                              section: sections,
                               lang: _language,
                             ),
                           );
@@ -172,19 +161,18 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                             showDialog(
                               barrierDismissible: false,
                               context: context,
-                              builder:
-                                  (context) => PopScope(
-                                    canPop: false,
-                                    child: Center(
-                                      child: SizedBox(
-                                        width: 50.w,
-                                        height: 50.h,
-                                        child: CircularProgressIndicator(
-                                          color: MyColors.primaryColor,
-                                        ),
-                                      ),
+                              builder: (context) => PopScope(
+                                canPop: false,
+                                child: Center(
+                                  child: SizedBox(
+                                    width: 50.w,
+                                    height: 50.h,
+                                    child: CircularProgressIndicator(
+                                      color: MyColors.primaryColor,
                                     ),
                                   ),
+                                ),
+                              ),
                             );
                           } else if (state is UploadFailedState) {
                             Navigator.of(context).pop();
@@ -198,11 +186,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                           } else if (state is UploadedState) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  S.of(context).addingCategorySuccess,
-                                ),
-                              ),
+                              SnackBar(content: Text(S.of(context).addingCategorySuccess)),
                             );
                           }
                         },
