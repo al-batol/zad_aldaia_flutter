@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +26,30 @@ class AddItemScreen extends StatefulWidget {
 }
 
 class _AddItemScreenState extends State<AddItemScreen> {
+  var toggleSelections = <bool>[true, false, false];
+
+  late final AddItemCubit cubit;
+  late final List<String> titles;
+  late final Map<String, String> langs;
+  final GlobalKey<FormState> formKey = GlobalKey();
+  final TextEditingController _itemTitleController = TextEditingController();
+  final TextEditingController _itemContentController = TextEditingController();
+  final TextEditingController _videoIdController = TextEditingController();
+  final TextEditingController _textItemNoteController = TextEditingController();
+  final TextEditingController _imageItemNoteController =
+      TextEditingController();
+  final TextEditingController _videoItemNoteController =
+      TextEditingController();
+  final TextEditingController _orderController = TextEditingController();
+  late List<String> section;
+  late String sections;
+  late String _title = titles.first;
+  String _language = Language.english;
+  File? _image;
+  String? _category;
+  String? _article;
+  String? _selectedBackgroundColor;
+
   @override
   void didChangeDependencies() {
     titles = [
@@ -47,41 +70,21 @@ class _AddItemScreenState extends State<AddItemScreen> {
       S.of(context).francais,
       S.of(context).filipino,
     ], Language.values);
+    section = const [
+      "Intro to Islam",
+      "Christians dialog",
+      "Atheist dialog",
+      "Other sects",
+      "Why Islam Is True?",
+      "Questions about islam",
+      "Teaching new muslims",
+      "Daia guide",
+    ];
+
+    sections = section.first;
 
     super.didChangeDependencies();
   }
-
-  var toggleSelections = <bool>[true, false, false];
-
-  late final AddItemCubit cubit;
-  late final List<String> titles;
-  late final Map<String, String> langs;
-  final GlobalKey<FormState> formKey = GlobalKey();
-  final TextEditingController _itemTitleController = TextEditingController();
-  final TextEditingController _itemContentController = TextEditingController();
-  final TextEditingController _videoIdController = TextEditingController();
-  final TextEditingController _textItemNoteController = TextEditingController();
-  final TextEditingController _imageItemNoteController =
-      TextEditingController();
-  final TextEditingController _videoItemNoteController =
-      TextEditingController();
-  final TextEditingController _orderController = TextEditingController();
-  late String _section = sections.first;
-  late String _title = titles.first;
-  String _language = Language.english;
-  File? _image;
-  String? _category;
-  String? _article;
-  final sections = const [
-    "التعريف بالإسلام",
-    "محاورة النصاري",
-    "محاورة الملحدين",
-    "الطوائف الأخرى",
-    "براهين صحة الإسلام",
-    "شبهات وأسئلة حول الإسلام",
-    "تعليم المسلم الجديد",
-    "دليل الداعية",
-  ];
 
   @override
   void initState() {
@@ -93,6 +96,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
         title: Text(
           S.of(context).addItem,
           style: MyTextStyle.font20primaryBold,
@@ -111,9 +115,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     title: S.of(context).section,
                     items: [
                       ...List.generate(
-                        sections.length,
+                        section.length,
                         (index) => DropdownMenuItem(
-                          value: sections[index],
+                          value: section[index],
                           child: Text(
                             titles[index],
                             style: MyTextStyle.font14BlackRegular,
@@ -122,7 +126,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       ),
                     ],
                     onSelected: (val) {
-                      _section = val;
+                      sections = val;
                       _title = titles[sections.indexOf(val)];
                     },
                   ),
@@ -167,7 +171,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                           (e) =>
                                               e.title == val &&
                                               e.lang == _language &&
-                                              e.section == _section,
+                                              e.section == sections,
                                         ) ==
                                         false) {
                                   return S
@@ -188,7 +192,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   element.title.startsWith(
                                     textEditingValue.text,
                                   ) &&
-                                  element.section == _section &&
+                                  element.section == sections &&
                                   element.lang == _language,
                             );
                           },
@@ -227,7 +231,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                           (e) =>
                                               e.title == val &&
                                               e.lang == _language &&
-                                              e.section == _section &&
+                                              e.section == sections &&
                                               e.category == _category,
                                         ) ==
                                         false) {
@@ -249,7 +253,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   element.title.startsWith(
                                     textEditingValue.text,
                                   ) &&
-                                  element.section == _section &&
+                                  element.section == sections &&
                                   element.lang == _language &&
                                   element.category == _category,
                             );
@@ -320,6 +324,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
                             itemTitleController: _itemTitleController,
                             itemContentController: _itemContentController,
                             itemNoteController: _textItemNoteController,
+                            onBackgroundColorSelected: (color) {
+                              setState(() {
+                                _selectedBackgroundColor = color;
+                              });
+                            },
                           );
                         case 1:
                           return ImageItemLayout(
@@ -330,6 +339,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 _image = image;
                               });
                             },
+
                           );
                         default:
                           return Column(
@@ -370,7 +380,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 cubit.addArticleItem(
                                   TextArticle(
                                     id: id,
-                                    section: _section,
+                                    section: sections,
                                     category: _category!,
                                     article: _article!,
                                     title: _itemTitleController.text,
@@ -378,8 +388,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                     note: _textItemNoteController.text,
                                     order: int.parse(_orderController.text),
                                     language: _language,
+                                    backgroundColor:
+                                        _selectedBackgroundColor ?? "",
                                   ),
                                 );
+                                break;
                               case 1:
                                 if (_image == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -400,7 +413,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   cubit.addArticleItem(
                                     ImageArticle(
                                       id: id,
-                                      section: _section,
+                                      section: sections,
                                       category: _category!,
                                       article: _article!,
                                       url: url,
@@ -410,15 +423,18 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                     ),
                                   );
                                 }
+                                break;
+
                               default:
                                 cubit.addArticleItem(
                                   VideoArticle(
                                     id: id,
-                                    section: _section,
+                                    section: sections,
                                     category: _category!,
                                     article: _article!,
                                     videoId: _videoIdController.text,
-                                    note: _imageItemNoteController.text,
+                                    note: _videoItemNoteController.text,
+                                    // Fix: Use video note controller instead of image
                                     order: int.parse(_orderController.text),
                                     language: _language,
                                   ),

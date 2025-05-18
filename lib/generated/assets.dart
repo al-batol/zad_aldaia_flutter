@@ -20,5 +20,13 @@ class Assets {
   static const String svgZadLogo = 'assets/images/svg/zad_logo.svg';
   static const String webDriftWorker = 'web/drift_worker.js';
   static const String webSqlite3 = 'web/sqlite3.wasm';
+  static const String filipino = 'assets/flags/filipino.png';
+  static const String france = 'assets/flags/france.png';
+  static const String portugal = 'assets/flags/portugal.png';
+  static const String spain = 'assets/flags/spain.png';
+  static const String sudia = 'assets/flags/sudia.png';
+  static const String unitedKingdom = 'assets/flags/united-kingdom.png';
+  static const String quran = 'assets/images/png/quran.png';
+  static const String admin = 'assets/images/png/admin.png';
 
 }

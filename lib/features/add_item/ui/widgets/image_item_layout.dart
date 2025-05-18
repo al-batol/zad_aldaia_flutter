@@ -6,7 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:zad_aldaia/core/widgets/my_text_form.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 
-class ImageItemLayout extends StatelessWidget {
+import 'color_wedgit.dart';
+
+class ImageItemLayout extends StatefulWidget {
   final TextEditingController imageItemNoteController;
   final File? image;
   final String? url;
@@ -18,14 +20,21 @@ class ImageItemLayout extends StatelessWidget {
     required this.image,
     required this.onImagePicked,
     this.url,
+
   });
 
   @override
+  State<ImageItemLayout> createState() => _ImageItemLayoutState();
+}
+
+class _ImageItemLayoutState extends State<ImageItemLayout> {
+  @override
   Widget build(BuildContext context) {
+
     return Column(
       children: [
         MyTextForm(
-          controller: imageItemNoteController,
+          controller: widget.imageItemNoteController,
           title: S.of(context).itemNote,
         ),
         SizedBox(height: 10.h),
@@ -35,18 +44,23 @@ class ImageItemLayout extends StatelessWidget {
               onTap: () async {
                 _pickImage();
               },
-              child: SizedBox(
-                width: 300.w,
-                height: 200.h,
-                child: Card(
-                  child:
-                      image != null
-                          ? Image.file(image!, fit: BoxFit.cover)
-                          : url != null
-                          ? Image.network(url!)
-                          : Center(child: Text("Add Image +")),
-                ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: 300.w,
+                    height: 200.h,
+                    child: Card(
+                      child:
+                          widget.image != null
+                              ? Image.file(widget.image!, fit: BoxFit.cover)
+                              : widget.url != null
+                              ? Image.network(widget.url!)
+                              : Center(child: Text("Add Image +")),
+                    ),
+                  ),
+                ],
               ),
+
             ),
           ],
         ),
@@ -59,7 +73,7 @@ class ImageItemLayout extends StatelessWidget {
       source: ImageSource.gallery,
     );
     if (pickedFile != null) {
-      onImagePicked(File(pickedFile.path));
+      widget.onImagePicked(File(pickedFile.path));
     }
   }
 }

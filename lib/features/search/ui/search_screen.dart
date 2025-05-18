@@ -31,14 +31,14 @@ class SearchScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               }, icon: Icon(Icons.clear))],
               onChanged: (value) {
-                  context.read<SearchCubit>().search(value);
+                context.read<SearchCubit>().search(value);
               },
             ),
             Expanded(
               child: Container(
                 margin: EdgeInsets.only(top: 20),
                 child: BlocBuilder<SearchCubit,SearchState>(builder:(context, state) {
-                  if(state is LoadedState){
+                  if(state is SearchLoadedState){
                     if(state.items.isEmpty) {
                       return NoItemsWidget();
                     }
@@ -48,7 +48,7 @@ class SearchScreen extends StatelessWidget {
                         case ArticleType.Text:
                           return TextItem(item: item as TextArticle);
                         case ArticleType.Image:
-                          return ImageItem(item: item as ImageArticle,onDownloadPressed: (url) async{
+                          return ImageItem(item: item as ImageArticle, onDownloadPressed: (url) async{
                             if(kIsWeb) {
                               await context.read<SearchCubit>().saveImageWeb(url);
                             }

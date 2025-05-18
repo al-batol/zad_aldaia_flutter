@@ -25,4 +25,5 @@ class HomeCubit extends Cubit {
   Future<bool> isAuthenticated() async {
     return await repo.isAuthenticated();
   }
+
 }

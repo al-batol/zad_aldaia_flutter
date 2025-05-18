@@ -20,6 +20,16 @@ class AddArticleScreen extends StatefulWidget {
 }
 
 class _AddArticleScreenState extends State<AddArticleScreen> {
+
+  late final AddArticleCubit cubit;
+  late final titles;
+  late final Map<String, String> langs;
+  final GlobalKey<FormState> formKey = GlobalKey();
+  final TextEditingController _articleController = TextEditingController();
+  late List<String> section;
+  late String sections;
+  String _language = Language.english;
+  String? _category;
   @override
   void didChangeDependencies() {
     titles = [
@@ -66,28 +76,22 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
           .of(context)
           .filipino,
     ], Language.values);
+    section = const [
+      "Intro to Islam",
+      "Christians dialog",
+      "Atheist dialog",
+      "Other sects",
+      "Why Islam Is True?",
+      "Questions about islam",
+      "Teaching new muslims",
+      "Daia guide"
+    ];
+
+    sections = section.first;
+
 
     super.didChangeDependencies();
   }
-
-  late final AddArticleCubit cubit;
-  late final titles;
-  late final Map<String, String> langs;
-  final GlobalKey<FormState> formKey = GlobalKey();
-  final TextEditingController _articleController = TextEditingController();
-  late String _section = sections.first;
-  String _language = Language.english;
-  String? _category;
-  final sections = const [
-    "التعريف بالإسلام",
-    "محاورة النصاري",
-    "محاورة الملحدين",
-    "الطوائف الأخرى",
-    "براهين صحة الإسلام",
-    "شبهات وأسئلة حول الإسلام",
-    "تعليم المسلم الجديد",
-    "دليل الداعية",
-  ];
 
   @override
   void initState() {
@@ -99,6 +103,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
         title: Text(S.of(context).addArticleTitle, style: MyTextStyle.font20primaryBold),
       ),
       body: SafeArea(
@@ -114,10 +119,10 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                 title: S.of(context).section,
                 items: [
                   ...List.generate(
-                    sections.length,
+                    section.length,
                         (index) =>
                         DropdownMenuItem(
-                          value: sections[index],
+                          value: section[index],
                           child: Text(
                             titles[index],
                             style: MyTextStyle.font14BlackRegular,
@@ -126,7 +131,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                   ),
                 ],
                 onSelected: (val) {
-                  _section = val;
+                  sections = val;
                 },
               ),
               SizedBox(height: 15.h),
@@ -169,7 +174,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                                       (e) =>
                                   e.title == val &&
                                       e.lang == _language &&
-                                      e.section == _section,
+                                      e.section == sections,
                                 ) ==
                                     false) {
                               return S.of(context).chooseCategoryFromSuggestions;
@@ -188,7 +193,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                           element.title.startsWith(
                             textEditingValue.text,
                           ) &&
-                              element.section == _section &&
+                              element.section == sections &&
                               element.lang == _language,
                         );
                       },
@@ -227,7 +232,7 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
                           cubit.addArticle(
                             Article(
                               title: _articleController.text,
-                              section: _section,
+                              section: sections,
                               category: _category!,
                               lang: _language,
                             ),

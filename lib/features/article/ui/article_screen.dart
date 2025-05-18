@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
 import 'package:zad_aldaia/features/article/data/models/article_item.dart';
@@ -21,7 +19,13 @@ class ArticleScreen extends StatefulWidget {
   final String category;
   final String article;
 
-  const ArticleScreen({super.key, required this.section, required this.language, required this.category, required this.article});
+  const ArticleScreen({
+    super.key,
+    required this.section,
+    required this.language,
+    required this.category,
+    required this.article,
+  });
 
   @override
   State<ArticleScreen> createState() => _ArticleScreenState();
@@ -30,12 +34,16 @@ class ArticleScreen extends StatefulWidget {
 class _ArticleScreenState extends State<ArticleScreen> {
   late ArticleCubit cubit;
   bool _isSearching = false;
-  List<ArticleItem> selectedItems = [];
 
   @override
   void initState() {
     cubit = context.read<ArticleCubit>();
-    cubit.getArticles(widget.section, widget.language, widget.category, widget.article);
+    cubit.getArticles(
+      widget.section,
+      widget.language,
+      widget.category,
+      widget.article,
+    );
     super.initState();
   }
 
@@ -43,6 +51,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
         leading: IconButton(
           onPressed: () {
             if (_isSearching) {
@@ -60,7 +69,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
             _isSearching
                 ? TextField(
                   autofocus: true,
-                  decoration: InputDecoration(hintText: S.of(context).search, border: InputBorder.none),
+                  decoration: InputDecoration(
+                    hintText: S.of(context).search,
+                    border: InputBorder.none,
+                  ),
                   style: const TextStyle(color: Colors.black),
                   onChanged: (query) {
                     cubit.search(query);
@@ -68,13 +80,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 )
                 : Text(widget.article),
         actions: [
-          if (selectedItems.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.share),
-              onPressed: () {
-                Share.multi(selectedItems);
-              },
-            ),
           _isSearching
               ? IconButton(
                 icon: const Icon(Icons.close),
@@ -84,7 +89,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 },
               )
               : IconButton(
-                icon: Icon(const IconData(0xe802, fontFamily: "search_icon"), color: MyColors.primaryColor),
+                icon: Icon(const IconData(0xe802, fontFamily: "search_icon"),color: MyColors.primaryColor,),
                 onPressed: () {
                   _isSearching = true;
                   setState(() {});
@@ -106,51 +111,18 @@ class _ArticleScreenState extends State<ArticleScreen> {
                   var item = state.items[index];
                   switch (state.items[index].type) {
                     case ArticleType.Text:
-                      return TextItem(
-                        item: item as TextArticle,
-                        isSelected: selectedItems.contains(item),
-                        onSelect: (article) {
-                          if (selectedItems.contains(article)) {
-                            selectedItems.remove(article);
-                          } else {
-                            selectedItems.add(article);
-                          }
-                          setState(() {});
-                        },
-                      );
+                      return TextItem(item: item as TextArticle);
                     case ArticleType.Image:
-                      return ImageItem(
-                        item: item as ImageArticle,
-                        onDownloadPressed: (url) async {
-                          if (kIsWeb) {
-                            await cubit.saveImageWeb(url);
-                          } else {
-                            await cubit.saveImageAndroid(url);
-                          }
-                        },
-                        isSelected: selectedItems.contains(item),
-                        onSelect: (article) {
-                          if (selectedItems.contains(article)) {
-                            selectedItems.remove(article);
-                          } else {
-                            selectedItems.add(article);
-                          }
-                          setState(() {});
-                        },
-                      );
+                      return ImageItem(item: item as ImageArticle,onDownloadPressed: (url) async{
+                        if(kIsWeb) {
+                          await cubit.saveImageWeb(url);
+                        }
+                        else{
+                          await cubit.saveImageAndroid(url);
+                        }
+                      },);
                     case ArticleType.Video:
-                      return VideoItem(
-                        item: item as VideoArticle,
-                        isSelected: selectedItems.contains(item),
-                        onSelect: (article) {
-                          if (selectedItems.contains(article)) {
-                            selectedItems.remove(article);
-                          } else {
-                            selectedItems.add(article);
-                          }
-                          setState(() {});
-                        },
-                      );
+                      return VideoItem(item: item as VideoArticle);
                   }
                 },
               );

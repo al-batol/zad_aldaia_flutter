@@ -1,8 +1,6 @@
-import 'package:equatable/equatable.dart';
 import 'package:zad_aldaia/core/models/article_type.dart';
-import 'package:zad_aldaia/core/models/languge.dart';
 
-sealed class ArticleItem{
+sealed class ArticleItem {
   final String id;
   final String section;
   final String category;
@@ -20,16 +18,16 @@ sealed class ArticleItem{
     required this.language,
     required this.note,
     required this.type,
-    required this.order
+    required this.order,
   });
 
   Map<String, dynamic> toJson();
-
 }
 
 class TextArticle extends ArticleItem {
   final String title;
   final String content;
+  final String backgroundColor;
 
   TextArticle({
     required super.id,
@@ -40,9 +38,9 @@ class TextArticle extends ArticleItem {
     required this.title,
     required this.content,
     required super.note,
-    required super.order
+    required super.order,
+    required this.backgroundColor,
   }) : super(type: ArticleType.Text);
-
 
   @override
   Map<String, dynamic> toJson() => {
@@ -56,8 +54,8 @@ class TextArticle extends ArticleItem {
     'type': 'Text',
     'title': title,
     'content': content,
+    'backgroundColor': backgroundColor,
   };
-
 }
 
 class ImageArticle extends ArticleItem {
@@ -71,7 +69,7 @@ class ImageArticle extends ArticleItem {
     required super.language,
     required this.url,
     required super.note,
-    required super.order
+    required super.order,
   }) : super(type: ArticleType.Image);
 
   @override
@@ -86,7 +84,6 @@ class ImageArticle extends ArticleItem {
     'type': 'Image',
     'url': url,
   };
-
 }
 
 class VideoArticle extends ArticleItem {
@@ -100,7 +97,7 @@ class VideoArticle extends ArticleItem {
     required super.language,
     required this.videoId,
     required super.note,
-    required super.order
+    required super.order,
   }) : super(type: ArticleType.Video);
 
   @override
@@ -115,7 +112,4 @@ class VideoArticle extends ArticleItem {
     'type': 'Video',
     'videoId': videoId,
   };
-
 }
-
-

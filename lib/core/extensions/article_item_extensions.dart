@@ -11,11 +11,12 @@ extension ArticleTypeExtension on AI.ArticleItem {
           section: section,
           category: category,
           article: article,
-          title: title!,
-          content: content!,
-          note: note!,
+          title: title ?? "",
+          content: content ?? "",
+          note: note ?? "",
           language: language,
           order: order,
+          backgroundColor:backgroundColor??"",
         );
       case ArticleType.Image:
         return ImageArticle(
@@ -23,8 +24,8 @@ extension ArticleTypeExtension on AI.ArticleItem {
           section: section,
           category: category,
           article: article,
-          note: note!,
-          url: url!,
+          note: note ?? "",
+          url: url ?? "",
           language: language,
           order: order,
         );
@@ -34,9 +35,9 @@ extension ArticleTypeExtension on AI.ArticleItem {
           section: section,
           category: category,
           article: article,
-          note: note!,
+          note: note ?? "",
           language: language,
-          videoId: videoId!,
+          videoId: videoId ?? "",
           order: order,
         );
     }

@@ -66,6 +66,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "chooseCategoryFromSuggestions": MessageLookupByLibrary.simpleMessage(
       "اختر الفئة من الاقتراحات",
     ),
+    "chooseTheLanguageYouWant": MessageLookupByLibrary.simpleMessage(
+      "اختر اللغة التي تريد قراءتها مع زاد الداعيه",
+    ),
     "christiansDialog": MessageLookupByLibrary.simpleMessage(
       "حوار مع المسيحيين",
     ),
@@ -124,6 +127,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseEnterPassword": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال كلمة المرور",
     ),
+    "pleaseSelectAccountType": MessageLookupByLibrary.simpleMessage(
+      "اختر نوع الحساب",
+    ),
     "portugues": MessageLookupByLibrary.simpleMessage("البرتغالية"),
     "portuguese": MessageLookupByLibrary.simpleMessage("البرتغالية"),
     "punjabi": MessageLookupByLibrary.simpleMessage("البنجابية"),
@@ -134,7 +140,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "russian": MessageLookupByLibrary.simpleMessage("الروسية"),
     "search": MessageLookupByLibrary.simpleMessage("البحث..."),
     "section": MessageLookupByLibrary.simpleMessage("القسم"),
+    "selectLanguage": MessageLookupByLibrary.simpleMessage("اختر اللغه"),
     "spanish": MessageLookupByLibrary.simpleMessage("الإسبانية"),
+    "speaker": MessageLookupByLibrary.simpleMessage("محاور"),
+    "teacher": MessageLookupByLibrary.simpleMessage("معلم"),
     "teachingNewMuslims": MessageLookupByLibrary.simpleMessage(
       "تعليم المسلمين الجدد",
     ),
