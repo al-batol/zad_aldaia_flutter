@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/database/my_database.dart';
 import 'package:http/http.dart';
 import 'dart:io';
@@ -17,7 +18,9 @@ class ArticleRepo {
   final MyDatabase _db;
   final ApiService _apiService;
 
-  ArticleRepo(this._db, this._apiService);
+  final SupabaseClient _supabase;
+
+  ArticleRepo(this._db, this._apiService, this._supabase);
 
   Future<String?> translateText(text, language) async {
     try {
@@ -72,6 +75,53 @@ class ArticleRepo {
       );
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<bool> updateArticleItem(article_item.ArticleItem articleItem) async {
+    try {
+      await _supabase
+          .from('article_items')
+          .upsert(articleItem.toJson(), onConflict: 'id');
+
+      return true;
+    } catch (e) {
+      print('Error updating article item: $e');
+      return false;
+    }
+  }
+
+  Future<bool> swapArticleItemOrders(String id1, String id2) async {
+    try {
+      final response = await _supabase
+          .from('article_items')
+          .select('id, order')
+          .or('id.eq.$id1,id.eq.$id2');
+
+      if (response.length != 2) {
+        print('❌ One or both IDs not found.');
+        return false;
+      }
+
+      final order1 = response.firstWhere((item) => item['id'] == id1)['order'];
+      print('order1: $order1');
+      final order2 = response.firstWhere((item) => item['id'] == id2)['order'];
+      print('order2: $order2');
+
+      await _supabase
+          .from('article_items')
+          .update({'order': order2})
+          .eq('id', id1);
+      await _supabase
+          .from('article_items')
+          .update({'order': order1})
+          .eq('id', id2);
+
+      print('✅ Orders swapped between ID $id1 and ID $id2');
+      return true;
+    } catch (e) {
+      print('Error swapping article item orders: $e');
+      return false;
     }
   }
 }

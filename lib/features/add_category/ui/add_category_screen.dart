@@ -12,7 +12,13 @@ import 'package:zad_aldaia/features/add_category/logic/add_category_state.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 
 class AddCategoryScreen extends StatefulWidget {
-  const AddCategoryScreen({super.key});
+  final String section;
+  final String language;
+  const AddCategoryScreen({
+    super.key,
+    required this.section,
+    required this.language,
+  });
 
   @override
   State<AddCategoryScreen> createState() => _AddCategoryScreenState();
@@ -54,6 +60,12 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   @override
   void initState() {
     _cubit = context.read<AddCategoryCubit>();
+    if (widget.section.isNotEmpty) {
+      _section = widget.section;
+    }
+    if (widget.language.isNotEmpty) {
+      _language = widget.language;
+    }
     super.initState();
   }
 
@@ -165,7 +177,11 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                           } else if (state is UploadFailedState) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(S.of(context).addingCategoryFailed)),
+                              SnackBar(
+                                content: Text(
+                                  S.of(context).addingCategoryFailed,
+                                ),
+                              ),
                             );
                           } else if (state is UploadedState) {
                             Navigator.of(context).pop();

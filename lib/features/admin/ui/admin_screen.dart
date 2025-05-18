@@ -13,7 +13,6 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-
   @override
   void didChangeDependencies() {
     titles = [
@@ -53,7 +52,47 @@ class _AdminScreenState extends State<AdminScreen> {
                   widthFactor: .8,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamed(routes[index]);
+                      // Navigator.of(context).pushNamed(routes[index]);
+                      switch (index) {
+                        case 0:
+                          Navigator.of(context).pushNamed(
+                            MyRoutes.addCategoryScreen,
+                            arguments: {"section": "", "language": ""},
+                          );
+                          break;
+                        case 1:
+                          Navigator.of(context).pushNamed(
+                            MyRoutes.addArticleScreen,
+                            arguments: {
+                              "section": "",
+                              "category": "",
+                              "language": "",
+                            },
+                          );
+                          break;
+                        case 2:
+                          Navigator.of(context).pushNamed(
+                            MyRoutes.addItemScreen,
+                            arguments: {
+                              "section": "",
+                              "category": "",
+                              "article": "",
+                              "language": "",
+                            },
+                          );
+                          break;
+                        case 3:
+                          Navigator.of(context).pushNamed(
+                            MyRoutes.editItemScreen,
+                            arguments: {
+                              "section": "",
+                              "category": "",
+                              "article": "",
+                              "language": "",
+                            },
+                          );
+                          break;
+                      }
                     },
                     style: ButtonStyle(
                       padding: WidgetStatePropertyAll(

@@ -23,11 +23,18 @@ class TextItem extends StatefulWidget {
   final bool? isSelected;
   final Function(ArticleItem)? onSelect;
 
+  // Added from update-order-of-items
+  final Function(ArticleItem)? onArticleItemUp;
+  final Function(ArticleItem)? onArticleItemDown;
+
   const TextItem({
     super.key,
     required this.item,
     this.onSelect,
     this.isSelected = false,
+    // Added from update-order-of-items
+    this.onArticleItemUp,
+    this.onArticleItemDown,
   });
 
   @override
@@ -50,6 +57,7 @@ class _TextItemState extends State<TextItem> {
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies(); // Good practice to call super first
     languageMap = {
       S.of(context).original_text: "Original Text",
       S.of(context).english: "en",
@@ -71,10 +79,9 @@ class _TextItemState extends State<TextItem> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkForAutoExpand();
     });
-
-    super.didChangeDependencies();
   }
 
+  // --- Methods from test-merge (search related and color parsing) ---
   String get searchQuery {
     final state = context.read<SearchCubit>().state;
     if (state is SearchLoadedState) {
@@ -124,53 +131,53 @@ class _TextItemState extends State<TextItem> {
     try {
       if (rawColor == null ||
           rawColor.trim().isEmpty ||
-          rawColor.trim().toLowerCase() == "Null") {
-        return const Color(0xFFFFFFFF);
+          rawColor.trim().toLowerCase() == "Null") { // Added "Null" string check
+        return const Color(0xFFFFFFFF); // Default to white
       }
       final cleaned = rawColor.trim().replaceAll("#", "");
-      print("🎨 Cleaned color: $cleaned");
+      if (kDebugMode) print("🎨 Cleaned color: $cleaned");
 
       if (cleaned.length == 6 &&
           RegExp(r'^[0-9a-fA-F]{6}$').hasMatch(cleaned)) {
         final parsed = Color(int.parse('0xFF$cleaned'));
-        print("✅ Parsed color: $parsed");
+        if (kDebugMode) print("✅ Parsed color: $parsed");
         return parsed;
       }
     } catch (e) {
-      print("❌ Color parsing failed: $e");
+      if (kDebugMode) print("❌ Color parsing failed: $e");
     }
-    print("❌ Fallback to white");
-    return Colors.white;
+    if (kDebugMode) print("❌ Fallback to white");
+    return Colors.white; // Fallback to white
   }
+  // --- End of methods from test-merge ---
 
   @override
   Widget build(BuildContext context) {
     final bool hiddenMatch = hasHiddenMatch();
     final bool noteMatch = hasMatchInNote();
-
     final backgroundColor = parseBackgroundColor(widget.item.backgroundColor);
+
     if (kDebugMode) {
-      print(backgroundColor);
+      print("Background color for item ${widget.item.title}: $backgroundColor");
     }
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
-      child: Material(
+      child: Material( // Retained Material from update-order-of-items for elevation/shape
         elevation: 2,
         borderRadius: BorderRadius.circular(10),
-        child: Container(
+        child: Container( // Container from test-merge for background and border
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(10),
-            border:
-                hiddenMatch
-                    ? Border.all(color: Colors.yellow, width: 2.0)
-                    : null,
+            borderRadius: BorderRadius.circular(10), // Can be redundant but safe
+            border: hiddenMatch
+                ? Border.all(color: Colors.yellow, width: 2.0)
+                : null,
           ),
           child: ExpansionTile(
             controller: _controller,
             expandedAlignment: Alignment.topLeft,
-            title: HighlightedText(
+            title: HighlightedText( // From test-merge
               text: widget.item.title,
               query: searchQuery,
               style: MyTextStyle.font18BlackBold,
@@ -191,6 +198,7 @@ class _TextItemState extends State<TextItem> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Note Icon from test-merge (with highlight)
                 if (widget.item.note.trim().isNotEmpty)
                   Padding(
                     padding: EdgeInsets.symmetric(
@@ -203,19 +211,17 @@ class _TextItemState extends State<TextItem> {
                           onTap: () {
                             showDialog(
                               context: context,
-                              builder:
-                                  (context) => NoteDialog(
-                                    note: widget.item.note,
-                                    searchQuery: searchQuery,
-                                  ),
+                              builder: (context) => NoteDialog(
+                                note: widget.item.note,
+                                searchQuery: searchQuery, // Pass searchQuery
+                              ),
                             );
                           },
                           child: Icon(
                             const IconData(0xe801, fontFamily: "pin_icon"),
-                            color:
-                                noteMatch
-                                    ? Colors.yellow[700]
-                                    : MyColors.primaryColor,
+                            color: noteMatch
+                                ? Colors.yellow[700]
+                                : MyColors.primaryColor,
                           ),
                         ),
                         if (noteMatch)
@@ -238,12 +244,13 @@ class _TextItemState extends State<TextItem> {
                       ],
                     ),
                   ),
+                // Copy Icon (structure from test-merge)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.w),
                   child: InkWell(
                     onTap: () async {
                       await Clipboard.setData(
-                        ClipboardData(text: widget.item.content),
+                        ClipboardData(text: widget.item.content), // Use original content
                       ).then((value) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(S.of(context).contentCopied)),
@@ -253,54 +260,56 @@ class _TextItemState extends State<TextItem> {
                     child: Icon(Icons.copy, color: MyColors.primaryColor),
                   ),
                 ),
+                // Translate Icon (structure from test-merge, with improved onSelected)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.w),
-                  child:
-                      isTranslating
-                          ? SizedBox(
-                            width: 24.h,
-                            height: 24.h,
-                            child: CircularProgressIndicator(
-                              color: MyColors.primaryColor,
-                            ),
-                          )
-                          : PopupMenuButton<String>(
-                            child: Icon(
-                              Icons.g_translate,
-                              color: MyColors.primaryColor,
-                            ),
-                            onSelected: (value) async {
-                              setState(() {
-                                isTranslating = true;
-                              });
-                              if (value == "Original Text") {
-                                content = widget.item.content;
-                              } else {
-                                var translation = await getIt<ArticleCubit>()
-                                    .translateText(widget.item.content, value);
-                                if (translation != null) {
-                                  content = HtmlUnescape().convert(translation);
-                                }
-                              }
-                              setState(() {
-                                isTranslating = false;
-                              });
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                checkForAutoExpand();
-                              });
-                            },
-                            itemBuilder: (BuildContext context) {
-                              return languageMap.entries
-                                  .map(
-                                    (e) => PopupMenuItem(
-                                      value: e.value,
-                                      child: Text(e.key),
-                                    ),
-                                  )
-                                  .toList();
-                            },
+                  child: isTranslating
+                      ? SizedBox( // Using SizedBox as in test-merge for consistency
+                          width: 24.h,
+                          height: 24.h,
+                          child: CircularProgressIndicator(
+                            color: MyColors.primaryColor,
                           ),
+                        )
+                      : PopupMenuButton<String>(
+                          child: Icon(
+                            Icons.g_translate,
+                            color: MyColors.primaryColor,
+                          ),
+                          onSelected: (value) async {
+                            setState(() {
+                              isTranslating = true;
+                            });
+                            if (value == "Original Text") {
+                              content = widget.item.content;
+                            } else {
+                              var translation = await getIt<ArticleCubit>()
+                                  .translateText(widget.item.content, value);
+                              if (translation != null) {
+                                content = HtmlUnescape().convert(translation);
+                              }
+                            }
+                            setState(() {
+                              isTranslating = false;
+                            });
+                            // Call checkForAutoExpand after translation (from test-merge)
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              checkForAutoExpand();
+                            });
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return languageMap.entries
+                                .map(
+                                  (e) => PopupMenuItem(
+                                    value: e.value,
+                                    child: Text(e.key),
+                                  ),
+                                )
+                                .toList();
+                          },
+                        ),
                 ),
+                // Share Icon (common to both)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.w),
                   child: InkWell(
@@ -311,6 +320,7 @@ class _TextItemState extends State<TextItem> {
                     ),
                   ),
                 ),
+                // Edit Icon (common to both, using Icons.edit from test-merge)
                 if (Supabase.instance.client.auth.currentUser != null)
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 3.w),
@@ -321,9 +331,34 @@ class _TextItemState extends State<TextItem> {
                           arguments: {"id": widget.item.id},
                         );
                       },
-                      child: Icon(Icons.edit, color: MyColors.primaryColor),
+                      child: Icon(Icons.edit, color: MyColors.primaryColor), // From test-merge
                     ),
                   ),
+                // Up/Down Arrow Icons (from update-order-of-items)
+                if (Supabase.instance.client.auth.currentUser != null)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3.w),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min, // Important for Column in Row
+                      children: [
+                        InkWell(
+                          onTap: () => widget.onArticleItemUp?.call(widget.item),
+                          child: Icon(
+                            Icons.arrow_circle_up,
+                            color: MyColors.primaryColor,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => widget.onArticleItemDown?.call(widget.item),
+                          child: Icon(
+                            Icons.arrow_circle_down,
+                            color: MyColors.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                // Checkbox Icon (common to both)
                 if (widget.isSelected != null)
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 3.w),
@@ -342,8 +377,8 @@ class _TextItemState extends State<TextItem> {
             children: [
               Container(
                 margin: EdgeInsets.all(10),
-                child: HighlightedText(
-                  text: content,
+                child: HighlightedText( // From test-merge
+                  text: content, // Use the potentially translated content
                   query: searchQuery,
                   style: MyTextStyle.font16BlackRegular,
                   selectable: true,

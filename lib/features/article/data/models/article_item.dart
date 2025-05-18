@@ -21,6 +21,49 @@ sealed class ArticleItem {
     required this.order,
   });
 
+  factory ArticleItem.fromJson(Map<String, dynamic> json) {
+    final type = json['type'];
+
+    switch (type) {
+      case 'Text':
+        return TextArticle(
+          id: json['id'],
+          section: json['section'],
+          category: json['category'],
+          article: json['article'],
+          language: json['language'],
+          title: json['title'],
+          content: json['content'],
+          note: json['note'] ?? '',
+          order: json['order'] ?? 0,
+        );
+      case 'Image':
+        return ImageArticle(
+          id: json['id'],
+          section: json['section'],
+          category: json['category'],
+          article: json['article'],
+          language: json['language'],
+          url: json['url'],
+          note: json['note'] ?? '',
+          order: json['order'] ?? 0,
+        );
+      case 'Video':
+        return VideoArticle(
+          id: json['id'],
+          section: json['section'],
+          category: json['category'],
+          article: json['article'],
+          language: json['language'],
+          videoId: json['videoId'],
+          note: json['note'] ?? '',
+          order: json['order'] ?? 0,
+        );
+      default:
+        throw Exception('نوع مقال غير معروف: $type');
+    }
+  }
+
   Map<String, dynamic> toJson();
 }
 
@@ -38,8 +81,8 @@ class TextArticle extends ArticleItem {
     required this.title,
     required this.content,
     required super.note,
-    required super.order,
-    required this.backgroundColor,
+    required super.order, 
+    required this.backgroundColor, 
   }) : super(type: ArticleType.Text);
 
   @override

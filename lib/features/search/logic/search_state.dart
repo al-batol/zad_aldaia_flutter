@@ -1,6 +1,6 @@
 import 'package:zad_aldaia/features/article/data/models/article_item.dart';
 
-sealed class SearchState{
+sealed class SearchState {}
 
 }
 

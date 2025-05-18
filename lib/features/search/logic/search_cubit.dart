@@ -11,6 +11,7 @@ class SearchCubit extends Cubit<SearchState> {
   search(String query) async {
     emit(SearchingState(query: query));
     List<ArticleItem> items = await _repo.searchArticleItems(query);
+
     if(query.isEmpty || items.isEmpty) {
       emit(SearchLoadedState([], query: query));
     } else {

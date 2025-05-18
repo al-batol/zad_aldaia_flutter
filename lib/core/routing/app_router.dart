@@ -38,6 +38,7 @@ class AppRouter {
                 child: HomeScreen(),
               ),
         );
+        
       case MyRoutes.languageScreen:
         return MaterialPageRoute(
           builder:
@@ -87,7 +88,10 @@ class AppRouter {
           builder:
               (context) => BlocProvider(
                 create: (context) => getIt<AddCategoryCubit>(),
-                child: AddCategoryScreen(),
+                child: AddCategoryScreen(
+                  section: (arguments as Map)["section"],
+                  language: arguments["language"],
+                ),
               ),
         );
 
@@ -104,7 +108,11 @@ class AppRouter {
           builder:
               (context) => BlocProvider(
                 create: (context) => getIt<AddArticleCubit>(),
-                child: AddArticleScreen(),
+                child: AddArticleScreen(
+                  section: (arguments as Map)["section"],
+                  category: arguments["category"],
+                  language: arguments["language"],
+                ),
               ),
         );
       case MyRoutes.addItemScreen:
@@ -112,7 +120,13 @@ class AppRouter {
           builder:
               (context) => BlocProvider(
                 create: (context) => getIt<AddItemCubit>(),
-                child: AddItemScreen(),
+                child: AddItemScreen(
+                  section: (arguments as Map)["section"],
+                  category: arguments["category"],
+                  language: arguments["language"],
+                  article: arguments["article"],
+                  order: arguments["order"],
+                ),
               ),
         );
       case MyRoutes.editItemScreen:
@@ -123,7 +137,6 @@ class AppRouter {
                 child: EditItemScreen(itemId: (arguments as Map)["id"]),
               ),
         );
-
       default:
         return null;
     }

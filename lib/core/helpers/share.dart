@@ -20,11 +20,17 @@ class Share {
 
   static article(ArticleItem item) {
     if (item is TextArticle) {
-      SharePlus.instance.share(ShareParams(title: item.title, text: item.content));
+      SharePlus.instance.share(
+        ShareParams(title: item.title, text: item.content),
+      );
     } else if (item is ImageArticle) {
-      SharePlus.instance.share(ShareParams(title: item.article, text: item.url));
+      SharePlus.instance.share(
+        ShareParams(title: item.article, text: item.url),
+      );
     } else if (item is VideoArticle) {
-      SharePlus.instance.share(ShareParams(title: item.article, text: item.videoId));
+      SharePlus.instance.share(
+        ShareParams(title: item.article, text: item.videoId),
+      );
     }
   }
 }

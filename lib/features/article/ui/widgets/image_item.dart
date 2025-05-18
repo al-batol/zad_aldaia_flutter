@@ -14,6 +14,8 @@ class ImageItem extends StatefulWidget {
   final ImageArticle item;
   final bool? isSelected;
   final Function(ArticleItem)? onSelect;
+  final Function(ArticleItem)? onArticleItemUp; // From update-order-of-items
+  final Function(ArticleItem)? onArticleItemDown; // From update-order-of-items
   final Future Function(String) onDownloadPressed;
 
   const ImageItem({
@@ -22,6 +24,8 @@ class ImageItem extends StatefulWidget {
     required this.onDownloadPressed,
     this.onSelect,
     this.isSelected = false,
+    this.onArticleItemUp, // From update-order-of-items
+    this.onArticleItemDown, // From update-order-of-items
   });
 
   @override
@@ -34,8 +38,8 @@ class _ImageItemState extends State<ImageItem> {
 
   @override
   void initState() {
+    super.initState(); // Call super.initState() first
     _controller = ExpansionTileController();
-    super.initState();
   }
 
   @override
@@ -45,26 +49,81 @@ class _ImageItemState extends State<ImageItem> {
       child: Material(
         elevation: 2,
         borderRadius: BorderRadius.circular(10),
-        child: Container(
+        child: Container( // Retaining container for potential future background styling
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
+            color: Colors.white, // Default color from test-merge
           ),
           child: ExpansionTile(
             controller: _controller,
             expandedAlignment: Alignment.topLeft,
-            tilePadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+            tilePadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h), // Adjusted vertical padding
             title: Text(
-              widget.item.note ?? 'Image',
+              // Use item.title if available and not empty, otherwise note, then fallback
+              widget.item.title.isNotEmpty ? widget.item.title : (widget.item.note.isNotEmpty ? widget.item.note : S.of(context).image),
               style: MyTextStyle.font18BlackBold,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            childrenPadding: EdgeInsets.zero,
+            // --- Trailing icons: Reorder and Selection ---
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Reorder icons from update-order-of-items
+                if (Supabase.instance.client.auth.currentUser != null &&
+                    widget.onArticleItemUp != null &&
+                    widget.onArticleItemDown != null)
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () => widget.onArticleItemUp?.call(widget.item),
+                        child: Icon(
+                          Icons.arrow_circle_up,
+                          color: MyColors.primaryColor,
+                          size: 20.sp, // Adjust size as needed
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => widget.onArticleItemDown?.call(widget.item),
+                        child: Icon(
+                          Icons.arrow_circle_down,
+                          color: MyColors.primaryColor,
+                          size: 20.sp, // Adjust size as needed
+                        ),
+                      ),
+                    ],
+                  ),
+                if (Supabase.instance.client.auth.currentUser != null &&
+                    widget.onArticleItemUp != null &&
+                    widget.onArticleItemDown != null)
+                  SizedBox(width: 8.w), // Spacer
+
+                // Select icon (common)
+                if (widget.isSelected != null)
+                  InkWell(
+                    onTap: () => widget.onSelect?.call(widget.item),
+                    child: Icon(
+                      widget.isSelected!
+                          ? Icons.check_box_outlined
+                          : Icons.check_box_outline_blank,
+                      color: MyColors.primaryColor,
+                      size: 24.sp, // Adjust size as needed
+                    ),
+                  ),
+              ],
+            ),
+            childrenPadding: EdgeInsets.zero, // From test-merge
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                // Using ClipRRect from test-merge to ensure image corners are rounded if needed
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
                 child: CachedNetworkImage(
                   imageUrl: widget.item.url,
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  errorWidget: (context, url, error) => Icon(Icons.error, size: 50.sp),
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
                       Center(
                         child: SizedBox(
@@ -78,15 +137,17 @@ class _ImageItemState extends State<ImageItem> {
                         ),
                       ),
                   fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 200.h,
+                  width: double.infinity, // Take full width
+                  height: 250.h, // Adjusted height
                 ),
               ),
+              // --- Action buttons below the image (when expanded) ---
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    // Note Icon (common logic)
                     if (widget.item.note.trim().isNotEmpty)
                       InkWell(
                         onTap: () {
@@ -95,38 +156,55 @@ class _ImageItemState extends State<ImageItem> {
                             builder: (context) => NoteDialog(note: widget.item.note),
                           );
                         },
+                        child: Tooltip(
+                          message: S.of(context).viewNote,
+                          child: Icon(
+                            const IconData(0xe801, fontFamily: "pin_icon"),
+                            color: MyColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    // Download Icon (common logic)
+                    isDownloading
+                        ? SizedBox(
+                            width: 24.w, // Use .w for width
+                            height: 24.h,
+                            child: CircularProgressIndicator(
+                              color: MyColors.primaryColor,
+                            ),
+                          )
+                        : InkWell(
+                            onTap: () async {
+                              setState(() {
+                                isDownloading = true;
+                              });
+                              await widget.onDownloadPressed(widget.item.url);
+                              if (mounted) { // Check if widget is still in the tree
+                                setState(() {
+                                  isDownloading = false;
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(S.of(context).imageDownloaded)),
+                                );
+                              }
+                            },
+                            child: Tooltip(
+                              message: S.of(context).downloadImage,
+                              child: Icon(Icons.download, color: MyColors.primaryColor),
+                            ),
+                          ),
+                    // Share Icon (common)
+                    InkWell(
+                      onTap: () => Share.article(widget.item),
+                      child: Tooltip(
+                        message: S.of(context).share,
                         child: Icon(
-                          const IconData(0xe801, fontFamily: "pin_icon"),
+                          Icons.share_outlined,
                           color: MyColors.primaryColor,
                         ),
                       ),
-                    isDownloading
-                        ? SizedBox(
-                      width: 24.h,
-                      height: 24.h,
-                      child: CircularProgressIndicator(
-                        color: MyColors.primaryColor,
-                      ),
-                    )
-                        : InkWell(
-                      onTap: () async {
-                        setState(() {
-                          isDownloading = true;
-                        });
-                        await widget.onDownloadPressed(widget.item.url);
-                        setState(() {
-                          isDownloading = false;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(S.of(context).imageDownloaded)),
-                          );
-                        });
-                      },
-                      child: Icon(Icons.download, color: MyColors.primaryColor),
                     ),
-                    InkWell(
-                      onTap: () => Share.article(widget.item),
-                      child: Icon(Icons.share_outlined, color: MyColors.primaryColor),
-                    ),
+                    // Edit Icon (common, if user is logged in)
                     if (Supabase.instance.client.auth.currentUser != null)
                       InkWell(
                         onTap: () {
@@ -135,16 +213,9 @@ class _ImageItemState extends State<ImageItem> {
                             arguments: {"id": widget.item.id},
                           );
                         },
-                        child: Icon(Icons.edit, color: MyColors.primaryColor),
-                      ),
-                    if (widget.isSelected != null)
-                      InkWell(
-                        onTap: () => widget.onSelect?.call(widget.item),
-                        child: Icon(
-                          widget.isSelected!
-                              ? Icons.check_box_outlined
-                              : Icons.check_box_outline_blank,
-                          color: MyColors.primaryColor,
+                        child: Tooltip(
+                          message: S.of(context).edit,
+                          child: Icon(Icons.edit, color: MyColors.primaryColor),
                         ),
                       ),
                   ],

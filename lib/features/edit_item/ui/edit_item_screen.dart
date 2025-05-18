@@ -40,7 +40,13 @@ class _EditItemScreenState extends State<EditItemScreen> {
       S.of(context).daiaGuide,
     ];
 
-    langs = Map.fromIterables([S.of(context).english, S.of(context).espanol, S.of(context).portuguese, S.of(context).francais, S.of(context).filipino], Language.values);
+    langs = Map.fromIterables([
+      S.of(context).english,
+      S.of(context).espanol,
+      S.of(context).portuguese,
+      S.of(context).francais,
+      S.of(context).filipino,
+    ], Language.values);
 
     super.didChangeDependencies();
   }
@@ -53,8 +59,10 @@ class _EditItemScreenState extends State<EditItemScreen> {
   final TextEditingController _itemContentController = TextEditingController();
   final TextEditingController _videoIdController = TextEditingController();
   final TextEditingController _textItemNoteController = TextEditingController();
-  final TextEditingController _imageItemNoteController = TextEditingController();
-  final TextEditingController _videoItemNoteController = TextEditingController();
+  final TextEditingController _imageItemNoteController =
+      TextEditingController();
+  final TextEditingController _videoItemNoteController =
+      TextEditingController();
   final TextEditingController _orderController = TextEditingController();
   late String _section = sections.first;
   late final String _title = titles.first;
@@ -121,7 +129,12 @@ class _EditItemScreenState extends State<EditItemScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(S.of(context).editItem, style: MyTextStyle.font20primaryBold)),
+      appBar: AppBar(
+        title: Text(
+          S.of(context).editItem,
+          style: MyTextStyle.font20primaryBold,
+        ),
+      ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Container(
@@ -130,8 +143,24 @@ class _EditItemScreenState extends State<EditItemScreen> {
               key: formKey,
               child: Column(
                 children: [
-                  if (widget.itemId == null) ...[MyTextForm(title: S.of(context).itemId, validatorMessage: S.of(context).required, onChanged: onChanged), SizedBox(height: 10.h)],
-                  if (isFetching) Center(child: SizedBox(width: 50.w, height: 50.h, child: CircularProgressIndicator(color: MyColors.primaryColor))),
+                  if (widget.itemId == null) ...[
+                    MyTextForm(
+                      title: S.of(context).itemId,
+                      validatorMessage: S.of(context).required,
+                      onChanged: onChanged,
+                    ),
+                    SizedBox(height: 10.h),
+                  ],
+                  if (isFetching)
+                    Center(
+                      child: SizedBox(
+                        width: 50.w,
+                        height: 50.h,
+                        child: CircularProgressIndicator(
+                          color: MyColors.primaryColor,
+                        ),
+                      ),
+                    ),
                   if (_item != null)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +171,13 @@ class _EditItemScreenState extends State<EditItemScreen> {
                           items: [
                             ...List.generate(
                               sections.length,
-                              (index) => DropdownMenuItem(value: sections[index], child: Text(titles[index], style: MyTextStyle.font14BlackRegular)),
+                              (index) => DropdownMenuItem(
+                                value: sections[index],
+                                child: Text(
+                                  titles[index],
+                                  style: MyTextStyle.font14BlackRegular,
+                                ),
+                              ),
                             ),
                           ],
                           onSelected: (val) {
@@ -152,7 +187,18 @@ class _EditItemScreenState extends State<EditItemScreen> {
                         SizedBox(height: 15.h),
                         MyDropdownButton(
                           initialSelection: _language,
-                          items: langs.entries.map((e) => DropdownMenuItem(value: e.value, child: Text(e.key, style: MyTextStyle.font14BlackRegular))).toList(),
+                          items:
+                              langs.entries
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e.value,
+                                      child: Text(
+                                        e.key,
+                                        style: MyTextStyle.font14BlackRegular,
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
                           onSelected: (val) {
                             _language = val;
                           },
@@ -164,15 +210,30 @@ class _EditItemScreenState extends State<EditItemScreen> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Autocomplete(
-                                displayStringForOption: (option) => option.title,
-                                fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+                                displayStringForOption:
+                                    (option) => option.title,
+                                fieldViewBuilder: (
+                                  context,
+                                  textEditingController,
+                                  focusNode,
+                                  onFieldSubmitted,
+                                ) {
                                   textEditingController.text = _category!;
                                   return MyTextForm(
                                     title: S.of(context).category,
                                     focusNode: focusNode,
                                     validator: (val) {
-                                      if (val?.isEmpty == true || snapshot.data!.any((e) => e.title == val && e.lang == _language && e.section == _section) == false) {
-                                        return S.of(context).chooseCategoryFromSuggestions;
+                                      if (val?.isEmpty == true ||
+                                          snapshot.data!.any(
+                                                (e) =>
+                                                    e.title == val &&
+                                                    e.lang == _language &&
+                                                    e.section == _section,
+                                              ) ==
+                                              false) {
+                                        return S
+                                            .of(context)
+                                            .chooseCategoryFromSuggestions;
                                       }
                                       return null;
                                     },
@@ -184,12 +245,25 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                 },
                                 optionsBuilder: (textEditingValue) {
                                   return snapshot.data!.where(
-                                    (element) => element.title.startsWith(textEditingValue.text) && element.section == _section && element.lang == _language,
+                                    (element) =>
+                                        element.title.startsWith(
+                                          textEditingValue.text,
+                                        ) &&
+                                        element.section == _section &&
+                                        element.lang == _language,
                                   );
                                 },
                               );
                             }
-                            return Center(child: SizedBox(height: 24.h, width: 24.w, child: CircularProgressIndicator(color: MyColors.primaryColor)));
+                            return Center(
+                              child: SizedBox(
+                                height: 24.h,
+                                width: 24.w,
+                                child: CircularProgressIndicator(
+                                  color: MyColors.primaryColor,
+                                ),
+                              ),
+                            );
                           },
                         ),
                         SizedBox(height: 15.h),
@@ -198,16 +272,31 @@ class _EditItemScreenState extends State<EditItemScreen> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Autocomplete(
-                                displayStringForOption: (option) => option.title,
-                                fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+                                displayStringForOption:
+                                    (option) => option.title,
+                                fieldViewBuilder: (
+                                  context,
+                                  textEditingController,
+                                  focusNode,
+                                  onFieldSubmitted,
+                                ) {
                                   textEditingController.text = _article!;
                                   return MyTextForm(
                                     title: S.of(context).article,
                                     focusNode: focusNode,
                                     validator: (val) {
                                       if (val?.isEmpty == true ||
-                                          snapshot.data!.any((e) => e.title == val && e.lang == _language && e.section == _section && e.category == _category) == false) {
-                                        return S.of(context).chooseArticleFromSuggestions;
+                                          snapshot.data!.any(
+                                                (e) =>
+                                                    e.title == val &&
+                                                    e.lang == _language &&
+                                                    e.section == _section &&
+                                                    e.category == _category,
+                                              ) ==
+                                              false) {
+                                        return S
+                                            .of(context)
+                                            .chooseArticleFromSuggestions;
                                       }
                                       return null;
                                     },
@@ -220,7 +309,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                 optionsBuilder: (textEditingValue) {
                                   return snapshot.data!.where(
                                     (element) =>
-                                        element.title.startsWith(textEditingValue.text) &&
+                                        element.title.startsWith(
+                                          textEditingValue.text,
+                                        ) &&
                                         element.section == _section &&
                                         element.lang == _language &&
                                         element.category == _category,
@@ -228,7 +319,15 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                 },
                               );
                             }
-                            return Center(child: SizedBox(height: 24.h, width: 24.w, child: CircularProgressIndicator(color: MyColors.primaryColor)));
+                            return Center(
+                              child: SizedBox(
+                                height: 24.h,
+                                width: 24.w,
+                                child: CircularProgressIndicator(
+                                  color: MyColors.primaryColor,
+                                ),
+                              ),
+                            );
                           },
                         ),
                         SizedBox(height: 10.h),
@@ -236,7 +335,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                           title: S.of(context).order,
                           validatorMessage: S.of(context).required,
                           inputType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                           controller: _orderController,
                         ),
                         SizedBox(height: 20.h),
@@ -257,7 +358,8 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                 return ImageItemLayout(
                                   image: _image,
                                   url: imageUrl,
-                                  imageItemNoteController: _imageItemNoteController,
+                                  imageItemNoteController:
+                                      _imageItemNoteController,
                                   onImagePicked: (image) {
                                     setState(() {
                                       _image = image;
@@ -267,9 +369,16 @@ class _EditItemScreenState extends State<EditItemScreen> {
                               default:
                                 return Column(
                                   children: [
-                                    MyTextForm(controller: _videoIdController, validatorMessage: S.of(context).required, title: S.of(context).videoId),
+                                    MyTextForm(
+                                      controller: _videoIdController,
+                                      validatorMessage: S.of(context).required,
+                                      title: S.of(context).videoId,
+                                    ),
                                     SizedBox(height: 10.h),
-                                    MyTextForm(controller: _videoItemNoteController, title: S.of(context).itemNote),
+                                    MyTextForm(
+                                      controller: _videoItemNoteController,
+                                      title: S.of(context).itemNote,
+                                    ),
                                   ],
                                 );
                             }
@@ -281,8 +390,12 @@ class _EditItemScreenState extends State<EditItemScreen> {
                             widthFactor: .8,
                             child: ElevatedButton(
                               style: ButtonStyle(
-                                padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10.h)),
-                                backgroundColor: WidgetStatePropertyAll(MyColors.primaryColor),
+                                padding: WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(vertical: 10.h),
+                                ),
+                                backgroundColor: WidgetStatePropertyAll(
+                                  MyColors.primaryColor,
+                                ),
                               ),
                               onPressed: () async {
                                 if (formKey.currentState!.validate()) {
@@ -299,12 +412,21 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                           title: _itemTitleController.text,
                                           content: _itemContentController.text,
                                           note: _textItemNoteController.text,
-                                          order: int.parse(_orderController.text),
+                                          order: int.parse(
+                                            _orderController.text,
+                                          ),
                                           language: _language,
                                         ),
                                       );
                                     case ArticleType.Image:
-                                      String? url = _image != null ? await cubit.uploadImage(_image!, _title, imageUrl ?? '') : (_item as ImageArticle).url;
+                                      String? url =
+                                          _image != null
+                                              ? await cubit.uploadImage(
+                                                _image!,
+                                                _title,
+                                                imageUrl ?? '',
+                                              )
+                                              : (_item as ImageArticle).url;
                                       if (url == null) {
                                         return;
                                       }
@@ -317,7 +439,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                           article: _article!,
                                           url: url,
                                           note: _imageItemNoteController.text,
-                                          order: int.parse(_orderController.text),
+                                          order: int.parse(
+                                            _orderController.text,
+                                          ),
                                           language: _language,
                                         ),
                                       );
@@ -330,7 +454,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                           article: _article!,
                                           videoId: _videoIdController.text,
                                           note: _imageItemNoteController.text,
-                                          order: int.parse(_orderController.text),
+                                          order: int.parse(
+                                            _orderController.text,
+                                          ),
                                           language: _language,
                                         ),
                                       );
@@ -338,7 +464,10 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                 }
                               },
                               child: BlocConsumer<EditItemCubit, EditItemState>(
-                                listenWhen: (previous, current) => previous.runtimeType != current.runtimeType,
+                                listenWhen:
+                                    (previous, current) =>
+                                        previous.runtimeType !=
+                                        current.runtimeType,
                                 listener: (context, state) {
                                   if (state is UploadingState) {
                                     showDialog(
@@ -347,19 +476,44 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                       builder:
                                           (context) => PopScope(
                                             canPop: false,
-                                            child: Center(child: SizedBox(width: 50.w, height: 50.h, child: CircularProgressIndicator(color: MyColors.primaryColor))),
+                                            child: Center(
+                                              child: SizedBox(
+                                                width: 50.w,
+                                                height: 50.h,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      color:
+                                                          MyColors.primaryColor,
+                                                    ),
+                                              ),
+                                            ),
                                           ),
                                     );
                                   } else if (state is UploadFailedState) {
                                     Navigator.of(context).pop();
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).editingItemFailed)));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          S.of(context).editingItemFailed,
+                                        ),
+                                      ),
+                                    );
                                   } else if (state is UploadedState) {
                                     Navigator.of(context).pop();
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).editingItemSuccess)));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          S.of(context).editingItemSuccess,
+                                        ),
+                                      ),
+                                    );
                                   }
                                 },
                                 builder: (context, state) {
-                                  return Text(S.of(context).editItem, style: MyTextStyle.font18WhiteRegular);
+                                  return Text(
+                                    S.of(context).editItem,
+                                    style: MyTextStyle.font18WhiteRegular,
+                                  );
                                 },
                               ),
                             ),
@@ -371,8 +525,12 @@ class _EditItemScreenState extends State<EditItemScreen> {
                             widthFactor: .8,
                             child: ElevatedButton(
                               style: ButtonStyle(
-                                padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10.h)),
-                                backgroundColor: WidgetStatePropertyAll(MyColors.primaryColor),
+                                padding: WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(vertical: 10.h),
+                                ),
+                                backgroundColor: WidgetStatePropertyAll(
+                                  MyColors.primaryColor,
+                                ),
                               ),
                               onPressed: () async {
                                 cubit.deleteItem(_item!.id);
@@ -386,22 +544,47 @@ class _EditItemScreenState extends State<EditItemScreen> {
                                       builder:
                                           (context) => PopScope(
                                             canPop: false,
-                                            child: Center(child: SizedBox(width: 50.w, height: 50.h, child: CircularProgressIndicator(color: MyColors.primaryColor))),
+                                            child: Center(
+                                              child: SizedBox(
+                                                width: 50.w,
+                                                height: 50.h,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      color:
+                                                          MyColors.primaryColor,
+                                                    ),
+                                              ),
+                                            ),
                                           ),
                                     );
                                   } else if (state is DeletingFailedState) {
                                     Navigator.of(context).pop();
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).deletingItemFailed)));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          S.of(context).deletingItemFailed,
+                                        ),
+                                      ),
+                                    );
                                   } else if (state is DeletedState) {
                                     Navigator.of(context).pop();
                                     setState(() {
                                       _item = null;
                                     });
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).deletingItemSuccess)));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          S.of(context).deletingItemSuccess,
+                                        ),
+                                      ),
+                                    );
                                   }
                                 },
                                 builder: (context, state) {
-                                  return Text(S.of(context).deleteItem, style: MyTextStyle.font18WhiteRegular);
+                                  return Text(
+                                    S.of(context).deleteItem,
+                                    style: MyTextStyle.font18WhiteRegular,
+                                  );
                                 },
                               ),
                             ),
