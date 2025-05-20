@@ -33,7 +33,7 @@ class CategoryWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.edit),
+                          icon: const Icon(Icons.edit, color: Colors.amber),
                           onPressed: () {
                             Navigator.of(context).pushNamed(MyRoutes.addCategoryScreen, arguments: {"id": category.id});
                           },

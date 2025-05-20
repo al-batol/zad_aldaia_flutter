@@ -51,10 +51,11 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
                         return ListTile(
                           title: Text(category.title ?? '---'),
-                          trailing:
-                              category.hasChildren
-                                  ? const Icon(Icons.chevron_right)
-                                  : Tooltip(message: "Select ${category.title}", child: const Icon(Icons.check_circle_outline, color: Colors.green)),
+                          trailing: const Icon(Icons.chevron_right),
+                          // trailing:
+                          //     category.hasChildren
+                          //         ? const Icon(Icons.chevron_right)
+                          //         : null, //Tooltip(message: "Select ${category.title}", child: const Icon(Icons.check_circle_outline, color: Colors.green)),
                           onTap: () => _onCategoryTap(category),
                         );
                       },
@@ -84,9 +85,9 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       breadcrumb.add(category);
     }
     setState(() {});
-    if (category.hasChildren) {
-      cubit.getChildCategories(category.id, null);
-    }
+    // if (category.hasChildren) {
+    // }
+    cubit.getChildCategories(category.id, null);
   }
 
   Widget _buildBreadcrumbWidget(BuildContext context) {

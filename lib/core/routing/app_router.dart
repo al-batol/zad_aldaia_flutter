@@ -26,7 +26,7 @@ class AppRouter {
       case MyRoutes.addCategoryScreen:
         return MaterialPageRoute(builder: (context) => CategoryFormScreen(categoryId: arguments["id"]));
       case MyRoutes.addArticleScreen:
-        return MaterialPageRoute(builder: (context) => ArticleFormScreen(articleId: arguments["article_id"]));
+        return MaterialPageRoute(builder: (context) => ArticleFormScreen(articleId: arguments["id"]));
       case MyRoutes.articles:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(create: (context) => getIt<CategoriesCubit>(), child: ArticlesScreen(title: arguments["title"], categoryId: arguments["category_id"])),

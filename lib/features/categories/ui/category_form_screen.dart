@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart'; // For getIt
 import 'package:zad_aldaia/core/models/languge.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
-import 'package:zad_aldaia/core/theming/my_text_style.dart';
-import 'package:zad_aldaia/core/widgets/my_dropdown_button.dart';
+import 'package:zad_aldaia/core/widgets/language_drop_down.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart'; // Assuming your Category model
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
 import 'package:zad_aldaia/features/categories/ui/CategorySelectionScreen.dart';
@@ -24,10 +23,8 @@ class CategoryFormScreen extends StatefulWidget {
 
 class _CategoryFormScreenState extends State<CategoryFormScreen> {
   late final CategoriesCubit store;
-  Category? category;
+  Category category = Category(id: '');
   final _formKey = GlobalKey<FormState>();
-  late final langs = Map.fromIterables([S.of(context).english, S.of(context).espanol, S.of(context).portuguese, S.of(context).francais, S.of(context).filipino], Language.values);
-
   final _titleController = TextEditingController();
   Category? parentCategory;
   bool _isActive = true;
@@ -47,8 +44,8 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
     }
     if (state is SavedState) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Category ${widget.isEditMode ? "updated" : "created"} successfully!')));
-      if ((parentCategory?.id ?? category?.parentId) != null) {
-        Navigator.of(context).pushNamed(MyRoutes.categories, arguments: {"id": parentCategory?.id ?? category?.parentId, "title": parentCategory?.title});
+      if ((parentCategory?.id ?? category.parentId) != null) {
+        Navigator.of(context).pushNamed(MyRoutes.categories, arguments: {"id": parentCategory?.id ?? category.parentId, "title": parentCategory?.title});
       }
     }
     if (state is LoadedState) {
@@ -58,10 +55,11 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
   }
 
   fillForm() async {
-    _titleController.text = category?.title ?? '';
-    _isActive = category?.isActive ?? true;
-    if (category?.parentId != null) {
-      parentCategory = await store.findCategory({'id': category!.parentId!});
+    category.lang = category.lang ?? Language.english;
+    _titleController.text = category.title ?? '';
+    _isActive = category.isActive;
+    if (category.parentId != null) {
+      parentCategory = await store.findCategory({'id': category.parentId!});
     }
     setState(() {});
   }
@@ -76,19 +74,18 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
 
   setParent(Category? parent) {
     setState(() {
+      category.parentId = parent?.id;
       parentCategory = parent;
     });
   }
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final categoryData = category ?? Category(id: '');
-      categoryData.title = _titleController.text.trim();
-      categoryData.parentId = parentCategory?.id;
-      // categoryData.lang = _langController.text.trim().isNotEmpty ? _langController.text.trim() : null;
-      categoryData.isActive = _isActive;
+      category.title = _titleController.text.trim();
+      category.parentId = parentCategory?.id;
+      category.isActive = _isActive;
 
-      await store.saveCategory(categoryData);
+      await store.saveCategory(category);
     }
   }
 
@@ -136,15 +133,21 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                           if (parentCategory != null) IconButton(icon: const Icon(Icons.clear), onPressed: () => setParent(null), tooltip: "Clear parent"),
                         ],
                       ),
-                      const SizedBox(height: 20),
-
-                      MyDropdownButton(
-                        items: langs.entries.map((e) => DropdownMenuItem(value: e.value, child: Text(e.key, style: MyTextStyle.font14BlackRegular))).toList(),
-                        onSelected: (val) {
-                          category?.lang = val;
-                        },
-                        title: S.of(context).contentLanguage,
-                      ),
+                      if ((category.parentId) == null) ...[
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(S.of(context).contentLanguage),
+                            LanguageDropDown(
+                              language: category.lang ?? Language.english,
+                              onSelect: (val) {
+                                category.lang = val ?? Language.english;
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 20),
 
                       Row(
@@ -163,12 +166,12 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                       ),
                       const SizedBox(height: 30),
                       ImageUpload(
-                        url: category?.image,
-                        identifier: category?.imageIdentifier,
+                        url: category.image,
+                        identifier: category.imageIdentifier,
                         onImageUpdated: (identifier, image) {
                           setState(() {
-                            category?.imageIdentifier = identifier;
-                            category?.image = image;
+                            category.imageIdentifier = identifier;
+                            category.image = image;
                           });
                         },
                       ),

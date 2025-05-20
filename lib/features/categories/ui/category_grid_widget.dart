@@ -52,14 +52,14 @@ class CategoryGridWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.edit),
+                          icon: const Icon(Icons.edit, color: Colors.amber),
                           onPressed: () {
                             Navigator.of(context).pushNamed(MyRoutes.addCategoryScreen, arguments: {"id": category.id});
                           },
                         ),
 
-                        IconButton(onPressed: () => onArticleItemUp?.call(category), icon: Icon(Icons.arrow_circle_up)),
-                        IconButton(onPressed: () => onArticleItemDown?.call(category), icon: Icon(Icons.arrow_circle_down)),
+                        IconButton(onPressed: () => onArticleItemUp?.call(category), icon: Icon(Icons.arrow_circle_up, color: Colors.white)),
+                        IconButton(onPressed: () => onArticleItemDown?.call(category), icon: Icon(Icons.arrow_circle_down, color: Colors.white)),
                       ],
                     ),
                   ),

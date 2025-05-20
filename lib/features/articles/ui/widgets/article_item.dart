@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/articles/data/models/article.dart';
 
 class ArticleItem extends StatelessWidget {
@@ -11,7 +13,23 @@ class ArticleItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () => onPressed(article),
-      title: Card(child: Padding(padding: const EdgeInsets.all(32.0), child: Text(article.title ?? '---', textAlign: TextAlign.center))),
+      title: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Row(
+            children: [
+              Expanded(child: Text(article.title ?? '---', textAlign: TextAlign.center)),
+              if (Supabase.instance.client.auth.currentUser != null)
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(MyRoutes.addArticleScreen, arguments: {"id": article.id});
+                  },
+                  icon: Icon(Icons.edit, color: Colors.amber),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
