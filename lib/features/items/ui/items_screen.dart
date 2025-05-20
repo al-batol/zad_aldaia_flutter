@@ -25,7 +25,7 @@ class ItemsScreen extends StatefulWidget {
 
 class _ItemsScreenState extends State<ItemsScreen> {
   late final ItemsCubit cubit = getIt<ItemsCubit>();
-  bool _isSearching = false;
+  // bool _isSearching = false;
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
   }
 
   loadData() {
-    cubit.loadItems({'article_id': widget.articleId}..removeWhere((key, value) => value == null));
+    cubit.loadItems(eqMap: {'article_id': widget.articleId}..removeWhere((key, value) => value == null));
   }
 
   List<Item> selectedItems = [];
@@ -42,46 +42,47 @@ class _ItemsScreenState extends State<ItemsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            if (_isSearching) {
-              setState(() {
-                _isSearching = false;
-              });
-            } else {
-              Navigator.of(context).pop();
-            }
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
+        // leading: IconButton(
+        //   onPressed: () {
+        //     if (_isSearching) {
+        //       setState(() {
+        //         _isSearching = false;
+        //       });
+        //     } else {
+        //       Navigator.of(context).pop();
+        //     }
+        //   },
+        //   icon: Icon(Icons.arrow_back),
+        // ),
         titleTextStyle: MyTextStyle.font22primaryBold,
-        title:
-            _isSearching
-                ? TextField(
-                  autofocus: true,
-                  decoration: InputDecoration(hintText: S.of(context).search, border: InputBorder.none),
-                  style: const TextStyle(color: Colors.black),
-                  onChanged: (query) {
-                    // cubit.search(query);
-                  },
-                )
-                : Text(widget.title ?? 'Items'),
+        centerTitle: true,
+        title: Text(widget.title ?? 'Items'),
+        // _isSearching
+        //     ? TextField(
+        //       autofocus: true,
+        //       decoration: InputDecoration(hintText: S.of(context).search, border: InputBorder.none),
+        //       style: const TextStyle(color: Colors.black),
+        //       onChanged: (query) {
+        //         // cubit.search(query);
+        //       },
+        //     )
+        //     : Text(widget.title ?? 'Items'),
         actions: [
-          _isSearching
-              ? IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  _isSearching = false;
-                  setState(() {});
-                },
-              )
-              : IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  _isSearching = true;
-                  setState(() {});
-                },
-              ),
+          // _isSearching
+          //     ? IconButton(
+          //       icon: const Icon(Icons.close),
+          //       onPressed: () {
+          //         _isSearching = false;
+          //         setState(() {});
+          //       },
+          //     )
+          //     : IconButton(
+          //       icon: Icon(Icons.search),
+          //       onPressed: () {
+          //         _isSearching = true;
+          //         setState(() {});
+          //       },
+          //     ),
           if (selectedItems.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.share),
@@ -98,102 +99,100 @@ class _ItemsScreenState extends State<ItemsScreen> {
             ),
         ],
       ),
-      body: SizedBox.expand(
-        child: BlocProvider(
-          create: (context) => cubit,
-          child: BlocBuilder<ItemsCubit, ItemsState>(
-            builder: (context, state) {
-              if (state is ErrorState) {
-                return Center(child: Text(state.error));
+      body: BlocProvider(
+        create: (context) => cubit,
+        child: BlocBuilder<ItemsCubit, ItemsState>(
+          builder: (context, state) {
+            if (state is ErrorState) {
+              return Center(child: Text(state.error));
+            }
+            if (state is LoadingState) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (state is ListLoadedState) {
+              if (state.items.isEmpty) {
+                return Center(child: Text('Empty'));
               }
-              if (state is LoadingState) {
-                return Center(child: CircularProgressIndicator());
-              }
-              if (state is ListLoadedState) {
-                if (state.items.isEmpty) {
-                  return Center(child: Text('Empty'));
-                }
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: state.items.length,
-                        itemBuilder: (context, index) {
-                          var prevItemId = index > 0 ? state.items[index - 1].id : null;
-                          var item = state.items[index];
-                          var nextItemId = index < state.items.length - 1 ? state.items[index + 1].id : null;
-                          switch (item.type) {
-                            case ItemType.text:
-                              return TextItem(
-                                item: item,
-                                isSelected: selectedItems.contains(item),
-                                onSelect: (article) {
-                                  if (selectedItems.contains(article)) {
-                                    selectedItems.remove(article);
-                                  } else {
-                                    selectedItems.add(article);
-                                  }
-                                  setState(() {});
-                                },
-                                onItemUp: (item) {
-                                  cubit.swapItemsOrder(item.id, prevItemId ?? "");
-                                },
-                                onItemDown: (item) {
-                                  cubit.swapItemsOrder(item.id, nextItemId ?? "");
-                                },
-                              );
-                            case ItemType.image:
-                              return ImageItem(
-                                item: item,
-                                isSelected: selectedItems.contains(item),
-                                onSelect: (article) {
-                                  if (selectedItems.contains(article)) {
-                                    selectedItems.remove(article);
-                                  } else {
-                                    selectedItems.add(article);
-                                  }
-                                  setState(() {});
-                                },
-                                onItemUp: (item) {
-                                  cubit.swapItemsOrder(item.id, prevItemId ?? "");
-                                },
-                                onItemDown: (item) {
-                                  cubit.swapItemsOrder(item.id, nextItemId ?? "");
-                                },
-                                onDownloadPressed: (url) async {
-                                  Storage.download(url);
-                                },
-                              );
-                            case ItemType.video:
-                              return VideoItem(
-                                item: item,
-                                isSelected: selectedItems.contains(item),
-                                onSelect: (article) {
-                                  if (selectedItems.contains(article)) {
-                                    selectedItems.remove(article);
-                                  } else {
-                                    selectedItems.add(article);
-                                  }
-                                  setState(() {});
-                                },
-                                onItemUp: (item) {
-                                  cubit.swapItemsOrder(item.id, prevItemId ?? "");
-                                },
-                                onItemDown: (item) {
-                                  cubit.swapItemsOrder(item.id, nextItemId ?? "");
-                                },
-                              );
-                          }
-                        },
-                      ),
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.items.length,
+                      itemBuilder: (context, index) {
+                        var prevItemId = index > 0 ? state.items[index - 1].id : null;
+                        var item = state.items[index];
+                        var nextItemId = index < state.items.length - 1 ? state.items[index + 1].id : null;
+                        switch (item.type) {
+                          case ItemType.text:
+                            return TextItem(
+                              item: item,
+                              isSelected: selectedItems.contains(item),
+                              onSelect: (article) {
+                                if (selectedItems.contains(article)) {
+                                  selectedItems.remove(article);
+                                } else {
+                                  selectedItems.add(article);
+                                }
+                                setState(() {});
+                              },
+                              onItemUp: (item) {
+                                cubit.swapItemsOrder(item.id, prevItemId ?? "");
+                              },
+                              onItemDown: (item) {
+                                cubit.swapItemsOrder(item.id, nextItemId ?? "");
+                              },
+                            );
+                          case ItemType.image:
+                            return ImageItem(
+                              item: item,
+                              isSelected: selectedItems.contains(item),
+                              onSelect: (article) {
+                                if (selectedItems.contains(article)) {
+                                  selectedItems.remove(article);
+                                } else {
+                                  selectedItems.add(article);
+                                }
+                                setState(() {});
+                              },
+                              onItemUp: (item) {
+                                cubit.swapItemsOrder(item.id, prevItemId ?? "");
+                              },
+                              onItemDown: (item) {
+                                cubit.swapItemsOrder(item.id, nextItemId ?? "");
+                              },
+                              onDownloadPressed: (url) async {
+                                Storage.download(url);
+                              },
+                            );
+                          case ItemType.video:
+                            return VideoItem(
+                              item: item,
+                              isSelected: selectedItems.contains(item),
+                              onSelect: (article) {
+                                if (selectedItems.contains(article)) {
+                                  selectedItems.remove(article);
+                                } else {
+                                  selectedItems.add(article);
+                                }
+                                setState(() {});
+                              },
+                              onItemUp: (item) {
+                                cubit.swapItemsOrder(item.id, prevItemId ?? "");
+                              },
+                              onItemDown: (item) {
+                                cubit.swapItemsOrder(item.id, nextItemId ?? "");
+                              },
+                            );
+                        }
+                      },
                     ),
-                  ],
-                );
-              } else {
-                return Container();
-              }
-            },
-          ),
+                  ),
+                ],
+              );
+            } else {
+              return Container();
+            }
+          },
         ),
       ),
     );

@@ -16,7 +16,7 @@ class VideoItem extends StatefulWidget {
   final Function(Item)? onItemDown;
   final Function(Item)? onSelect;
 
-  const VideoItem({super.key, required this.item, this.onSelect, this.isSelected = false, this.onItemUp, this.onItemDown});
+  const VideoItem({super.key, required this.item, this.onSelect, this.isSelected, this.onItemUp, this.onItemDown});
 
   @override
   State<VideoItem> createState() => _YoutubePlayerWidgetState();

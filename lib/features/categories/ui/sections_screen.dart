@@ -5,10 +5,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
 import 'package:zad_aldaia/core/models/languge.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
+import 'package:zad_aldaia/core/widgets/language_drop_down.dart';
+import 'package:zad_aldaia/features/auth/auth_cubit.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
 import 'package:zad_aldaia/features/categories/ui/category_grid_widget.dart';
-import 'package:zad_aldaia/features/home/logic/home_cubit.dart';
-import 'package:zad_aldaia/features/home/ui/widgets/language_drop_down_bottom.dart';
 import '../../../core/theming/my_text_style.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 
@@ -21,7 +21,7 @@ class SectionsScreen extends StatefulWidget {
 
 class _SectionsScreenState extends State<SectionsScreen> {
   late final CategoriesCubit cubit = getIt<CategoriesCubit>();
-  late final HomeCubit authCubit = getIt<HomeCubit>();
+  late final AuthCubit authCubit = getIt<AuthCubit>();
   String language = Language.english;
   final GlobalKey<FormState> adminPasswordFormKey = GlobalKey();
   final TextEditingController passwordController = TextEditingController();
@@ -54,13 +54,13 @@ class _SectionsScreenState extends State<SectionsScreen> {
           icon: Icon(Icons.search),
         ),
         actions: [
-          // if (Supabase.instance.client.auth.currentUser != null)
-          //   IconButton(
-          //     icon: const Icon(Icons.add),
-          //     onPressed: () {
-          //       Navigator.of(context).pushNamed(MyRoutes.addCategoryScreen, arguments: {"parent_id": widget.parentId});
-          //     },
-          //   ),
+          if (Supabase.instance.client.auth.currentUser != null)
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.of(context).pushNamed(MyRoutes.addCategoryScreen, arguments: {"is_section": true});
+              },
+            ),
           LanguageDropDown(
             language: language,
             onSelect:

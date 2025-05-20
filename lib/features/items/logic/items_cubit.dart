@@ -25,11 +25,10 @@ class ItemsCubit extends Cubit<ItemsState> {
     }
   }
 
-  loadItems(Map<String, dynamic> eqMap) async {
+  loadItems({Map<String, dynamic> eqMap = const {}, Map<String, dynamic> likeMap = const {}}) async {
     emit(LoadingState());
     try {
-      items = (await searchItems(eqMap));
-      print(items);
+      items = (await searchItems(eqMap: eqMap, likeMap: likeMap));
       emit(ListLoadedState(items));
     } catch (e) {
       emit(ErrorState(e.toString()));
@@ -38,7 +37,7 @@ class ItemsCubit extends Cubit<ItemsState> {
 
   loadItem(Map<String, dynamic> eqMap) async {
     try {
-      items = (await searchItems(eqMap));
+      items = (await searchItems(eqMap: eqMap));
       if (items.isEmpty) {
         emit(ErrorState('Not Found'));
       } else {
@@ -49,13 +48,13 @@ class ItemsCubit extends Cubit<ItemsState> {
     }
   }
 
-  Future<Item?> findItem(Map<String, dynamic> eqMap) async {
-    final items = (await searchItems(eqMap));
+  Future<Item?> findItem({Map<String, dynamic> eqMap = const {}, Map<String, dynamic> likeMap = const {}}) async {
+    final items = (await searchItems(eqMap: likeMap, likeMap: likeMap));
     return items.isEmpty ? null : items.first;
   }
 
-  Future<List<Item>> searchItems(Map<String, dynamic> eqMap) async {
-    return await _repo.searchItems(eqMap);
+  Future<List<Item>> searchItems({Map<String, dynamic> eqMap = const {}, Map<String, dynamic> likeMap = const {}}) async {
+    return await _repo.searchItems(eqMap, likeMap);
   }
 
   Future<bool> swapItemsOrder(String id1, String id2) async {

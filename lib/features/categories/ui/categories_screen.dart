@@ -5,7 +5,6 @@ import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
 import 'package:zad_aldaia/features/categories/ui/category_widget.dart';
 import '../../../core/theming/my_text_style.dart';
-import 'package:zad_aldaia/generated/l10n.dart';
 
 class CategoriesScreen extends StatefulWidget {
   final String? parentId;
@@ -19,7 +18,6 @@ class CategoriesScreen extends StatefulWidget {
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
   late CategoriesCubit cubit;
-  bool _isSearching = false;
 
   @override
   void initState() {
@@ -36,46 +34,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            if (_isSearching) {
-              setState(() {
-                _isSearching = false;
-              });
-            } else {
-              Navigator.of(context).pop();
-            }
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
         titleTextStyle: MyTextStyle.font22primaryBold,
-        title:
-            _isSearching
-                ? TextField(
-                  autofocus: true,
-                  decoration: InputDecoration(hintText: S.of(context).search, border: InputBorder.none),
-                  style: const TextStyle(color: Colors.black),
-                  onChanged: (query) {
-                    // cubit.search(query);
-                  },
-                )
-                : Text(widget.title ?? 'Categories'),
+        centerTitle: true,
+        title: Text(widget.title ?? 'Categories'),
         actions: [
-          _isSearching
-              ? IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  _isSearching = false;
-                  setState(() {});
-                },
-              )
-              : IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  _isSearching = true;
-                  setState(() {});
-                },
-              ),
           if (Supabase.instance.client.auth.currentUser != null)
             IconButton(
               icon: const Icon(Icons.add),

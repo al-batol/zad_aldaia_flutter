@@ -101,7 +101,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.isEditMode ? 'Edit Category' : 'Create New Category')),
+      appBar: AppBar(centerTitle: true, title: Text(widget.isEditMode ? 'Edit Category' : 'Create New Category')),
       body: BlocProvider(
         create: (context) => store,
         child: BlocListener<CategoriesCubit, CategoriesState>(

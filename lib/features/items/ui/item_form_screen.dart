@@ -55,7 +55,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
     if (state is SavedState) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Item ${widget.isEditMode ? "updated" : "created"} successfully!')));
       if (item.articleId != null) {
-        Navigator.of(context).pushNamed(MyRoutes.articleScreen, arguments: {"id": item.articleId});
+        Navigator.of(context).pushNamed(MyRoutes.items, arguments: {"id": item.articleId});
       }
     }
     if (state is LoadedState) {
@@ -103,7 +103,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.isEditMode ? 'Edit Item' : 'Create New Item')),
+      appBar: AppBar(centerTitle: true, title: Text(widget.isEditMode ? 'Edit Item' : 'Create New Item')),
       body: BlocProvider(
         create: (context) => store,
         child: BlocListener<ItemsCubit, ItemsState>(

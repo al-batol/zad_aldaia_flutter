@@ -101,7 +101,7 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.isEditMode ? 'Edit Article' : 'Create New Article')),
+      appBar: AppBar(centerTitle: true, title: Text(widget.isEditMode ? 'Edit Article' : 'Create New Article')),
       body: BlocProvider(
         create: (context) => store,
         child: BlocListener<ArticlesCubit, ArticlesState>(
@@ -115,6 +115,15 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      Text('Category:', style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(child: ElevatedButton(onPressed: _selectCategory, child: Text(category?.title ?? '(Top Level)'))),
+                          if (category != null) IconButton(icon: const Icon(Icons.clear), onPressed: () => setParent(null), tooltip: "Clear parent"),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
                       TextFormField(
                         controller: _titleController,
                         decoration: const InputDecoration(labelText: 'Article Title *'),
@@ -125,42 +134,8 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
 
-                      // Parent Article Selection
-                      Text('Category:', style: Theme.of(context).textTheme.titleMedium),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(child: ElevatedButton(onPressed: _selectCategory, child: Text(category?.title ?? '(Top Level)'))),
-                          if (category != null) IconButton(icon: const Icon(Icons.clear), onPressed: () => setParent(null), tooltip: "Clear parent"),
-                        ],
-                      ),
-
-                      // const SizedBox(height: 20),
-                      // MyDropdownButton(
-                      //   items: langs.entries.map((e) => DropdownMenuItem(value: e.value, child: Text(e.key, style: MyTextStyle.font14BlackRegular))).toList(),
-                      //   onSelected: (val) {
-                      //     article?.lang = val;
-                      //   },
-                      //   title: S.of(context).contentLanguage,
-                      // ),
-                      // const SizedBox(height: 20),
-                      // Row(
-                      //   children: [
-                      //     const Text('Is Active:'),
-                      //     Spacer(),
-                      //     Switch(
-                      //       value: _isActive,
-                      //       onChanged: (bool value) {
-                      //         setState(() {
-                      //           _isActive = value;
-                      //         });
-                      //       },
-                      //     ),
-                      //   ],
-                      // ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 100),
                       if (state is SavingState)
                         const Center(child: CircularProgressIndicator())
                       else

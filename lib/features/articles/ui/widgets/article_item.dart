@@ -9,6 +9,9 @@ class ArticleItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(onTap: () => onPressed(article), title: Text(article.title ?? '---'));
+    return ListTile(
+      onTap: () => onPressed(article),
+      title: Card(child: Padding(padding: const EdgeInsets.all(32.0), child: Text(article.title ?? '---', textAlign: TextAlign.center))),
+    );
   }
 }

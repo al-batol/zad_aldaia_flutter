@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:zad_aldaia/core/di/dependency_injection.dart';
 import 'package:zad_aldaia/core/helpers/share.dart';
+import 'package:zad_aldaia/core/helpers/translator.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
 import 'package:flutter/services.dart';
-import 'package:zad_aldaia/features/article/logic/article_cubit.dart';
 import 'package:zad_aldaia/features/items/data/models/item.dart';
 import '../../../../core/widgets/note_dialog.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
@@ -21,7 +20,7 @@ class TextItem extends StatefulWidget {
   final Function(Item)? onItemUp;
   final Function(Item)? onItemDown;
 
-  const TextItem({super.key, required this.item, this.onSelect, this.isSelected = false, this.onItemUp, this.onItemDown});
+  const TextItem({super.key, required this.item, this.onSelect, this.isSelected, this.onItemUp, this.onItemDown});
 
   @override
   State<TextItem> createState() => _TextItemState();
@@ -120,7 +119,7 @@ class _TextItemState extends State<TextItem> {
                             if (value == "Original Text") {
                               content = widget.item.content ?? '';
                             } else {
-                              var translation = await getIt<ArticleCubit>().translateText(widget.item.content, value);
+                              var translation = await Translator.text(widget.item.content, value);
                               if (translation != null) {
                                 content = HtmlUnescape().convert(translation);
                               }

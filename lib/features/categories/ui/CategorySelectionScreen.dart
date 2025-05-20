@@ -28,6 +28,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Select Category"),
+        centerTitle: true,
         actions: [if (breadcrumb.isNotEmpty) IconButton(onPressed: () => Navigator.pop(context, breadcrumb.last), icon: Icon(Icons.done))],
       ),
       body: Column(

@@ -34,6 +34,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
       appBar: AppBar(
         titleTextStyle: MyTextStyle.font22primaryBold,
         title: Text(widget.title),
+        centerTitle: true,
         actions: [
           if (Supabase.instance.client.auth.currentUser != null)
             IconButton(
@@ -63,8 +64,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                         itemBuilder:
                             (context, index) => ArticleItem(
                               article: state.items[index],
-                              onPressed:
-                                  (p0) => Navigator.of(context).pushNamed(MyRoutes.articleScreen, arguments: {"id": state.items[index].id, "title": state.items[index].title}),
+                              onPressed: (p0) => Navigator.of(context).pushNamed(MyRoutes.items, arguments: {"id": state.items[index].id, "title": state.items[index].title}),
                             ),
                       ),
                     ),

@@ -17,7 +17,7 @@ class ImageItem extends StatefulWidget {
   final Function(Item)? onItemDown;
   final Future Function(String) onDownloadPressed;
 
-  const ImageItem({super.key, required this.item, required this.onDownloadPressed, this.onSelect, this.isSelected = false, this.onItemUp, this.onItemDown});
+  const ImageItem({super.key, required this.item, required this.onDownloadPressed, this.onSelect, this.isSelected, this.onItemUp, this.onItemDown});
 
   @override
   State<ImageItem> createState() => _ImageItemState();

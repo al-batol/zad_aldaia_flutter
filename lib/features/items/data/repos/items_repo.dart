@@ -8,10 +8,15 @@ class ItemsRepo {
 
   List<Item> items = [];
 
-  Future<List<Item>> searchItems(Map<String, dynamic> eqMap) async {
+  Future<List<Item>> searchItems(Map<String, dynamic> eqMap, Map<String, dynamic> likeMap) async {
+    print("eqMap: ${eqMap}");
+    print("likeMap: ${likeMap}");
     var query = _supabase.from('article_items').select('*');
     for (var element in eqMap.entries) {
       query = query.eq(element.key, element.value);
+    }
+    for (var element in likeMap.entries) {
+      query = query.like(element.key, "%${element.value}%");
     }
     if (Supabase.instance.client.auth.currentUser == null) {
       query = query.eq('is_active', true);
