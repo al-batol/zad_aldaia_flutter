@@ -22,8 +22,8 @@ class CategoryWidget extends StatelessWidget {
           onTap: onTap,
           leading: (category.image == null) ? null : CachedNetworkImage(imageUrl: category.image!, height: 50, width: 50, fit: BoxFit.cover),
           title: Text(category.title ?? '---'),
-          // subtitle: Text(category.lang ?? ''),
-          subtitle: Text('${category.childrenCount} - ${category.articlesCount}'),
+          subtitle: Text(category.lang ?? ''),
+          // subtitle: Text('${category.childrenCount} - ${category.articlesCount}'),
           trailing:
               (Supabase.instance.client.auth.currentUser == null)
                   ? null

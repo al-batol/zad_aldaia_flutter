@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zad_aldaia/core/di/dependency_injection.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
@@ -24,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late final HomeCubit cubit;
+  late final HomeCubit cubit = getIt<HomeCubit>();
   final GlobalKey<FormState> adminPasswordFormKey = GlobalKey();
   final TextEditingController passwordController = TextEditingController();
   String? passwordError;
@@ -33,8 +34,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    cubit = context.read<HomeCubit>();
     _checkForDataUpdates(context);
+  }
+
+  Future<void> _checkForDataUpdates(BuildContext context) async {
+    await cubit.checkForDataUpdates();
+    FlutterNativeSplash.remove();
   }
 
   @override
@@ -111,8 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         showDialog(
                           context: context,
                           builder:
-                              (context) => BlocProvider.value(
-                                value: cubit,
+                              (context) => BlocProvider(
+                                create: (context) => cubit,
                                 child: Dialog(
                                   backgroundColor: Colors.white,
                                   child: Container(
@@ -216,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.only(bottom: 170.h),
             child: Column(
               children: [
-                LanguageDropDownBottom(),
+                // LanguageDropDownBottom(),
                 Container(
                   margin: EdgeInsets.only(top: 180.h),
                   child: Stack(
@@ -270,10 +275,5 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _checkForDataUpdates(BuildContext context) async {
-    await context.read<HomeCubit>().checkForDataUpdates();
-    FlutterNativeSplash.remove();
   }
 }

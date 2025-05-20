@@ -20,7 +20,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   @override
   void initState() {
     super.initState();
-    cubit.getChildCategories(widget.initialParentId);
+    cubit.getChildCategories(widget.initialParentId, null);
   }
 
   @override
@@ -84,7 +84,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     }
     setState(() {});
     if (category.hasChildren) {
-      cubit.getChildCategories(category.id);
+      cubit.getChildCategories(category.id, null);
     }
   }
 

@@ -26,6 +26,7 @@ class CategoriesCubit extends Cubit<CategoriesState> {
   }
 
   loadCategories(Map<String, dynamic> eqMap) async {
+    emit(LoadingState());
     try {
       categories = (await searchCategories(eqMap));
       emit(ListLoadedState(categories));
@@ -36,6 +37,7 @@ class CategoriesCubit extends Cubit<CategoriesState> {
 
   loadCategory(Map<String, dynamic> eqMap) async {
     try {
+      emit(LoadingState());
       categories = (await searchCategories(eqMap));
       if (categories.isEmpty) {
         emit(ErrorState('Not Found'));
@@ -56,10 +58,15 @@ class CategoriesCubit extends Cubit<CategoriesState> {
     return await _repo.searchCategories(eqMap);
   }
 
-  getChildCategories(String? parentId) async {
-    var categories = await _repo.fetchCategories(parentId, null);
-    this.categories = categories;
-    emit(ListLoadedState(categories));
+  getChildCategories(String? parentId, String? language) async {
+    try {
+      emit(LoadingState());
+      var categories = await _repo.fetchCategories(parentId, language);
+      this.categories = categories;
+      emit(ListLoadedState(categories));
+    } catch (e) {
+      emit(ErrorState(e.toString()));
+    }
   }
 
   Future<bool> swapCategoriesOrder(String id1, String id2) async {
