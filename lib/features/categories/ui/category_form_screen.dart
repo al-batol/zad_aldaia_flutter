@@ -164,6 +164,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                       const SizedBox(height: 30),
                       ImageUpload(
                         url: category?.image,
+                        identifier: category?.imageIdentifier,
                         onImageUpdated: (identifier, image) {
                           setState(() {
                             category?.imageIdentifier = identifier;

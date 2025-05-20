@@ -122,7 +122,12 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                         child: ToggleButtons(
                           onPressed: onToggle,
                           isSelected: toggleSelections,
-                          children: [Text(S.of(context).text), Text(S.of(context).image), Text(S.of(context).video)],
+
+                          children: [
+                            Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32), child: Text(S.of(context).text)),
+                            Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32), child: Text(S.of(context).image)),
+                            Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32), child: Text(S.of(context).video)),
+                          ],
                         ),
                       ),
                       if (item.type == ItemType.text) ...[
