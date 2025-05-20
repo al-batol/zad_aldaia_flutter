@@ -6,39 +6,11 @@ extension ArticleTypeExtension on AI.ArticleItem {
   ArticleItem toArticleType() {
     switch (type) {
       case ArticleType.Text:
-        return TextArticle(
-          id: id,
-          section: section,
-          category: category,
-          article: article,
-          title: title!,
-          content: content!,
-          note: note!,
-          language: language,
-          order: order,
-        );
+        return TextArticle(id: id, articleId: articleId, title: title!, content: content!, note: note!, order: order);
       case ArticleType.Image:
-        return ImageArticle(
-          id: id,
-          section: section,
-          category: category,
-          article: article,
-          note: note!,
-          url: url!,
-          language: language,
-          order: order,
-        );
+        return ImageArticle(id: id, articleId: articleId, note: note!, url: url!, order: order);
       case ArticleType.Video:
-        return VideoArticle(
-          id: id,
-          section: section,
-          category: category,
-          article: article,
-          note: note!,
-          language: language,
-          videoId: videoId!,
-          order: order,
-        );
+        return VideoArticle(id: id, articleId: articleId, note: note!, videoId: videoId!, order: order);
     }
   }
 }

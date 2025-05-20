@@ -4,21 +4,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
-import 'package:zad_aldaia/features/article/data/models/article_item.dart';
-import 'package:zad_aldaia/features/article/logic/article_cubit.dart';
+import 'package:zad_aldaia/features/items/data/models/item.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 import '../../../../core/theming/my_colors.dart';
 import '../../../../core/widgets/note_dialog.dart';
 
 class ImageItem extends StatefulWidget {
-  final ImageArticle item;
+  final Item item;
   final bool? isSelected;
-  final Function(ArticleItem)? onSelect;
-  final Function(ArticleItem)? onArticleItemUp;
-  final Function(ArticleItem)? onArticleItemDown;
+  final Function(Item)? onSelect;
+  final Function(Item)? onItemUp;
+  final Function(Item)? onItemDown;
   final Future Function(String) onDownloadPressed;
 
-  const ImageItem({super.key, required this.item, required this.onDownloadPressed, this.onSelect, this.isSelected = false, this.onArticleItemUp, this.onArticleItemDown});
+  const ImageItem({super.key, required this.item, required this.onDownloadPressed, this.onSelect, this.isSelected = false, this.onItemUp, this.onItemDown});
 
   @override
   State<ImageItem> createState() => _ImageItemState();
@@ -40,7 +39,7 @@ class _ImageItemState extends State<ImageItem> {
           children: [
             Expanded(
               child: CachedNetworkImage(
-                imageUrl: widget.item.url,
+                imageUrl: widget.item.imageUrl ?? '---',
                 errorWidget: (context, url, error) => Icon(Icons.error),
                 progressIndicatorBuilder:
                     (context, url, downloadProgress) => Center(
@@ -53,12 +52,12 @@ class _ImageItemState extends State<ImageItem> {
             ),
             Column(
               children: [
-                if (widget.item.note.trim().isNotEmpty)
+                if (widget.item.note?.trim().isNotEmpty ?? false)
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
                     child: InkWell(
                       onTap: () {
-                        showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note));
+                        showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note ?? '---'));
                       },
                       child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
                     ),
@@ -73,7 +72,7 @@ class _ImageItemState extends State<ImageItem> {
                               setState(() {
                                 isDownloading = true;
                               });
-                              await widget.onDownloadPressed(widget.item.url);
+                              await widget.onDownloadPressed(widget.item.imageUrl ?? '---');
                               setState(() {
                                 isDownloading = false;
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).imageDownloaded)));
@@ -84,7 +83,7 @@ class _ImageItemState extends State<ImageItem> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.w),
-                  child: InkWell(onTap: () => Share.article(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
+                  child: InkWell(onTap: () => Share.item(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
                 ),
                 if (Supabase.instance.client.auth.currentUser != null)
                   Padding(
@@ -101,8 +100,8 @@ class _ImageItemState extends State<ImageItem> {
                     padding: EdgeInsets.symmetric(horizontal: 3.w),
                     child: Column(
                       children: [
-                        InkWell(onTap: () => widget.onArticleItemUp?.call(widget.item), child: Icon(Icons.arrow_circle_up, color: MyColors.primaryColor)),
-                        InkWell(onTap: () => widget.onArticleItemDown?.call(widget.item), child: Icon(Icons.arrow_circle_down, color: MyColors.primaryColor)),
+                        InkWell(onTap: () => widget.onItemUp?.call(widget.item), child: Icon(Icons.arrow_circle_up, color: MyColors.primaryColor)),
+                        InkWell(onTap: () => widget.onItemDown?.call(widget.item), child: Icon(Icons.arrow_circle_down, color: MyColors.primaryColor)),
                       ],
                     ),
                   ),

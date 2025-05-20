@@ -11,8 +11,7 @@ import 'package:uuid/uuid.dart';
 import 'package:zad_aldaia/core/extensions/article_item_extensions.dart';
 import 'package:zad_aldaia/core/networking/api_service.dart';
 import 'package:zad_aldaia/core/networking/translation_request.dart';
-import 'package:zad_aldaia/features/article/data/models/article_item.dart'
-    as article_item;
+import 'package:zad_aldaia/features/article/data/models/article_item.dart' as article_item;
 
 class ArticleRepo {
   final MyDatabase _db;
@@ -24,29 +23,15 @@ class ArticleRepo {
 
   Future<String?> translateText(text, language) async {
     try {
-      var response = await _apiService.translateText(
-        TranslationRequest(text, language),
-      );
+      var response = await _apiService.translateText(TranslationRequest(text, language));
       return response.data.translations.first.translatedText;
     } catch (e) {
       return null;
     }
   }
 
-  Future<List<article_item.ArticleItem>> getArticleItems(
-    String article,
-    String category,
-    String section,
-    String language,
-  ) async {
-    var items =
-        await (_db.select(_db.articleItems)..where(
-          (tbl) =>
-              tbl.section.equals(section) &
-              tbl.category.equals(category) &
-              tbl.article.equals(article) &
-              tbl.language.equals(language),
-        )).get();
+  Future<List<article_item.ArticleItem>> getArticleItems(String articleId) async {
+    var items = await (_db.select(_db.articleItems)..where((tbl) => tbl.articleId.equals(articleId))).get();
     return items.map((e) {
       return e.toArticleType();
     }).toList();
@@ -57,10 +42,7 @@ class ArticleRepo {
     var androidVersion = (await DeviceInfoPlugin().androidInfo).version.release;
     if (status.isGranted || int.parse(androidVersion) >= 11) {
       var response = await get(Uri.parse(imageUrl));
-      var downloadDirectory =
-          await ExternalPath.getExternalStoragePublicDirectory(
-            ExternalPath.DIRECTORY_DOWNLOAD,
-          );
+      var downloadDirectory = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOAD);
       var filePathAndName = '$downloadDirectory/${Uuid().v4()}.jpg';
       File file = File(filePathAndName);
       await file.writeAsBytes(response.bodyBytes);
@@ -69,10 +51,7 @@ class ArticleRepo {
 
   saveImageWeb(String imageUrl) async {
     try {
-      await WebImageDownloader.downloadImageFromWeb(
-        imageUrl,
-        name: Uuid().v4(),
-      );
+      await WebImageDownloader.downloadImageFromWeb(imageUrl, name: Uuid().v4());
     } catch (e) {
       print(e);
     }
@@ -80,9 +59,7 @@ class ArticleRepo {
 
   Future<bool> updateArticleItem(article_item.ArticleItem articleItem) async {
     try {
-      await _supabase
-          .from('article_items')
-          .upsert(articleItem.toJson(), onConflict: 'id');
+      await _supabase.from('article_items').upsert(articleItem.toJson(), onConflict: 'id');
 
       return true;
     } catch (e) {
@@ -93,10 +70,7 @@ class ArticleRepo {
 
   Future<bool> swapArticleItemOrders(String id1, String id2) async {
     try {
-      final response = await _supabase
-          .from('article_items')
-          .select('id, order')
-          .or('id.eq.$id1,id.eq.$id2');
+      final response = await _supabase.from('article_items').select('id, order').or('id.eq.$id1,id.eq.$id2');
 
       if (response.length != 2) {
         print('❌ One or both IDs not found.');
@@ -108,14 +82,8 @@ class ArticleRepo {
       final order2 = response.firstWhere((item) => item['id'] == id2)['order'];
       print('order2: $order2');
 
-      await _supabase
-          .from('article_items')
-          .update({'order': order2})
-          .eq('id', id1);
-      await _supabase
-          .from('article_items')
-          .update({'order': order1})
-          .eq('id', id2);
+      await _supabase.from('article_items').update({'order': order2}).eq('id', id1);
+      await _supabase.from('article_items').update({'order': order1}).eq('id', id2);
 
       print('✅ Orders swapped between ID $id1 and ID $id2');
       return true;

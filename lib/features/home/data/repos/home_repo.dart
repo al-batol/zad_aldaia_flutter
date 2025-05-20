@@ -37,20 +37,13 @@ class HomeRepo {
 
     while (true) {
       try {
-        final result = await _supabase
-            .from('article_items')
-            .select()
-            .order('id')
-            .range(offset, offset + limit - 1);
+        final result = await _supabase.from('article_items').select().order('id').range(offset, offset + limit - 1);
 
         if (result.isEmpty) {
           break;
         }
 
-        final articleItems =
-            (result as List<dynamic>)
-                .map((data) => articleFromFirestore(data))
-                .toList();
+        final articleItems = (result as List<dynamic>).map((data) => articleFromFirestore(data)).toList();
 
         await Future.wait(
           articleItems.map((articleItem) async {
@@ -73,10 +66,7 @@ class HomeRepo {
   ArticleItem articleFromFirestore(Map<String, dynamic> data) {
     return ArticleItem(
       id: data["id"] ?? "",
-      section: data["section"] ?? "",
-      category: data["category"] ?? "",
-      article: data["article"] ?? "",
-      language: data["language"],
+      articleId: data["article_id"] ?? "",
       type: ArticleTypeExtension.valueOf(data["type"]),
       title: data["title"],
       content: data["content"],
@@ -88,9 +78,7 @@ class HomeRepo {
   }
 
   _saveArticleItem(ArticleItem articleItem) async {
-    await _dp
-        .into(_dp.articleItems)
-        .insert(articleItem, onConflict: DoUpdate((old) => articleItem));
+    await _dp.into(_dp.articleItems).insert(articleItem, onConflict: DoUpdate((old) => articleItem));
   }
 
   Future<void> checkDeletes() async {
@@ -98,10 +86,7 @@ class HomeRepo {
       final result = await _supabase.from('deleted_items').select('id');
 
       if (result.isNotEmpty) {
-        final deletesId =
-            (result as List<dynamic>)
-                .map((item) => item['id'] as String)
-                .toList();
+        final deletesId = (result as List<dynamic>).map((item) => item['id'] as String).toList();
 
         await Future.wait(deletesId.map((id) async => await deleteArticle(id)));
       }
@@ -111,8 +96,7 @@ class HomeRepo {
   }
 
   deleteArticle(String id) async {
-    await (_dp.delete(_dp.articleItems)
-      ..where((tbl) => tbl.id.equals(id))).go();
+    await (_dp.delete(_dp.articleItems)..where((tbl) => tbl.id.equals(id))).go();
   }
 
   saveDataVersion(int version) {
@@ -121,10 +105,7 @@ class HomeRepo {
 
   Future<bool> signIn(String password) async {
     try {
-      final response = await _supabase.auth.signInWithPassword(
-        email: '$password@admin.com',
-        password: password,
-      );
+      final response = await _supabase.auth.signInWithPassword(email: '$password@admin.com', password: password);
 
       return response.user != null;
     } catch (e) {

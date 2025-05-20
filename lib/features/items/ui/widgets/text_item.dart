@@ -6,22 +6,22 @@ import 'package:zad_aldaia/core/helpers/share.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/core/theming/my_colors.dart';
 import 'package:zad_aldaia/core/theming/my_text_style.dart';
-import 'package:zad_aldaia/features/article/data/models/article_item.dart';
 import 'package:flutter/services.dart';
 import 'package:zad_aldaia/features/article/logic/article_cubit.dart';
+import 'package:zad_aldaia/features/items/data/models/item.dart';
 import '../../../../core/widgets/note_dialog.dart';
 import 'package:zad_aldaia/generated/l10n.dart';
 import 'package:html_unescape/html_unescape.dart';
 
 class TextItem extends StatefulWidget {
-  final TextArticle item;
+  final Item item;
   final bool? isSelected;
-  final Function(ArticleItem)? onSelect;
+  final Function(Item)? onSelect;
 
-  final Function(ArticleItem)? onArticleItemUp;
-  final Function(ArticleItem)? onArticleItemDown;
+  final Function(Item)? onItemUp;
+  final Function(Item)? onItemDown;
 
-  const TextItem({super.key, required this.item, this.onSelect, this.isSelected = false, this.onArticleItemUp, this.onArticleItemDown});
+  const TextItem({super.key, required this.item, this.onSelect, this.isSelected = false, this.onItemUp, this.onItemDown});
 
   @override
   State<TextItem> createState() => _TextItemState();
@@ -37,7 +37,7 @@ class _TextItemState extends State<TextItem> {
   @override
   void initState() {
     super.initState();
-    content = widget.item.content;
+    content = widget.item.content ?? '';
     _controller = ExpansionTileController();
   }
 
@@ -77,7 +77,7 @@ class _TextItemState extends State<TextItem> {
             onTap: () {
               _controller.isExpanded ? _controller.collapse() : _controller.expand();
             },
-            widget.item.title,
+            widget.item.title ?? '---',
             style: MyTextStyle.font18BlackBold,
           ),
           controlAffinity: ListTileControlAffinity.leading,
@@ -85,12 +85,12 @@ class _TextItemState extends State<TextItem> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (widget.item.note.trim().isNotEmpty)
+              if (widget.item.note?.trim().isNotEmpty ?? false)
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
                   child: InkWell(
                     onTap: () {
-                      showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note));
+                      showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note!));
                     },
                     child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
                   ),
@@ -99,7 +99,7 @@ class _TextItemState extends State<TextItem> {
                 padding: EdgeInsets.symmetric(horizontal: 3.w),
                 child: InkWell(
                   onTap: () async {
-                    await Clipboard.setData(ClipboardData(text: widget.item.content)).then((value) {
+                    await Clipboard.setData(ClipboardData(text: content)).then((value) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).contentCopied)));
                     });
                   },
@@ -118,7 +118,7 @@ class _TextItemState extends State<TextItem> {
                               isTranslating = true;
                             });
                             if (value == "Original Text") {
-                              content = widget.item.content;
+                              content = widget.item.content ?? '';
                             } else {
                               var translation = await getIt<ArticleCubit>().translateText(widget.item.content, value);
                               if (translation != null) {
@@ -136,7 +136,7 @@ class _TextItemState extends State<TextItem> {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w),
-                child: InkWell(onTap: () => Share.article(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
+                child: InkWell(onTap: () => Share.item(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
               ),
               if (Supabase.instance.client.auth.currentUser != null)
                 Padding(
@@ -153,8 +153,8 @@ class _TextItemState extends State<TextItem> {
                   padding: EdgeInsets.symmetric(horizontal: 3.w),
                   child: Column(
                     children: [
-                      InkWell(onTap: () => widget.onArticleItemUp?.call(widget.item), child: Icon(Icons.arrow_circle_up, color: MyColors.primaryColor)),
-                      InkWell(onTap: () => widget.onArticleItemDown?.call(widget.item), child: Icon(Icons.arrow_circle_down, color: MyColors.primaryColor)),
+                      InkWell(onTap: () => widget.onItemUp?.call(widget.item), child: Icon(Icons.arrow_circle_up, color: MyColors.primaryColor)),
+                      InkWell(onTap: () => widget.onItemDown?.call(widget.item), child: Icon(Icons.arrow_circle_down, color: MyColors.primaryColor)),
                     ],
                   ),
                 ),

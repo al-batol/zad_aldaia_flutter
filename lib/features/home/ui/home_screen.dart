@@ -65,16 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
     "دليل الداعية",
   ];
 
-  final colors = const [
-    Color(0xff7E4D5A),
-    Color(0xff51B8E1),
-    Color(0xff364666),
-    Color(0xff4A71EC),
-    Color(0xff5B2D3E),
-    Color(0xff3E586D),
-    Color(0xff3E2A30),
-    MyColors.primaryColor,
-  ];
+  final colors = const [Color(0xff7E4D5A), Color(0xff51B8E1), Color(0xff364666), Color(0xff4A71EC), Color(0xff5B2D3E), Color(0xff3E586D), Color(0xff3E2A30), MyColors.primaryColor];
 
   final images = const [
     Assets.svgCresentMoon,
@@ -125,20 +116,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Dialog(
                                   backgroundColor: Colors.white,
                                   child: Container(
-                                    padding: EdgeInsetsDirectional.symmetric(
-                                      vertical: 10.h,
-                                      horizontal: 20.w,
-                                    ),
+                                    padding: EdgeInsetsDirectional.symmetric(vertical: 10.h, horizontal: 20.w),
                                     child: StatefulBuilder(
                                       builder: (builderContext, setState) {
                                         return Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text(
-                                              S.of(context).enterPassword,
-                                              style:
-                                                  MyTextStyle.font18BlackBold,
-                                            ),
+                                            Text(S.of(context).enterPassword, style: MyTextStyle.font18BlackBold),
                                             SizedBox(height: 20.h),
                                             Form(
                                               key: adminPasswordFormKey,
@@ -147,53 +131,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 obscureText: _obscureText,
                                                 decoration: InputDecoration(
                                                   errorText: passwordError,
-                                                  contentPadding:
-                                                      EdgeInsetsDirectional.only(
-                                                        start: 16.0,
-                                                        end: 4.0,
-                                                      ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                          color:
-                                                              MyColors
-                                                                  .primaryColor,
-                                                          style:
-                                                              BorderStyle.solid,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              15.h,
-                                                            ),
-                                                      ),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          15.h,
-                                                        ),
+                                                  contentPadding: EdgeInsetsDirectional.only(start: 16.0, end: 4.0),
+                                                  focusedBorder: OutlineInputBorder(
+                                                    borderSide: BorderSide(color: MyColors.primaryColor, style: BorderStyle.solid),
+                                                    borderRadius: BorderRadius.circular(15.h),
                                                   ),
-                                                  hintText:
-                                                      S.of(context).password,
+                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.h)),
+                                                  hintText: S.of(context).password,
                                                   suffixIcon: IconButton(
-                                                    icon: Icon(
-                                                      _obscureText
-                                                          ? Icons.visibility_off
-                                                          : Icons.visibility,
-                                                    ),
+                                                    icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
                                                     onPressed: () {
                                                       setState(() {
-                                                        _obscureText =
-                                                            !_obscureText;
+                                                        _obscureText = !_obscureText;
                                                       });
                                                     },
                                                   ),
                                                 ),
                                                 validator: (value) {
-                                                  if (value == null ||
-                                                      value.isEmpty) {
-                                                    return S
-                                                        .of(context)
-                                                        .pleaseEnterPassword;
+                                                  if (value == null || value.isEmpty) {
+                                                    return S.of(context).pleaseEnterPassword;
                                                   }
                                                   return null;
                                                 },
@@ -206,75 +162,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   onPressed: () {
                                                     Navigator.of(context).pop();
                                                   },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                        backgroundColor:
-                                                            MyColors
-                                                                .primaryColor,
-                                                      ),
-                                                  child: Text(
-                                                    S.of(context).dismiss,
-                                                    style:
-                                                        MyTextStyle
-                                                            .font16WhiteBold,
-                                                  ),
+                                                  style: ElevatedButton.styleFrom(backgroundColor: MyColors.primaryColor),
+                                                  child: Text(S.of(context).dismiss, style: MyTextStyle.font16WhiteBold),
                                                 ),
                                                 SizedBox(width: 15.w),
                                                 ElevatedButton(
                                                   onPressed: () async {
-                                                    if (adminPasswordFormKey
-                                                        .currentState!
-                                                        .validate()) {
+                                                    if (adminPasswordFormKey.currentState!.validate()) {
                                                       setState(() {
                                                         checkingPassword = true;
                                                       });
-                                                      if (await cubit.signIn(
-                                                        passwordController.text,
-                                                      )) {
+                                                      if (await cubit.signIn(passwordController.text)) {
                                                         passwordError = null;
-                                                        Navigator.of(
-                                                          context,
-                                                        ).popAndPushNamed(
-                                                          MyRoutes.adminScreen,
-                                                        );
+                                                        Navigator.of(context).popAndPushNamed(MyRoutes.adminScreen);
                                                       } else {
                                                         setState(() {
-                                                          passwordError =
-                                                              S
-                                                                  .of(context)
-                                                                  .wrongPassword;
+                                                          passwordError = S.of(context).wrongPassword;
                                                         });
                                                       }
                                                       checkingPassword = false;
                                                     }
                                                   },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                        backgroundColor:
-                                                            MyColors
-                                                                .primaryColor,
-                                                      ),
+                                                  style: ElevatedButton.styleFrom(backgroundColor: MyColors.primaryColor),
                                                   child:
                                                       checkingPassword == true
-                                                          ? Center(
-                                                            child: SizedBox(
-                                                              width: 24.h,
-                                                              height: 24.h,
-                                                              child: CircularProgressIndicator(
-                                                                color:
-                                                                    Colors
-                                                                        .white,
-                                                              ),
-                                                            ),
-                                                          )
-                                                          : Text(
-                                                            S
-                                                                .of(context)
-                                                                .continu,
-                                                            style:
-                                                                MyTextStyle
-                                                                    .font16WhiteBold,
-                                                          ),
+                                                          ? Center(child: SizedBox(width: 24.h, height: 24.h, child: CircularProgressIndicator(color: Colors.white)))
+                                                          : Text(S.of(context).continu, style: MyTextStyle.font16WhiteBold),
                                                 ),
                                               ],
                                             ),
@@ -292,11 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ];
             },
-            child: Icon(
-              Icons.more_vert,
-              size: 40.h,
-              color: MyColors.primaryColor,
-            ),
+            child: Icon(Icons.more_vert, size: 40.h, color: MyColors.primaryColor),
           ),
         ],
       ),
@@ -321,12 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 120.w,
                           height: 120.h,
                           alignment: Alignment.center,
-                          child: SvgPicture.asset(
-                            Assets.svgZadLogo,
-                            width: 90.w,
-                            height: 90.h,
-                            fit: BoxFit.cover,
-                          ),
+                          child: SvgPicture.asset(Assets.svgZadLogo, width: 90.w, height: 90.h, fit: BoxFit.cover),
                         ),
                       ),
 
@@ -350,24 +254,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               image: images[index],
                               color: colors[index],
                               onPressed: () {
-                                Navigator.of(context).pushNamed(
-                                  MyRoutes.sectionsScreen,
-                                  arguments: {
-                                    "title": titles[index],
-                                    "section": sections[index],
-                                    "language": cubit.language,
-                                  },
-                                );
+                                Navigator.of(context).pushNamed(MyRoutes.categories, arguments: {"title": titles[index], "section": sections[index], "language": cubit.language});
                               },
                               title: titles[index],
                             ),
                           ),
                         );
                       }),
-                    ].animate(
-                      interval: .1.seconds,
-                      effects: [SlideEffect(), FadeEffect()],
-                    ),
+                    ].animate(interval: .1.seconds, effects: [SlideEffect(), FadeEffect()]),
                   ),
                 ),
               ],

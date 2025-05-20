@@ -18,18 +18,13 @@ import '../../../core/theming/my_colors.dart';
 import '../../../core/widgets/no_items_widget.dart';
 
 class ArticleScreen extends StatefulWidget {
-  final String section;
-  final String language;
-  final String category;
-  final String article;
+  final String id;
+  final String? title;
+  // final String? language;
+  // final String? category;
+  // final String? article;
 
-  const ArticleScreen({
-    super.key,
-    required this.section,
-    required this.language,
-    required this.category,
-    required this.article,
-  });
+  const ArticleScreen({super.key, required this.id, this.title});
 
   @override
   State<ArticleScreen> createState() => _ArticleScreenState();
@@ -43,12 +38,8 @@ class _ArticleScreenState extends State<ArticleScreen> {
   @override
   void initState() {
     cubit = context.read<ArticleCubit>();
-    cubit.getArticles(
-      widget.section,
-      widget.language,
-      widget.category,
-      widget.article,
-    );
+    cubit.articleId = widget.id;
+    cubit.getItems();
     super.initState();
   }
 
@@ -73,22 +64,19 @@ class _ArticleScreenState extends State<ArticleScreen> {
             _isSearching
                 ? TextField(
                   autofocus: true,
-                  decoration: InputDecoration(
-                    hintText: S.of(context).search,
-                    border: InputBorder.none,
-                  ),
+                  decoration: InputDecoration(hintText: S.of(context).search, border: InputBorder.none),
                   style: const TextStyle(color: Colors.black),
                   onChanged: (query) {
                     cubit.search(query);
                   },
                 )
-                : Text(widget.article),
+                : Text(widget.title ?? '---'),
         actions: [
           if (selectedItems.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.share),
               onPressed: () {
-                Share.multi(selectedItems);
+                // Share.multi(selectedItems);
               },
             ),
           _isSearching
@@ -100,15 +88,19 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 },
               )
               : IconButton(
-                icon: Icon(
-                  const IconData(0xe802, fontFamily: "search_icon"),
-                  color: MyColors.primaryColor,
-                ),
+                icon: Icon(const IconData(0xe802, fontFamily: "search_icon"), color: MyColors.primaryColor),
                 onPressed: () {
                   _isSearching = true;
                   setState(() {});
                 },
               ),
+
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(MyRoutes.addItemScreen, arguments: {"article_id": widget.id, "order": cubit.items.length + 1});
+            },
+            icon: Icon(Icons.add),
+          ),
         ],
       ),
       body: Container(
@@ -117,100 +109,14 @@ class _ArticleScreenState extends State<ArticleScreen> {
           builder: (context, state) {
             if (state is LoadedState) {
               if (state.items.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      NoItemsWidget(),
-                      SizedBox(height: 50.h),
-                      Supabase.instance.client.auth.currentUser != null
-                          ? ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                MyColors.primaryColor,
-                              ),
-                              padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(
-                                  vertical: 10.h,
-                                  horizontal: 30.w,
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pushNamed(
-                                MyRoutes.addItemScreen,
-                                arguments: {
-                                  "section": widget.section,
-                                  "language": widget.language,
-                                  "category": widget.category,
-                                  "article": widget.article,
-                                  "order": state.items.length + 1,
-                                },
-                              );
-                            },
-                            child: Text(
-                              "Add Item",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.sp,
-                              ),
-                            ),
-                          )
-                          : SizedBox(),
-                    ],
-                  ),
-                );
+                return Center(child: Text('Empty.'));
               }
               return ListView.builder(
-                itemCount: state.items.length + 1,
+                itemCount: state.items.length,
                 itemBuilder: (context, index) {
-                  if (index == state.items.length) {
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child:
-                          Supabase.instance.client.auth.currentUser != null
-                              ? ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                    MyColors.primaryColor,
-                                  ),
-                                  padding: MaterialStateProperty.all(
-                                    EdgeInsets.symmetric(
-                                      vertical: 15.h,
-                                      horizontal: 40.w,
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pushNamed(
-                                    MyRoutes.addItemScreen,
-                                    arguments: {
-                                      "section": widget.section,
-                                      "language": widget.language,
-                                      "category": widget.category,
-                                      "article": widget.article,
-                                      "order": state.items.length + 1,
-                                    },
-                                  );
-                                },
-                                child: Text(
-                                  "Add Item",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.sp,
-                                  ),
-                                ),
-                              )
-                              : null,
-                    );
-                  }
                   var prevItemId = index > 0 ? state.items[index - 1].id : null;
                   var item = state.items[index];
-                  var nextItemId =
-                      index < state.items.length - 1
-                          ? state.items[index + 1].id
-                          : null;
+                  var nextItemId = index < state.items.length - 1 ? state.items[index + 1].id : null;
                   switch (item.type) {
                     case ArticleType.Text:
                       return TextItem(
@@ -225,24 +131,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
                           setState(() {});
                         },
                         onArticleItemUp: (item) {
-                          cubit.swapArticleItemOrders(
-                            item.id,
-                            prevItemId ?? "",
-                            widget.section,
-                            widget.language,
-                            widget.category,
-                            widget.article,
-                          );
+                          cubit.swapArticleItemOrders(item.id, prevItemId ?? "");
                         },
                         onArticleItemDown: (item) {
-                          cubit.swapArticleItemOrders(
-                            item.id,
-                            nextItemId ?? "",
-                            widget.section,
-                            widget.language,
-                            widget.category,
-                            widget.article,
-                          );
+                          cubit.swapArticleItemOrders(item.id, nextItemId ?? "");
                         },
                       );
                     case ArticleType.Image:
@@ -258,24 +150,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
                           setState(() {});
                         },
                         onArticleItemUp: (item) {
-                          cubit.swapArticleItemOrders(
-                            item.id,
-                            prevItemId ?? "",
-                            widget.section,
-                            widget.language,
-                            widget.category,
-                            widget.article,
-                          );
+                          cubit.swapArticleItemOrders(item.id, prevItemId ?? "");
                         },
                         onArticleItemDown: (item) {
-                          cubit.swapArticleItemOrders(
-                            item.id,
-                            nextItemId ?? "",
-                            widget.section,
-                            widget.language,
-                            widget.category,
-                            widget.article,
-                          );
+                          cubit.swapArticleItemOrders(item.id, nextItemId ?? "");
                         },
                         onDownloadPressed: (url) async {
                           if (kIsWeb) {
@@ -298,33 +176,17 @@ class _ArticleScreenState extends State<ArticleScreen> {
                           setState(() {});
                         },
                         onArticleItemUp: (item) {
-                          cubit.swapArticleItemOrders(
-                            item.id,
-                            prevItemId ?? "",
-                            widget.section,
-                            widget.language,
-                            widget.category,
-                            widget.article,
-                          );
+                          cubit.swapArticleItemOrders(item.id, prevItemId ?? "");
                         },
                         onArticleItemDown: (item) {
-                          cubit.swapArticleItemOrders(
-                            item.id,
-                            nextItemId ?? "",
-                            widget.section,
-                            widget.language,
-                            widget.category,
-                            widget.article,
-                          );
+                          cubit.swapArticleItemOrders(item.id, nextItemId ?? "");
                         },
                       );
                   }
                 },
               );
             }
-            return Center(
-              child: CircularProgressIndicator(color: MyColors.primaryColor),
-            );
+            return Center(child: CircularProgressIndicator(color: MyColors.primaryColor));
           },
         ),
       ),
