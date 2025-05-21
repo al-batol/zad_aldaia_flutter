@@ -77,3 +77,7 @@
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 #/lib/core/constants/firebase_constants.dart
+
+.flutter-plugins-dependencies
+.flutter-plugins
+pubspec.lock
