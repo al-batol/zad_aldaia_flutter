@@ -9,11 +9,12 @@ import 'package:zad_aldaia/features/categories/ui/CategorySelectionScreen.dart';
 import 'package:zad_aldaia/features/upload/image_upload.dart';
 
 class CategoryFormScreen extends StatefulWidget {
-  final String? categoryId;
+  final String? id;
+  final String? parentId;
 
-  const CategoryFormScreen({super.key, this.categoryId});
+  const CategoryFormScreen({super.key, this.id, required this.parentId});
 
-  bool get isEditMode => categoryId != null;
+  bool get isEditMode => id != null;
 
   @override
   State<CategoryFormScreen> createState() => _CategoryFormScreenState();
@@ -32,7 +33,9 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
     super.initState();
     store = getIt<CategoriesCubit>();
     if (widget.isEditMode) {
-      store.loadCategory({'id': widget.categoryId!});
+      store.loadCategory({'id': widget.id!});
+    } else {
+      fillForm();
     }
   }
 
@@ -58,6 +61,9 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
     if (category.parentId != null) {
       parentCategory = await store.findCategory({'id': category.parentId!});
     }
+    if (widget.parentId != null) {
+      parentCategory = await store.findCategory({'id': widget.parentId!});
+    }
     setState(() {});
   }
 
@@ -79,7 +85,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       category.title = _titleController.text.trim();
-      category.parentId = parentCategory?.id;
+      category.parentId = widget.parentId ?? category.parentId ?? parentCategory?.id;
       category.isActive = _isActive;
       category.lang = await Lang.get();
 
@@ -122,14 +128,20 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Parent Category Selection
                       Text('Parent Category:', style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(child: ElevatedButton(onPressed: _selectParentCategory, child: Text(parentCategory?.title ?? '(Top Level)'))),
-                          if (parentCategory != null) IconButton(icon: const Icon(Icons.clear), onPressed: () => setParent(null), tooltip: "Clear parent"),
-                        ],
+                      AbsorbPointer(
+                        absorbing: (widget.parentId != null),
+                        child: Opacity(
+                          opacity: (widget.parentId != null ? 0.7 : 1),
+                          child: Row(
+                            children: [
+                              Expanded(child: ElevatedButton(onPressed: _selectParentCategory, child: Text(parentCategory?.title ?? '(Top Level)'))),
+                              if (parentCategory != null && widget.parentId == null)
+                                IconButton(icon: const Icon(Icons.clear), onPressed: () => setParent(null), tooltip: "Clear parent"),
+                            ],
+                          ),
+                        ),
                       ),
                       // if ((category.parentId) == null) ...[
                       //   const SizedBox(height: 20),

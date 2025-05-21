@@ -10,10 +10,8 @@ import '../../../core/theming/my_text_style.dart';
 class ArticlesScreen extends StatefulWidget {
   final String categoryId;
   final String title;
-  final String? section;
-  final String? language;
 
-  const ArticlesScreen({super.key, required this.categoryId, required this.title, this.section, this.language});
+  const ArticlesScreen({super.key, required this.categoryId, required this.title});
 
   @override
   State<ArticlesScreen> createState() => _ArticlesScreenState();
@@ -40,7 +38,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: () {
-                Navigator.of(context).pushNamed(MyRoutes.addArticleScreen, arguments: {"section": widget.section, "language": widget.language});
+                Navigator.of(context).pushNamed(MyRoutes.addArticleScreen, arguments: {"category_id": widget.categoryId});
               },
             ),
         ],

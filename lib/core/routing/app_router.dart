@@ -27,9 +27,9 @@ class AppRouter {
           builder: (context) => BlocProvider(create: (context) => getIt<CategoriesCubit>(), child: CategoriesScreen(title: arguments["title"], parentId: arguments["category_id"])),
         );
       case MyRoutes.addCategoryScreen:
-        return MaterialPageRoute(builder: (context) => CategoryFormScreen(categoryId: arguments["id"]));
+        return MaterialPageRoute(builder: (context) => CategoryFormScreen(id: arguments["id"], parentId: arguments["parent_id"]));
       case MyRoutes.addArticleScreen:
-        return MaterialPageRoute(builder: (context) => ArticleFormScreen(articleId: arguments["id"]));
+        return MaterialPageRoute(builder: (context) => ArticleFormScreen(id: arguments["id"], categoryId: arguments["category_id"]));
       case MyRoutes.articles:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(create: (context) => getIt<CategoriesCubit>(), child: ArticlesScreen(title: arguments["title"], categoryId: arguments["category_id"])),
