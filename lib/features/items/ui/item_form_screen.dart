@@ -145,6 +145,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                         ),
                         TextFormField(
                           controller: contentController,
+                          maxLines: 10,
                           decoration: const InputDecoration(labelText: 'Content'),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
@@ -157,8 +158,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
 
                       TextFormField(controller: noteController, decoration: const InputDecoration(labelText: 'Note')),
 
-                      TextFormField(controller: backgroundColorController, decoration: const InputDecoration(labelText: 'Background color')),
-
+                      // TextFormField(controller: backgroundColorController, decoration: const InputDecoration(labelText: 'Background color')),
                       if (item.type == ItemType.video)
                         TextFormField(
                           controller: youtubeUrlController,

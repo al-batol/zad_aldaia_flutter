@@ -118,7 +118,7 @@ class _TextItemState extends State<TextItem> {
                             if (value == "Original Text") {
                               content = widget.item.content ?? '';
                             } else {
-                              var translation = await Translator.text(widget.item.content, value);
+                              var translation = await Translator.text(widget.item.content!, value);
                               if (translation != null) {
                                 content = HtmlUnescape().convert(translation);
                               }
