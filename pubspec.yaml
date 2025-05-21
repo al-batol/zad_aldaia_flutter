@@ -80,9 +80,10 @@ flutter:
 
   assets:
     - assets/
-    - assets/images/
-    - assets/images/png/
-    - assets/images/svg/
+    - assets/images/flags/
+    # - assets/images/
+    # - assets/images/png/
+    # - assets/images/svg/
     - web/sqlite3.wasm
     - web/drift_worker.js
 

@@ -48,9 +48,7 @@ initializeFirebase() async {
     //   ),
     // );
   } else {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   }
   setupFirebaseCrashlytics();
 }
@@ -86,20 +84,11 @@ class MyApp extends StatelessWidget {
               }
               return supportedLocales.first;
             },
-            localizationsDelegates: [
-              S.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+            localizationsDelegates: [S.delegate, GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
             debugShowCheckedModeBanner: false,
-            initialRoute: MyRoutes.homeScreen,
-            theme: ThemeData(
-              dividerColor: Colors.transparent,
-              primaryColor: MyColors.primaryColor,
-              fontFamily: "almarai_bold",
-            ),
+            initialRoute: MyRoutes.languages,
             onGenerateRoute: AppRouter().generateRoutes,
+            theme: ThemeData(dividerColor: Colors.transparent, primaryColor: MyColors.primaryColor, fontFamily: "almarai_bold"),
           ),
         );
       },
