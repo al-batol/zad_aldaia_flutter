@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zad_aldaia/core/di/dependency_injection.dart'; // For getIt
-import 'package:zad_aldaia/core/models/languge.dart';
+import 'package:zad_aldaia/core/di/dependency_injection.dart';
+import 'package:zad_aldaia/core/helpers/Language.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
-import 'package:zad_aldaia/core/widgets/language_drop_down.dart';
-import 'package:zad_aldaia/features/categories/data/models/category.dart'; // Assuming your Category model
+import 'package:zad_aldaia/features/categories/data/models/category.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
 import 'package:zad_aldaia/features/categories/ui/CategorySelectionScreen.dart';
 import 'package:zad_aldaia/features/upload/image_upload.dart';
-import 'package:zad_aldaia/generated/l10n.dart'; // Your CategoriesCubit
 
 class CategoryFormScreen extends StatefulWidget {
   final String? categoryId;
@@ -55,7 +53,6 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
   }
 
   fillForm() async {
-    category.lang = category.lang ?? Language.english;
     _titleController.text = category.title ?? '';
     _isActive = category.isActive;
     if (category.parentId != null) {
@@ -65,7 +62,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
   }
 
   Future<void> _selectParentCategory() async {
-    final Category? result = await Navigator.push<Category?>(context, MaterialPageRoute(builder: (context) => CategorySelectionScreen()));
+    final Category? result = await Navigator.push<Category?>(context, MaterialPageRoute(builder: (context) => CategorySelectionScreen(forArticles: false)));
 
     if (result != null) {
       setParent(result);
@@ -84,6 +81,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
       category.title = _titleController.text.trim();
       category.parentId = parentCategory?.id;
       category.isActive = _isActive;
+      category.lang = await Lang.get();
 
       await store.saveCategory(category);
     }
@@ -133,21 +131,21 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                           if (parentCategory != null) IconButton(icon: const Icon(Icons.clear), onPressed: () => setParent(null), tooltip: "Clear parent"),
                         ],
                       ),
-                      if ((category.parentId) == null) ...[
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(S.of(context).contentLanguage),
-                            LanguageDropDown(
-                              language: category.lang ?? Language.english,
-                              onSelect: (val) {
-                                category.lang = val ?? Language.english;
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                      // if ((category.parentId) == null) ...[
+                      //   const SizedBox(height: 20),
+                      //   Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Text(S.of(context).contentLanguage),
+                      //       LanguageDropDown(
+                      //         language: category.lang ?? Language.english,
+                      //         onSelect: (val) {
+                      //           category.lang = val ?? Language.english;
+                      //         },
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ],
                       const SizedBox(height: 20),
 
                       Row(

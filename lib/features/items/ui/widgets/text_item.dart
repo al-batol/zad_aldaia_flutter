@@ -28,7 +28,7 @@ class TextItem extends StatefulWidget {
 
 class _TextItemState extends State<TextItem> {
   late final Map<String, String> languageMap;
-  late final ExpansionTileController _controller;
+  final ExpansionTileController _controller = ExpansionTileController();
 
   late String content;
   bool isTranslating = false;
@@ -37,7 +37,6 @@ class _TextItemState extends State<TextItem> {
   void initState() {
     super.initState();
     content = widget.item.content ?? '';
-    _controller = ExpansionTileController();
   }
 
   @override

@@ -18,9 +18,6 @@ class ItemsRepo {
     for (var element in likeMap.entries) {
       query = query.like(element.key, "%${element.value}%");
     }
-    if (Supabase.instance.client.auth.currentUser == null) {
-      query = query.eq('is_active', true);
-    }
     final response = await query.order('order', ascending: true);
     final items = response.map<Item>((item) => Item.fromJson(item)).toList();
     return items;
@@ -34,22 +31,22 @@ class ItemsRepo {
     await _supabase.from('article_items').insert(data).timeout(Duration(seconds: 30));
   }
 
-  Future<bool> swapItemsOrder(String id1, String id2) async {
+  Future<bool> swapItemsOrder(String id1, String id2, int index1, int index2) async {
     try {
-      final response = await _supabase.from('article_items').select('id, order').or('id.eq.$id1,id.eq.$id2');
+      // final response = await _supabase.from('article_items').select('id, order').or('id.eq.$id1,id.eq.$id2');
 
-      if (response.length != 2) {
-        print('❌ One or both IDs not found.');
-        return false;
-      }
+      // if (response.length != 2) {
+      //   print('❌ One or both IDs not found.');
+      //   return false;
+      // }
 
-      final order1 = response.firstWhere((item) => item['id'] == id1)['order'];
-      print('order1: $order1');
-      final order2 = response.firstWhere((item) => item['id'] == id2)['order'];
-      print('order2: $order2');
+      // final order1 = response.firstWhere((item) => item['id'] == id1)['order'];
+      // print('order1: $order1');
+      // final order2 = response.firstWhere((item) => item['id'] == id2)['order'];
+      // print('order2: $order2');
 
-      await _supabase.from('article_items').update({'order': order2}).eq('id', id1);
-      await _supabase.from('article_items').update({'order': order1}).eq('id', id2);
+      await _supabase.from('article_items').update({'order': index2}).eq('id', id1);
+      await _supabase.from('article_items').update({'order': index1}).eq('id', id2);
 
       print('✅ Orders swapped between ID $id1 and ID $id2');
       return true;

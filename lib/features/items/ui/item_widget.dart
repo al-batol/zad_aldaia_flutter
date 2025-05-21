@@ -7,10 +7,10 @@
 // class ItemWidget extends StatelessWidget {
 //   final Item item;
 //   final VoidCallback? onTap;
-//   final Function(Item)? onArticleItemUp;
-//   final Function(Item)? onArticleItemDown;
+//   final Function(Item)? onMoveUp;
+//   final Function(Item)? onMoveDown;
 
-//   const ItemWidget({super.key, required this.item, this.onTap, this.onArticleItemUp, this.onArticleItemDown});
+//   const ItemWidget({super.key, required this.item, this.onTap, this.onMoveUp, this.onMoveDown});
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -40,8 +40,8 @@
 //                         ),
 //                         Column(
 //                           children: [
-//                             InkWell(onTap: () => onArticleItemUp?.call(item), child: Icon(Icons.arrow_circle_up)),
-//                             InkWell(onTap: () => onArticleItemDown?.call(item), child: Icon(Icons.arrow_circle_down)),
+//                             InkWell(onTap: () => onMoveUp?.call(item), child: Icon(Icons.arrow_circle_up)),
+//                             InkWell(onTap: () => onMoveDown?.call(item), child: Icon(Icons.arrow_circle_down)),
 //                           ],
 //                         ),
 //                       ],

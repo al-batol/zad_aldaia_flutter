@@ -7,10 +7,10 @@ import 'package:zad_aldaia/features/categories/data/models/category.dart';
 class CategoryGridWidget extends StatelessWidget {
   final Category category;
   final VoidCallback? onTap;
-  final Function(Category)? onArticleItemUp;
-  final Function(Category)? onArticleItemDown;
+  final Function(Category)? onMoveUp;
+  final Function(Category)? onMoveDown;
 
-  const CategoryGridWidget({super.key, required this.category, this.onTap, this.onArticleItemUp, this.onArticleItemDown});
+  const CategoryGridWidget({super.key, required this.category, this.onTap, this.onMoveUp, this.onMoveDown});
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +34,14 @@ class CategoryGridWidget extends StatelessWidget {
                         : Container(
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: NetworkImage(category.image!),
+                              image: CachedNetworkImageProvider(category.image!),
                               fit: BoxFit.cover,
                               colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.4), BlendMode.darken),
                             ),
                           ),
                         ),
               ),
-              Positioned.fill(child: Center(child: Text(category.title ?? '-', style: TextStyle(color: Colors.white, fontSize: 24)))),
+              Positioned.fill(child: Center(child: Text(category.title ?? '-', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white)))),
               // Positioned.fill(child: Container(color: Colors.black, op)),
               if (Supabase.instance.client.auth.currentUser != null)
                 Positioned(
@@ -58,8 +58,8 @@ class CategoryGridWidget extends StatelessWidget {
                           },
                         ),
 
-                        IconButton(onPressed: () => onArticleItemUp?.call(category), icon: Icon(Icons.arrow_circle_up, color: Colors.white)),
-                        IconButton(onPressed: () => onArticleItemDown?.call(category), icon: Icon(Icons.arrow_circle_down, color: Colors.white)),
+                        IconButton(onPressed: () => onMoveUp?.call(category), icon: Icon(Icons.arrow_circle_up, color: Colors.white)),
+                        IconButton(onPressed: () => onMoveDown?.call(category), icon: Icon(Icons.arrow_circle_down, color: Colors.white)),
                       ],
                     ),
                   ),

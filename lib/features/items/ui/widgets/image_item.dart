@@ -25,95 +25,110 @@ class ImageItem extends StatefulWidget {
 
 class _ImageItemState extends State<ImageItem> {
   bool isDownloading = false;
+  final ExpansionTileController _controller = ExpansionTileController();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
-      height: 400,
       margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
       child: Material(
         elevation: 2,
-        borderRadius: BorderRadius.circular(10),
-        child: Row(
-          children: [
-            Expanded(
-              child: CachedNetworkImage(
-                imageUrl: widget.item.imageUrl ?? '---',
-                errorWidget: (context, url, error) => Icon(Icons.error),
-                progressIndicatorBuilder:
-                    (context, url, downloadProgress) => Center(
-                      child: SizedBox(width: 50.h, height: 50.h, child: CircularProgressIndicator(color: MyColors.primaryColor, strokeWidth: 4, value: downloadProgress.progress)),
-                    ),
-                fit: BoxFit.cover,
-                width: 300,
-                height: 400,
-              ),
-            ),
-            Column(
-              children: [
-                if (widget.item.note?.trim().isNotEmpty ?? false)
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note ?? '---'));
-                      },
-                      child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
-                    ),
-                  ),
+        child: ExpansionTile(
+          controller: _controller,
+          expandedAlignment: Alignment.topLeft,
+          title: SelectableText(
+            onTap: () {
+              _controller.isExpanded ? _controller.collapse() : _controller.expand();
+            },
+            'Image',
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.item.note?.trim().isNotEmpty ?? false)
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-                  child:
-                      isDownloading
-                          ? SizedBox(width: 24.h, height: 24.h, child: CircularProgressIndicator(color: MyColors.primaryColor))
-                          : InkWell(
-                            onTap: () async {
-                              setState(() {
-                                isDownloading = true;
-                              });
-                              await widget.onDownloadPressed(widget.item.imageUrl ?? '---');
-                              setState(() {
-                                isDownloading = false;
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).imageDownloaded)));
-                              });
-                            },
-                            child: Icon(Icons.download, color: MyColors.primaryColor),
-                          ),
+                  child: InkWell(
+                    onTap: () {
+                      showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note ?? '---'));
+                    },
+                    child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
+                  ),
                 ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                child:
+                    isDownloading
+                        ? SizedBox(width: 24.h, height: 24.h, child: CircularProgressIndicator(color: MyColors.primaryColor))
+                        : InkWell(
+                          onTap: () async {
+                            setState(() {
+                              isDownloading = true;
+                            });
+                            await widget.onDownloadPressed(widget.item.imageUrl ?? '---');
+                            setState(() {
+                              isDownloading = false;
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).imageDownloaded)));
+                            });
+                          },
+                          child: Icon(Icons.download, color: MyColors.primaryColor),
+                        ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w),
+                child: InkWell(onTap: () => Share.item(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
+              ),
+              if (Supabase.instance.client.auth.currentUser != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(MyRoutes.addItemScreen, arguments: {"id": widget.item.id});
+                    },
+                    child: Icon(Icons.edit, color: MyColors.primaryColor),
+                  ),
+                ),
+              if (Supabase.instance.client.auth.currentUser != null)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.w),
-                  child: InkWell(onTap: () => Share.item(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
+                  child: Column(
+                    children: [
+                      InkWell(onTap: () => widget.onItemUp?.call(widget.item), child: Icon(Icons.arrow_circle_up, color: MyColors.primaryColor)),
+                      InkWell(onTap: () => widget.onItemDown?.call(widget.item), child: Icon(Icons.arrow_circle_down, color: MyColors.primaryColor)),
+                    ],
+                  ),
                 ),
-                if (Supabase.instance.client.auth.currentUser != null)
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pushNamed(MyRoutes.addItemScreen, arguments: {"id": widget.item.id});
-                      },
-                      child: Icon(Icons.edit, color: MyColors.primaryColor),
-                    ),
+              if (widget.isSelected != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  child: InkWell(
+                    onTap: () => widget.onSelect?.call(widget.item),
+                    child: Icon(widget.isSelected! ? Icons.check_box_outlined : Icons.check_box_outline_blank, color: MyColors.primaryColor),
                   ),
-                if (Supabase.instance.client.auth.currentUser != null)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 3.w),
-                    child: Column(
-                      children: [
-                        InkWell(onTap: () => widget.onItemUp?.call(widget.item), child: Icon(Icons.arrow_circle_up, color: MyColors.primaryColor)),
-                        InkWell(onTap: () => widget.onItemDown?.call(widget.item), child: Icon(Icons.arrow_circle_down, color: MyColors.primaryColor)),
-                      ],
-                    ),
-                  ),
-                if (widget.isSelected != null)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 3.w),
-                    child: InkWell(
-                      onTap: () => widget.onSelect?.call(widget.item),
-                      child: Icon(widget.isSelected! ? Icons.check_box_outlined : Icons.check_box_outline_blank, color: MyColors.primaryColor),
-                    ),
-                  ),
-              ],
+                ),
+            ],
+          ),
+          controlAffinity: ListTileControlAffinity.leading,
+          tilePadding: EdgeInsets.symmetric(horizontal: 5.w),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: CachedNetworkImage(
+                  imageUrl: widget.item.imageUrl ?? '---',
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  progressIndicatorBuilder:
+                      (context, url, downloadProgress) => Center(
+                        child: SizedBox(
+                          width: 50.h,
+                          height: 50.h,
+                          child: CircularProgressIndicator(color: MyColors.primaryColor, strokeWidth: 4, value: downloadProgress.progress),
+                        ),
+                      ),
+                  fit: BoxFit.cover,
+                  height: 400,
+                ),
+              ),
             ),
           ],
         ),

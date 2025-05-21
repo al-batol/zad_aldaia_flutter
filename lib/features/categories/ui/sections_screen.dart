@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
-import 'package:zad_aldaia/core/models/languge.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
-import 'package:zad_aldaia/core/widgets/language_drop_down.dart';
 import 'package:zad_aldaia/features/auth/auth_cubit.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
 import 'package:zad_aldaia/features/categories/ui/category_grid_widget.dart';
@@ -22,8 +19,8 @@ class SectionsScreen extends StatefulWidget {
 class _SectionsScreenState extends State<SectionsScreen> {
   late final CategoriesCubit cubit = getIt<CategoriesCubit>();
   late final AuthCubit authCubit = getIt<AuthCubit>();
-  String language = Language.english;
   final GlobalKey<FormState> adminPasswordFormKey = GlobalKey();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   String? passwordError;
   bool checkingPassword = false;
@@ -33,12 +30,10 @@ class _SectionsScreenState extends State<SectionsScreen> {
   void initState() {
     loadData();
     super.initState();
-
-    FlutterNativeSplash.remove();
   }
 
   loadData() {
-    cubit.getChildCategories(null, language);
+    cubit.getChildCategories(null);
   }
 
   @override
@@ -61,14 +56,20 @@ class _SectionsScreenState extends State<SectionsScreen> {
                 Navigator.of(context).pushNamed(MyRoutes.addCategoryScreen, arguments: {"is_section": true});
               },
             ),
-          LanguageDropDown(
-            language: language,
-            onSelect:
-                (p0) => setState(() {
-                  language = p0 ?? Language.english;
-                  loadData();
-                }),
+          IconButton(
+            icon: const Icon(Icons.language),
+            onPressed: () {
+              Navigator.of(context).pushNamed(MyRoutes.languages);
+            },
           ),
+          // LanguageDropDown(
+          //   language: language,
+          //   onSelect:
+          //       (p0) => setState(() {
+          //         language = p0 ?? Language.english;
+          //         loadData();
+          //       }),
+          // ),
           IconButton(
             icon: (Supabase.instance.client.auth.currentUser != null) ? Icon(Icons.logout) : Icon(Icons.admin_panel_settings),
             onPressed: () async {
@@ -96,27 +97,32 @@ class _SectionsScreenState extends State<SectionsScreen> {
                                       SizedBox(height: 20),
                                       Form(
                                         key: adminPasswordFormKey,
-                                        child: TextFormField(
-                                          controller: passwordController,
-                                          obscureText: _obscureText,
-                                          decoration: InputDecoration(
-                                            errorText: passwordError,
-                                            hintText: S.of(context).password,
-                                            suffixIcon: IconButton(
-                                              icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
-                                              onPressed: () {
-                                                setStateX(() {
-                                                  _obscureText = !_obscureText;
-                                                });
+                                        child: Column(
+                                          children: [
+                                            TextFormField(controller: emailController, decoration: InputDecoration(hintText: 'Email')),
+                                            TextFormField(
+                                              controller: passwordController,
+                                              obscureText: _obscureText,
+                                              decoration: InputDecoration(
+                                                errorText: passwordError,
+                                                hintText: S.of(context).password,
+                                                suffixIcon: IconButton(
+                                                  icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
+                                                  onPressed: () {
+                                                    setStateX(() {
+                                                      _obscureText = !_obscureText;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                                                  return S.of(context).pleaseEnterPassword;
+                                                }
+                                                return null;
                                               },
                                             ),
-                                          ),
-                                          validator: (value) {
-                                            if (value == null || value.isEmpty) {
-                                              return S.of(context).pleaseEnterPassword;
-                                            }
-                                            return null;
-                                          },
+                                          ],
                                         ),
                                       ),
                                       SizedBox(height: 20),
@@ -135,7 +141,7 @@ class _SectionsScreenState extends State<SectionsScreen> {
                                                 setStateX(() {
                                                   checkingPassword = true;
                                                 });
-                                                if (await authCubit.signIn(passwordController.text)) {
+                                                if (await authCubit.signIn(emailController.text, passwordController.text)) {
                                                   passwordError = null;
                                                   Navigator.of(context).pop();
                                                   setState(() {});
@@ -198,15 +204,15 @@ class _SectionsScreenState extends State<SectionsScreen> {
                         Navigator.of(context).pushNamed(MyRoutes.articles, arguments: {"category_id": item.id, "title": item.title});
                       }
                     },
-                    onArticleItemUp: (category) async {
+                    onMoveUp: (category) async {
                       if (index > 0) {
-                        await cubit.swapCategoriesOrder(item.id, state.items[index - 1].id);
+                        await cubit.swapCategoriesOrder(id1: item.id, id2: state.items[index - 1].id, index1: index, index2: index - 1);
                         loadData();
                       }
                     },
-                    onArticleItemDown: (category) async {
+                    onMoveDown: (category) async {
                       if (index < state.items.length - 1) {
-                        await cubit.swapCategoriesOrder(item.id, state.items[index + 1].id);
+                        await cubit.swapCategoriesOrder(id1: item.id, id2: state.items[index + 1].id, index1: index, index2: index + 1);
                         loadData();
                       }
                     },

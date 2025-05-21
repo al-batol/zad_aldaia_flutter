@@ -22,7 +22,7 @@ class ItemFormScreen extends StatefulWidget {
 
 class _ItemFormScreenState extends State<ItemFormScreen> {
   late final ItemsCubit store = getIt<ItemsCubit>();
-  Item item = Item(id: '', type: ItemType.image);
+  Item item = Item(id: '');
   var toggleSelections = <bool>[true, false, false];
   final _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
@@ -36,6 +36,8 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
     super.initState();
     if (widget.isEditMode) {
       store.loadItem({'id': widget.itemId!});
+    } else {
+      fillForm();
     }
   }
 

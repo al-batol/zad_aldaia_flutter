@@ -11,12 +11,15 @@ import 'package:zad_aldaia/features/categories/ui/sections_screen.dart';
 import 'package:zad_aldaia/features/items/ui/item_form_screen.dart';
 import 'package:zad_aldaia/features/items/ui/items_screen.dart';
 import 'package:zad_aldaia/features/items/ui/search_screen.dart';
+import 'package:zad_aldaia/features/languages/languages_screen.dart';
 
 class AppRouter {
   Route? generateRoutes(RouteSettings settings) {
     final arguments = settings.arguments as Map? ?? {};
 
     switch (settings.name) {
+      case MyRoutes.languages:
+        return MaterialPageRoute(builder: (context) => LanguagesScreen());
       case MyRoutes.homeScreen:
         return MaterialPageRoute(builder: (context) => SectionsScreen());
       case MyRoutes.categories:

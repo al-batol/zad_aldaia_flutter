@@ -18,6 +18,10 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late final ItemsCubit cubit = getIt<ItemsCubit>();
+  String query = '';
+  loadData() {
+    cubit.loadItems(likeMap: {'content': query});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ],
                 onChanged: (value) {
-                  cubit.loadItems(likeMap: {'content': value});
+                  query = value;
                 },
               ),
               Expanded(
@@ -70,21 +74,25 @@ class _SearchScreenState extends State<SearchScreen> {
                                     case ItemType.text:
                                       return TextItem(
                                         item: item,
-                                        onItemUp: (item) {
-                                          cubit.swapItemsOrder(item.id, prevItemId ?? "");
+                                        onItemUp: (item) async {
+                                          await cubit.swapItemsOrder(item.id, prevItemId ?? "", index, index - 1);
+                                          loadData();
                                         },
-                                        onItemDown: (item) {
-                                          cubit.swapItemsOrder(item.id, nextItemId ?? "");
+                                        onItemDown: (item) async {
+                                          await cubit.swapItemsOrder(item.id, nextItemId ?? "", index, index + 1);
+                                          loadData();
                                         },
                                       );
                                     case ItemType.image:
                                       return ImageItem(
                                         item: item,
-                                        onItemUp: (item) {
-                                          cubit.swapItemsOrder(item.id, prevItemId ?? "");
+                                        onItemUp: (item) async {
+                                          await cubit.swapItemsOrder(item.id, prevItemId ?? "", index, index - 1);
+                                          loadData();
                                         },
-                                        onItemDown: (item) {
-                                          cubit.swapItemsOrder(item.id, nextItemId ?? "");
+                                        onItemDown: (item) async {
+                                          await cubit.swapItemsOrder(item.id, nextItemId ?? "", index, index + 1);
+                                          loadData();
                                         },
                                         onDownloadPressed: (url) async {
                                           Storage.download(url);
@@ -93,11 +101,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                     case ItemType.video:
                                       return VideoItem(
                                         item: item,
-                                        onItemUp: (item) {
-                                          cubit.swapItemsOrder(item.id, prevItemId ?? "");
+                                        onItemUp: (item) async {
+                                          await cubit.swapItemsOrder(item.id, prevItemId ?? "", index, index - 1);
+                                          loadData();
                                         },
-                                        onItemDown: (item) {
-                                          cubit.swapItemsOrder(item.id, nextItemId ?? "");
+                                        onItemDown: (item) async {
+                                          await cubit.swapItemsOrder(item.id, nextItemId ?? "", index, index + 1);
+                                          loadData();
                                         },
                                       );
                                   }

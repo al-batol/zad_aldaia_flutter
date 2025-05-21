@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart'; // For getIt
-import 'package:zad_aldaia/core/models/languge.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/articles/data/models/article.dart'; // Assuming your Article model
 import 'package:zad_aldaia/features/articles/logic/articles_cubit.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart' as C;
 import 'package:zad_aldaia/features/categories/ui/CategorySelectionScreen.dart';
-import 'package:zad_aldaia/generated/l10n.dart'; // Your ArticlesCubit
 
 class ArticleFormScreen extends StatefulWidget {
   final String? articleId;
@@ -26,8 +24,6 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
   late final C.CategoriesCubit categoryStore;
   Article? article;
   final _formKey = GlobalKey<FormState>();
-  late final langs = Map.fromIterables([S.of(context).english, S.of(context).espanol, S.of(context).portuguese, S.of(context).francais, S.of(context).filipino], Language.values);
-
   final _titleController = TextEditingController();
   Category? category;
 
@@ -59,7 +55,6 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
 
   fillForm() async {
     _titleController.text = article?.title ?? '';
-    // _isActive = article?.isActive ?? true;
     if (article?.categoryId != null) {
       category = await categoryStore.findCategory({'id': article!.categoryId!});
     }
@@ -67,7 +62,7 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
   }
 
   Future<void> _selectCategory() async {
-    final Category? result = await Navigator.push<Category?>(context, MaterialPageRoute(builder: (context) => CategorySelectionScreen()));
+    final Category? result = await Navigator.push<Category?>(context, MaterialPageRoute(builder: (context) => CategorySelectionScreen(forArticles: true)));
 
     if (result != null) {
       setParent(result);

@@ -57,7 +57,7 @@ class ItemsCubit extends Cubit<ItemsState> {
     return await _repo.searchItems(eqMap, likeMap);
   }
 
-  Future<bool> swapItemsOrder(String id1, String id2) async {
-    return await _repo.swapItemsOrder(id1, id2);
+  Future<bool> swapItemsOrder(String id1, String id2, int index1, int index2) async {
+    return await _repo.swapItemsOrder(id1, id2, index1, index2);
   }
 }

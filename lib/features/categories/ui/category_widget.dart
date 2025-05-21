@@ -7,10 +7,10 @@ import 'package:zad_aldaia/features/categories/data/models/category.dart';
 class CategoryWidget extends StatelessWidget {
   final Category category;
   final VoidCallback? onTap;
-  final Function(Category)? onArticleItemUp;
-  final Function(Category)? onArticleItemDown;
+  final Function(Category)? onMoveUp;
+  final Function(Category)? onMoveDown;
 
-  const CategoryWidget({super.key, required this.category, this.onTap, this.onArticleItemUp, this.onArticleItemDown});
+  const CategoryWidget({super.key, required this.category, this.onTap, this.onMoveUp, this.onMoveDown});
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +40,8 @@ class CategoryWidget extends StatelessWidget {
                         ),
                         Column(
                           children: [
-                            InkWell(onTap: () => onArticleItemUp?.call(category), child: Icon(Icons.arrow_circle_up)),
-                            InkWell(onTap: () => onArticleItemDown?.call(category), child: Icon(Icons.arrow_circle_down)),
+                            InkWell(onTap: () => onMoveUp?.call(category), child: Icon(Icons.arrow_circle_up)),
+                            InkWell(onTap: () => onMoveDown?.call(category), child: Icon(Icons.arrow_circle_down)),
                           ],
                         ),
                       ],

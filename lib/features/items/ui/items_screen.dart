@@ -135,11 +135,13 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                 }
                                 setState(() {});
                               },
-                              onItemUp: (item) {
-                                cubit.swapItemsOrder(item.id, prevItemId ?? "");
+                              onItemUp: (item) async {
+                                await cubit.swapItemsOrder(item.id, prevItemId ?? "", index, index - 1);
+                                loadData();
                               },
-                              onItemDown: (item) {
-                                cubit.swapItemsOrder(item.id, nextItemId ?? "");
+                              onItemDown: (item) async {
+                                await cubit.swapItemsOrder(item.id, nextItemId ?? "", index, index + 1);
+                                loadData();
                               },
                             );
                           case ItemType.image:
@@ -154,11 +156,13 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                 }
                                 setState(() {});
                               },
-                              onItemUp: (item) {
-                                cubit.swapItemsOrder(item.id, prevItemId ?? "");
+                              onItemUp: (item) async {
+                                await cubit.swapItemsOrder(item.id, prevItemId ?? "", index, index - 1);
+                                loadData();
                               },
-                              onItemDown: (item) {
-                                cubit.swapItemsOrder(item.id, nextItemId ?? "");
+                              onItemDown: (item) async {
+                                await cubit.swapItemsOrder(item.id, nextItemId ?? "", index, index + 1);
+                                loadData();
                               },
                               onDownloadPressed: (url) async {
                                 Storage.download(url);
@@ -176,11 +180,13 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                 }
                                 setState(() {});
                               },
-                              onItemUp: (item) {
-                                cubit.swapItemsOrder(item.id, prevItemId ?? "");
+                              onItemUp: (item) async {
+                                await cubit.swapItemsOrder(item.id, prevItemId ?? "", index, index - 1);
+                                loadData();
                               },
-                              onItemDown: (item) {
-                                cubit.swapItemsOrder(item.id, nextItemId ?? "");
+                              onItemDown: (item) async {
+                                await cubit.swapItemsOrder(item.id, nextItemId ?? "", index, index + 1);
+                                loadData();
                               },
                             );
                         }

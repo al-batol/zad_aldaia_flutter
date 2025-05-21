@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
             },
             localizationsDelegates: [S.delegate, GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
             debugShowCheckedModeBanner: false,
-            initialRoute: MyRoutes.homeScreen,
+            initialRoute: MyRoutes.languages,
             onGenerateRoute: AppRouter().generateRoutes,
             theme: ThemeData(dividerColor: Colors.transparent, primaryColor: MyColors.primaryColor, fontFamily: "almarai_bold"),
           ),

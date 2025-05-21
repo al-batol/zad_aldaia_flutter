@@ -72,15 +72,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               Navigator.of(context).pushNamed(MyRoutes.articles, arguments: {"category_id": item.id, "title": item.title});
                             }
                           },
-                          onArticleItemUp: (category) async {
+                          onMoveUp: (category) async {
                             if (index > 0) {
-                              await cubit.swapCategoriesOrder(item.id, state.items[index - 1].id);
+                              await cubit.swapCategoriesOrder(id1: item.id, id2: state.items[index - 1].id, index1: index, index2: index - 1);
                               loadData();
                             }
                           },
-                          onArticleItemDown: (category) async {
+                          onMoveDown: (category) async {
                             if (index < state.items.length - 1) {
-                              await cubit.swapCategoriesOrder(item.id, state.items[index + 1].id);
+                              await cubit.swapCategoriesOrder(id1: item.id, id2: state.items[index + 1].id, index1: index, index2: index + 1);
                               loadData();
                             }
                           },

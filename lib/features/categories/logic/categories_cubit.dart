@@ -58,10 +58,10 @@ class CategoriesCubit extends Cubit<CategoriesState> {
     return await _repo.searchCategories(eqMap);
   }
 
-  getChildCategories(String? parentId, String? language) async {
+  getChildCategories(String? parentId) async {
     try {
       emit(LoadingState());
-      var categories = await _repo.fetchCategories(parentId, language);
+      var categories = await _repo.fetchCategories(parentId);
       this.categories = categories;
       emit(ListLoadedState(categories));
     } catch (e) {
@@ -69,7 +69,7 @@ class CategoriesCubit extends Cubit<CategoriesState> {
     }
   }
 
-  Future<bool> swapCategoriesOrder(String id1, String id2) async {
-    return await _repo.swapCategoriesOrder(id1, id2);
+  Future<bool> swapCategoriesOrder({required String id1, required String id2, required int index1, required int index2}) async {
+    return await _repo.swapCategoriesOrder(id1, id2, index1, index2);
   }
 }

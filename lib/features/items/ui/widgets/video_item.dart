@@ -23,7 +23,8 @@ class VideoItem extends StatefulWidget {
 }
 
 class _YoutubePlayerWidgetState extends State<VideoItem> {
-  late YoutubePlayerController _controller;
+  late YoutubePlayerController _youtubeController;
+  final ExpansionTileController _controller = ExpansionTileController();
 
   @override
   void initState() {
@@ -34,81 +35,96 @@ class _YoutubePlayerWidgetState extends State<VideoItem> {
   void _initializePlayer() {
     final videoId = YoutubePlayer.convertUrlToId(widget.item.youtubeUrl!)!;
 
-    _controller = YoutubePlayerController(initialVideoId: videoId, flags: const YoutubePlayerFlags(autoPlay: false, mute: false, forceHD: false));
+    _youtubeController = YoutubePlayerController(initialVideoId: videoId, flags: const YoutubePlayerFlags(autoPlay: false, mute: false, forceHD: false));
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _youtubeController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: YoutubePlayer(
-            controller: _controller,
-            showVideoProgressIndicator: true,
-            progressIndicatorColor: Colors.redAccent,
-            bottomActions: const [
-              SizedBox(width: 14),
-              CurrentPosition(),
-              SizedBox(width: 8),
-              ProgressBar(isExpanded: true, colors: ProgressBarColors(playedColor: Colors.redAccent, handleColor: Colors.redAccent, backgroundColor: Colors.grey)),
-              RemainingDuration(),
-              PlaybackSpeedButton(),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
+      child: Material(
+        elevation: 2,
+        child: ExpansionTile(
+          controller: _controller,
+          expandedAlignment: Alignment.topLeft,
+          title: SelectableText(
+            onTap: () {
+              _controller.isExpanded ? _controller.collapse() : _controller.expand();
+            },
+            'Video',
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.item.note?.trim().isNotEmpty ?? false)
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                  child: InkWell(
+                    onTap: () {
+                      showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note!));
+                    },
+                    child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
+                  ),
+                ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w),
+                child: InkWell(onTap: () => Share.item(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
+              ),
+              if (Supabase.instance.client.auth.currentUser != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(MyRoutes.addItemScreen, arguments: {"id": widget.item.id});
+                    },
+                    child: Icon(Icons.edit, color: MyColors.primaryColor),
+                  ),
+                ),
+              if (Supabase.instance.client.auth.currentUser != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  child: Column(
+                    children: [
+                      InkWell(onTap: () => widget.onItemUp?.call(widget.item), child: Icon(Icons.arrow_circle_up, color: MyColors.primaryColor)),
+                      InkWell(onTap: () => widget.onItemDown?.call(widget.item), child: Icon(Icons.arrow_circle_down, color: MyColors.primaryColor)),
+                    ],
+                  ),
+                ),
+              if (widget.isSelected != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  child: InkWell(
+                    onTap: () => widget.onSelect?.call(widget.item),
+                    child: Icon(widget.isSelected! ? Icons.check_box_outlined : Icons.check_box_outline_blank, color: MyColors.primaryColor),
+                  ),
+                ),
             ],
           ),
-        ),
-        Column(
+          controlAffinity: ListTileControlAffinity.leading,
+          tilePadding: EdgeInsets.symmetric(horizontal: 5.w),
           children: [
-            if (widget.item.note?.trim().isNotEmpty ?? false)
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-                child: InkWell(
-                  onTap: () {
-                    showDialog(context: context, builder: (context) => NoteDialog(note: widget.item.note!));
-                  },
-                  child: Icon(const IconData(0xe801, fontFamily: "pin_icon"), color: MyColors.primaryColor),
-                ),
-              ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 3.w),
-              child: InkWell(onTap: () => Share.item(widget.item), child: Icon(Icons.share_outlined, color: MyColors.primaryColor)),
+            YoutubePlayer(
+              controller: _youtubeController,
+              showVideoProgressIndicator: true,
+              progressIndicatorColor: Colors.redAccent,
+              bottomActions: const [
+                SizedBox(width: 14),
+                CurrentPosition(),
+                SizedBox(width: 8),
+                ProgressBar(isExpanded: true, colors: ProgressBarColors(playedColor: Colors.redAccent, handleColor: Colors.redAccent, backgroundColor: Colors.grey)),
+                RemainingDuration(),
+                PlaybackSpeedButton(),
+              ],
             ),
-            if (Supabase.instance.client.auth.currentUser != null)
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 10.w),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(MyRoutes.addItemScreen, arguments: {"id": widget.item.id});
-                  },
-                  child: Icon(Icons.edit, color: MyColors.primaryColor),
-                ),
-              ),
-            if (Supabase.instance.client.auth.currentUser != null)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                child: Column(
-                  children: [
-                    InkWell(onTap: () => widget.onItemUp?.call(widget.item), child: Icon(Icons.arrow_circle_up, color: MyColors.primaryColor)),
-                    InkWell(onTap: () => widget.onItemDown?.call(widget.item), child: Icon(Icons.arrow_circle_down, color: MyColors.primaryColor)),
-                  ],
-                ),
-              ),
-            if (widget.isSelected != null)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                child: InkWell(
-                  onTap: () => widget.onSelect?.call(widget.item),
-                  child: Icon(widget.isSelected! ? Icons.check_box_outlined : Icons.check_box_outline_blank, color: MyColors.primaryColor),
-                ),
-              ),
           ],
         ),
-      ],
+      ),
     );
   }
 }

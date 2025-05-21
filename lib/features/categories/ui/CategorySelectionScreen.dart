@@ -6,8 +6,9 @@ import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
 
 class CategorySelectionScreen extends StatefulWidget {
   final String? initialParentId;
+  final bool forArticles;
 
-  const CategorySelectionScreen({super.key, this.initialParentId});
+  const CategorySelectionScreen({super.key, this.initialParentId, required this.forArticles});
 
   @override
   State<CategorySelectionScreen> createState() => _CategorySelectionScreenState();
@@ -20,7 +21,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   @override
   void initState() {
     super.initState();
-    cubit.getChildCategories(widget.initialParentId, null);
+    cubit.getChildCategories(widget.initialParentId);
   }
 
   @override
@@ -29,7 +30,23 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       appBar: AppBar(
         title: Text("Select Category"),
         centerTitle: true,
-        actions: [if (breadcrumb.isNotEmpty) IconButton(onPressed: () => Navigator.pop(context, breadcrumb.last), icon: Icon(Icons.done))],
+        actions: [
+          if (breadcrumb.isNotEmpty)
+            IconButton(
+              onPressed: () {
+                if (widget.forArticles && breadcrumb.last.childrenCount > 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('This category has deep branches')));
+                  return;
+                }
+                if (!widget.forArticles && breadcrumb.last.articlesCount > 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('This category has some articles')));
+                  return;
+                }
+                Navigator.pop(context, breadcrumb.last);
+              },
+              icon: Icon(Icons.done),
+            ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,9 +102,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       breadcrumb.add(category);
     }
     setState(() {});
-    // if (category.hasChildren) {
-    // }
-    cubit.getChildCategories(category.id, null);
+    cubit.getChildCategories(category.id);
   }
 
   Widget _buildBreadcrumbWidget(BuildContext context) {

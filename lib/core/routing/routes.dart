@@ -1,5 +1,6 @@
 class MyRoutes {
   static const homeScreen = "/";
+  static const languages = "/languages";
   static const categories = "/categories";
   static const addCategoryScreen = "/addCategoryScreen";
   static const articles = "/articles";
