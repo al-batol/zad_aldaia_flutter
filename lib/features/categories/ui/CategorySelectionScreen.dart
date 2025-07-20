@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
@@ -8,7 +9,11 @@ class CategorySelectionScreen extends StatefulWidget {
   final String? initialParentId;
   final bool forArticles;
 
-  const CategorySelectionScreen({super.key, this.initialParentId, required this.forArticles});
+  const CategorySelectionScreen({
+    super.key,
+    this.initialParentId,
+    required this.forArticles,
+  });
 
   @override
   State<CategorySelectionScreen> createState() => _CategorySelectionScreenState();
@@ -28,23 +33,40 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Select Category"),
+        title: Text(
+          "Select Category",
+          style: TextStyle(fontSize: 20.sp),
+        ),
         centerTitle: true,
         actions: [
           if (breadcrumb.isNotEmpty)
             IconButton(
               onPressed: () {
                 if (widget.forArticles && breadcrumb.last.childrenCount > 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('This category has deep branches')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'This category has deep branches',
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                    ),
+                  );
                   return;
                 }
                 if (!widget.forArticles && breadcrumb.last.articlesCount > 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('This category has some articles')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'This category has some articles',
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                    ),
+                  );
                   return;
                 }
                 Navigator.pop(context, breadcrumb.last);
               },
-              icon: Icon(Icons.done),
+              icon: Icon(Icons.done, size: 24.w),
             ),
         ],
       ),
@@ -59,26 +81,37 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                 builder: (context, state) {
                   if (state is ListLoadedState) {
                     if (state.items.isEmpty) {
-                      return const Center(child: Text('empty.'));
+                      return Center(
+                        child: Text(
+                          'empty.',
+                          style: TextStyle(fontSize: 16.sp),
+                        ),
+                      );
                     }
                     return ListView.builder(
                       itemCount: state.items.length,
                       itemBuilder: (context, index) {
                         final category = state.items[index];
-
                         return ListTile(
-                          title: Text(category.title ?? '---'),
-                          trailing: const Icon(Icons.chevron_right),
-                          // trailing:
-                          //     category.hasChildren
-                          //         ? const Icon(Icons.chevron_right)
-                          //         : null, //Tooltip(message: "Select ${category.title}", child: const Icon(Icons.check_circle_outline, color: Colors.green)),
+                          title: Text(
+                            category.title ?? '---',
+                            style: TextStyle(fontSize: 16.sp),
+                          ),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            size: 24.w,
+                          ),
                           onTap: () => _onCategoryTap(category),
                         );
                       },
                     );
                   }
-                  return const Center(child: Text('UnHanDleD state'));
+                  return Center(
+                    child: Text(
+                      'UnHandled state',
+                      style: TextStyle(fontSize: 16.sp),
+                    ),
+                  );
                 },
               ),
             ),
@@ -111,14 +144,17 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     // "Root" or "All Categories" button
     breadcrumbItems.add(
       InkWell(
-        // onTap: () => _onCategoryTap(),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
           child: Text(
             "/",
             style: TextStyle(
-              color: breadcrumb.isEmpty ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.secondary,
-              fontWeight: breadcrumb.isEmpty ? FontWeight.bold : FontWeight.normal,
+              fontSize: 16.sp,
+              color: breadcrumb.isEmpty
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).colorScheme.secondary,
+              fontWeight:
+                  breadcrumb.isEmpty ? FontWeight.bold : FontWeight.normal,
             ),
           ),
         ),
@@ -127,17 +163,28 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
     for (int i = 0; i < breadcrumb.length; i++) {
       final item = breadcrumb[i];
-      breadcrumbItems.add(const Icon(Icons.chevron_right, size: 20, color: Colors.grey));
+      breadcrumbItems.add(
+        Icon(
+          Icons.chevron_right,
+          size: 20.w,
+          color: Colors.grey,
+        ),
+      );
       breadcrumbItems.add(
         InkWell(
           onTap: () => _onCategoryTap(item),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
             child: Text(
               item.title ?? '---',
               style: TextStyle(
-                color: (i == breadcrumb.length - 1) ? Theme.of(context).primaryColor : Theme.of(context).colorScheme.secondary,
-                fontWeight: (i == breadcrumb.length - 1) ? FontWeight.bold : FontWeight.normal,
+                fontSize: 16.sp,
+                color: (i == breadcrumb.length - 1)
+                    ? Theme.of(context).primaryColor
+                    : Theme.of(context).colorScheme.secondary,
+                fontWeight: (i == breadcrumb.length - 1)
+                    ? FontWeight.bold
+                    : FontWeight.normal,
               ),
             ),
           ),
@@ -145,6 +192,10 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       );
     }
 
-    return SingleChildScrollView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: 8.0), child: Row(children: breadcrumbItems));
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      child: Row(children: breadcrumbItems),
+    );
   }
 }

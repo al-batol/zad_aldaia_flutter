@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
@@ -63,8 +64,8 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
       appBar: AppBar(
         title: Text(
           widget.title ?? 'Items',
-          style: const TextStyle(
-            fontSize: 22,
+          style: TextStyle(
+            fontSize: 22.sp,
             fontWeight: FontWeight.bold,
             fontFamily: 'Exo',
             color: Colors.white,
@@ -85,17 +86,17 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
           indicatorColor: Colors.white,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
-          tabs: const [
+          tabs: [
             Tab(
-              icon: Icon(Icons.article_outlined),
+              icon: Icon(Icons.article_outlined, size: 24.w),
               text: "Text",
             ),
             Tab(
-              icon: Icon(Icons.photo_library_outlined),
+              icon: Icon(Icons.photo_library_outlined, size: 24.w),
               text: "Images",
             ),
             Tab(
-              icon: Icon(Icons.play_circle_outline),
+              icon: Icon(Icons.play_circle_outline, size: 24.w),
               text: "Videos",
             ),
           ],
@@ -103,12 +104,12 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
         actions: [
           if (selectedItems.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.share, color: Colors.white),
+              icon: Icon(Icons.share, color: Colors.white, size: 24.w),
               onPressed: () => Share.multi(selectedItems),
             ),
           if (Supabase.instance.client.auth.currentUser != null)
             IconButton(
-              icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+              icon: Icon(Icons.add_circle_outline, color: Colors.white, size: 24.w),
               onPressed: () => Navigator.of(context).pushNamed(
                 MyRoutes.addItemScreen, 
                 arguments: {"article_id": widget.articleId}
@@ -121,7 +122,7 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
         child: BlocBuilder<ItemsCubit, ItemsState>(
           builder: (context, state) {
             if (state is ErrorState) {
-              return Center(child: Text(state.error));
+              return Center(child: Text(state.error, style: TextStyle(fontSize: 16.sp)));
             }
             if (state is LoadingState) {
               return const Center(child: CircularProgressIndicator());
@@ -149,16 +150,16 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
 
   Widget _buildStaggeredTextItemsList(List<Item> items, List<Item> allItems) {
     if (items.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No items found',
-          style: TextStyle(fontSize: 18, color: Colors.grey),
+          style: TextStyle(fontSize: 18.sp, color: Colors.grey),
         ),
       );
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
@@ -170,10 +171,10 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
           index: index,
           shouldAnimate: _shouldAnimate,
           child: Container(
-            margin: const EdgeInsets.only(bottom: 16),
+            margin: EdgeInsets.only(bottom: 16.h),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
@@ -191,16 +192,16 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
 
   Widget _buildItemsList(List<Item> items, List<Item> allItems) {
     if (items.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No items found',
-          style: TextStyle(fontSize: 18, color: Colors.grey),
+          style: TextStyle(fontSize: 18.sp, color: Colors.grey),
         ),
       );
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
@@ -209,10 +210,10 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
         final nextItemId = itemIndex < allItems.length - 1 ? allItems[itemIndex + 1].id : null;
 
         return Container(
-          margin: const EdgeInsets.only(bottom: 16),
+          margin: EdgeInsets.only(bottom: 16.h),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),

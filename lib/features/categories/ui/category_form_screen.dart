@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
-import 'package:zad_aldaia/core/helpers/Language.dart';
+import 'package:zad_aldaia/core/helpers/language.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
 import 'package:zad_aldaia/features/categories/ui/CategorySelectionScreen.dart';
 import 'package:zad_aldaia/features/upload/image_upload.dart';
 
-class CategoryFormScreen extends StatefulWidget
- {
+class CategoryFormScreen extends StatefulWidget {
   final String? categoryId;
 
   const CategoryFormScreen({super.key, this.categoryId});
@@ -21,7 +21,8 @@ class CategoryFormScreen extends StatefulWidget
   State<CategoryFormScreen> createState() => _CategoryFormScreenState();
 }
 
-class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTickerProviderStateMixin {
+class _CategoryFormScreenState extends State<CategoryFormScreen> 
+    with SingleTickerProviderStateMixin {
   late final CategoriesCubit store;
   Category category = Category(id: '');
   final _formKey = GlobalKey<FormState>();
@@ -69,15 +70,15 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
     super.dispose();
   }
 
-  listener(context, state) {
+  void listener(BuildContext context, CategoriesState state) {
     if (state is ErrorState) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(state.error),
+          content: Text(state.error, style: TextStyle(fontSize: 14.sp)),
           backgroundColor: Colors.red.shade700,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
           ),
         ),
       );
@@ -85,11 +86,14 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
     if (state is SavedState) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Category ${widget.isEditMode ? "updated" : "created"} successfully!'),
+          content: Text(
+            'Category ${widget.isEditMode ? "updated" : "created"} successfully!',
+            style: TextStyle(fontSize: 14.sp),
+          ),
           backgroundColor: Colors.green.shade700,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
           ),
         ),
       );
@@ -109,7 +113,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
     }
   }
 
-  fillForm() async {
+  Future<void> fillForm() async {
     _titleController.text = category.title ?? '';
     _isActive = category.isActive;
     if (category.parentId != null) {
@@ -122,7 +126,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
     final Category? result = await Navigator.push<Category?>(
       context, 
       MaterialPageRoute(
-        builder: (context) => CategorySelectionScreen(forArticles: false),
+        builder: (context) => const CategorySelectionScreen(forArticles: false),
         settings: const RouteSettings(name: 'Select Parent Category'),
       ),
     );
@@ -132,7 +136,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
     }
   }
 
-  setParent(Category? parent) {
+  void setParent(Category? parent) {
     setState(() {
       category.parentId = parent?.id;
       parentCategory = parent;
@@ -166,7 +170,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
                 child: Text(
                   widget.isEditMode ? 'Edit Category' : 'Create New Category',
                   style: GoogleFonts.exo(
-                    fontSize: 22,
+                    fontSize: 22.sp,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
@@ -187,9 +191,9 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
             ),
           ),
         ),
-        shape: const RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(20),
+            bottom: Radius.circular(20.r),
           ),
         ),
         elevation: 8,
@@ -209,7 +213,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
                     child: Transform.translate(
                       offset: Offset(0, _slideAnimation.value),
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20.r),
                         child: Form(
                           key: _formKey,
                           child: Column(
@@ -227,21 +231,21 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
                                 },
                                 icon: Icons.title,
                               ),
-                              const SizedBox(height: 25),
+                              SizedBox(height: 25.h),
 
                               // Parent Category Selection
                               _buildSectionHeader('Parent Category'),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12.h),
                               _buildParentCategorySelector(),
-                              const SizedBox(height: 25),
+                              SizedBox(height: 25.h),
 
                               // Active Switch
                               _buildActiveSwitch(),
-                              const SizedBox(height: 30),
+                              SizedBox(height: 30.h),
 
                               // Image Upload
                               _buildImageUpload(),
-                              const SizedBox(height: 30),
+                              SizedBox(height: 30.h),
 
                               // Submit Button
                               if (state is SavingState)
@@ -271,7 +275,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
   }) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
             color: Colors.green.shade100.withOpacity(0.5),
@@ -283,34 +287,36 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
       child: TextFormField(
         controller: controller,
         style: GoogleFonts.exo(
-          fontSize: 16,
+          fontSize: 16.sp,
           color: Colors.grey.shade800,
         ),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: GoogleFonts.exo(
             color: Colors.grey.shade600,
+            fontSize: 16.sp,
           ),
           prefixIcon: Icon(
             icon,
             color: Colors.green.shade700,
+            size: 24.w,
           ),
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide(
               color: Colors.green.shade700,
               width: 2,
             ),
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 16,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 20.w,
+            vertical: 16.h,
           ),
         ),
         validator: validator,
@@ -322,7 +328,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
     return Text(
       text,
       style: GoogleFonts.exo(
-        fontSize: 18,
+        fontSize: 18.sp,
         fontWeight: FontWeight.w600,
         color: Colors.grey.shade800,
       ),
@@ -332,7 +338,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
   Widget _buildParentCategorySelector() {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
@@ -347,26 +353,27 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
           Expanded(
             child: Material(
               color: Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               child: InkWell(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 onTap: _selectParentCategory,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 16.h,
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.category,
                         color: Colors.green.shade700,
+                        size: 24.w,
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12.w),
                       Text(
                         parentCategory?.title ?? '(Top Level)',
                         style: GoogleFonts.exo(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           color: parentCategory != null 
                               ? Colors.grey.shade800 
                               : Colors.grey.shade500,
@@ -383,6 +390,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
               icon: Icon(
                 Icons.clear,
                 color: Colors.red.shade400,
+                size: 24.w,
               ),
               onPressed: () => setParent(null),
               tooltip: "Clear parent",
@@ -395,7 +403,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
   Widget _buildActiveSwitch() {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
@@ -406,9 +414,9 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
+        padding: EdgeInsets.symmetric(
+          horizontal: 16.w,
+          vertical: 8.h,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -418,12 +426,13 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
                 Icon(
                   _isActive ? Icons.check_circle : Icons.remove_circle,
                   color: _isActive ? Colors.green.shade700 : Colors.red.shade400,
+                  size: 24.w,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Text(
                   'Category Status',
                   style: GoogleFonts.exo(
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     color: Colors.grey.shade800,
                   ),
                 ),
@@ -450,7 +459,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
   Widget _buildImageUpload() {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
@@ -461,19 +470,19 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Category Image',
               style: GoogleFonts.exo(
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey.shade800,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             ImageUpload(
               url: category.image,
               identifier: category.imageIdentifier,
@@ -493,7 +502,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
   Widget _buildLoadingIndicator() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20.r),
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(Colors.green.shade700),
           strokeWidth: 3,
@@ -506,16 +515,16 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
     return SizedBox(
       width: double.infinity,
       child: Material(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         elevation: 6,
         shadowColor: Colors.green.shade800.withOpacity(0.3),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           onTap: _submitForm,
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: EdgeInsets.symmetric(vertical: 16.h),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -529,7 +538,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> with SingleTick
               child: Text(
                 widget.isEditMode ? 'UPDATE CATEGORY' : 'CREATE CATEGORY',
                 style: GoogleFonts.exo(
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                   letterSpacing: 1.2,

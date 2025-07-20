@@ -1,4 +1,5 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
@@ -23,7 +24,8 @@ class CategoryGridWidget extends StatefulWidget {
   State<CategoryGridWidget> createState() => _CategoryGridWidgetState();
 }
 
-class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTickerProviderStateMixin {
+class _CategoryGridWidgetState extends State<CategoryGridWidget> 
+    with SingleTickerProviderStateMixin {
   bool _isHovered = false;
   double _scale = 1.0;
   double _elevation = 6.0;
@@ -81,9 +83,9 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                     ..translate(0.0, _animation.value * 20, 0.0),
                   alignment: FractionalOffset.center,
                   child: Container(
-                    margin: const EdgeInsets.all(12),
+                    margin: EdgeInsets.all(12.r),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(24.r),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.green.shade300.withOpacity(0.8),
@@ -94,10 +96,10 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                       ],
                     ),
                     child: Material(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(24.r),
                       color: Colors.transparent,
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(24.r),
                         onTap: widget.onTap,
                         splashColor: Colors.green.withOpacity(0.3),
                         highlightColor: Colors.green.withOpacity(0.1),
@@ -107,7 +109,7 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                             AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(24),
+                                borderRadius: BorderRadius.circular(24.r),
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -126,44 +128,13 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                               ),
                             ),
 
-                            // Glossy overlay effect
-                            Positioned.fill(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(24),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.white.withOpacity(0.2),
-                                      Colors.transparent,
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            // Border with animation
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                  color: _isHovered
-                                      ? Colors.green.shade800
-                                      : Colors.green.shade700,
-                                  width: _isHovered ? 3 : 2,
-                                ),
-                              ),
-                            ),
-
                             // Content
                             Positioned.fill(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    padding: EdgeInsets.symmetric(horizontal: 8.w),
                                     child: Text(
                                       widget.category.title ?? '-',
                                       textAlign: TextAlign.center,
@@ -171,6 +142,7 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                                           .textTheme
                                           .titleLarge
                                           ?.copyWith(
+                                            fontSize: 18.sp,
                                             color: Colors.black,
                                             fontFamily: 'Exo',
                                             fontWeight: FontWeight.bold,
@@ -186,13 +158,13 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  const SizedBox(height: 12),
-                                                                    Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 4),
+                                  SizedBox(height: 12.h),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w, vertical: 4.h),
                                     decoration: BoxDecoration(
                                       color: Colors.green.shade800.withOpacity(0.8),
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(12.r),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withOpacity(0.1),
@@ -207,6 +179,7 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                                           .textTheme
                                           .bodySmall
                                           ?.copyWith(
+                                            fontSize: 12.sp,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -215,6 +188,8 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                                 ],
                               ),
                             ),
+                            
+                            // Admin controls
                             if (Supabase.instance.client.auth.currentUser != null)
                               Positioned(
                                 bottom: 0,
@@ -225,9 +200,9 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: Colors.white.withOpacity(0.9),
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(16),
-                                        bottomRight: Radius.circular(24),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(16.r),
+                                        bottomRight: Radius.circular(24.r),
                                       ),
                                       boxShadow: [
                                         BoxShadow(
@@ -242,6 +217,7 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                                       children: [
                                         IconButton(
                                           icon: Icon(Icons.edit,
+                                              size: 24.w,
                                               color: Colors.amber.shade800),
                                           onPressed: () {
                                             Navigator.of(context).pushNamed(
@@ -251,16 +227,18 @@ class _CategoryGridWidgetState extends State<CategoryGridWidget> with SingleTick
                                           },
                                         ),
                                         IconButton(
+                                          icon: Icon(Icons.arrow_circle_up,
+                                              size: 24.w,
+                                              color: Colors.green.shade800),
                                           onPressed: () =>
                                               widget.onMoveUp?.call(widget.category),
-                                          icon: Icon(Icons.arrow_circle_up,
-                                              color: Colors.green.shade800),
                                         ),
                                         IconButton(
+                                          icon: Icon(Icons.arrow_circle_down,
+                                              size: 24.w,
+                                              color: Colors.green.shade800),
                                           onPressed: () => widget.onMoveDown
                                               ?.call(widget.category),
-                                          icon: Icon(Icons.arrow_circle_down,
-                                              color: Colors.green.shade800),
                                         ),
                                       ],
                                     ),

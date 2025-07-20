@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
+import 'package:zad_aldaia/core/theming/my_text_style.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart';
-import '../../../core/theming/my_text_style.dart';
 
 class CategoriesScreen extends StatefulWidget {
   final String? parentId;
@@ -26,7 +27,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     super.initState();
   }
 
-  loadData() {
+  void loadData() {
     cubit.loadCategories({'parent_id': widget.parentId}..removeWhere((key, value) => value == null));
   }
 
@@ -44,7 +45,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         actions: [
           if (Supabase.instance.client.auth.currentUser != null)
             IconButton(
-              icon: const Icon(Icons.add, color: Colors.white),
+              icon: Icon(Icons.add, color: Colors.white, size: 24.w),
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   MyRoutes.addCategoryScreen,
@@ -65,15 +66,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     children: [
                       Image.asset(
                         'assets/images/png/empty_box.png',
-                        width: 120,
-                        height: 120,
+                        width: 120.w,
+                        height: 120.h,
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       Text(
                         'No categories found',
                         style: MyTextStyle.font18BlackBold,
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10.h),
                       Text(
                         'Add new categories to get started',
                         style: MyTextStyle.font16Grey,
@@ -83,13 +84,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 );
               }
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.9,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16.h,
+                    crossAxisSpacing: 16.w,
                   ),
                   itemCount: state.items.length,
                   itemBuilder: (context, index) {
@@ -99,9 +100,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ),
               );
             } else if (state is LoadingState) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF005A32)),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF005A32)),
+                  strokeWidth: 2.w,
                 ),
               );
             } else if (state is ErrorState) {
@@ -109,30 +111,37 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                    const SizedBox(height: 16),
+                    Icon(Icons.error_outline, color: Colors.red, size: 48.w),
+                    SizedBox(height: 16.h),
                     Text(
                       'Error loading categories',
                       style: MyTextStyle.font18BlackBold,
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Text(
                       state.error,
                       textAlign: TextAlign.center,
                       style: MyTextStyle.font16Grey,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF005A32),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24.w,
+                          vertical: 12.h,
                         ),
                       ),
                       onPressed: loadData,
-                      child: const Text(
+                      child: Text(
                         'Retry',
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                        ),
                       ),
                     ),
                   ],
@@ -151,7 +160,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
             color: Colors.green.shade200.withOpacity(0.5),
@@ -162,10 +171,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         ],
       ),
       child: Material(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         color: Colors.white,
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           onTap: () {
             if (item.childrenCount > 0) {
               Navigator.of(context).pushNamed(
@@ -186,7 +195,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               // Background with subtle gradient
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20.r),
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -200,29 +209,29 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
               // Content
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.r),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 48,
-                      height: 48,
+                      width: 48.w,
+                      height: 48.h,
                       decoration: BoxDecoration(
                         color: const Color(0xFF005A32).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Icon(
                         item.childrenCount > 0 ? Icons.folder : Icons.article,
                         color: const Color(0xFF005A32),
-                        size: 28,
+                        size: 28.w,
                       ),
                     ),
 
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
                     Text(
                       item.title ?? 'Untitled',
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: TextStyle(
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                         fontFamily: 'Exo',
@@ -235,18 +244,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
                     // Item count badge
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 6.h,
                       ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF005A32),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Text(
                         '${item.childrenCount > 0 ? item.childrenCount : item.articlesCount} items',
-                        style: const TextStyle(
-                          fontSize: 12,
+                        style: TextStyle(
+                          fontSize: 12.sp,
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
                         ),
@@ -257,18 +266,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
               if (Supabase.instance.client.auth.currentUser != null)
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: 8.h,
+                  right: 8.w,
                   child: PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert, color: Colors.black54),
+                    icon: Icon(Icons.more_vert, color: Colors.black54, size: 24.w),
                     itemBuilder: (context) => [
                       PopupMenuItem(
                         value: 'edit',
                         child: Row(
-                          children: const [
-                            Icon(Icons.edit, color: Colors.blue),
-                            SizedBox(width: 8),
-                            Text('Edit'),
+                          children: [
+                            Icon(Icons.edit, color: Colors.blue, size: 20.w),
+                            SizedBox(width: 8.w),
+                            Text('Edit', style: TextStyle(fontSize: 14.sp)),
                           ],
                         ),
                       ),
@@ -276,10 +285,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         value: 'move_up',
                         enabled: index > 0,
                         child: Row(
-                          children: const [
-                            Icon(Icons.arrow_upward, color: Colors.green),
-                            SizedBox(width: 8),
-                            Text('Move Up'),
+                          children: [
+                            Icon(Icons.arrow_upward, color: Colors.green, size: 20.w),
+                            SizedBox(width: 8.w),
+                            Text('Move Up', style: TextStyle(fontSize: 14.sp)),
                           ],
                         ),
                       ),
@@ -287,10 +296,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         value: 'move_down',
                         enabled: index < items.length - 1,
                         child: Row(
-                          children: const [
-                            Icon(Icons.arrow_downward, color: Colors.green),
-                            SizedBox(width: 8),
-                            Text('Move Down'),
+                          children: [
+                            Icon(Icons.arrow_downward, color: Colors.green, size: 20.w),
+                            SizedBox(width: 8.w),
+                            Text('Move Down', style: TextStyle(fontSize: 14.sp)),
                           ],
                         ),
                       ),

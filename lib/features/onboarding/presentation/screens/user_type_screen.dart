@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:animations/animations.dart';
 import 'package:zad_aldaia/features/languages/languages_screen.dart';
 import 'package:zad_aldaia/features/onboarding/presentation/screens/login_screen.dart';
@@ -11,7 +12,7 @@ class UserTypeScreen extends StatefulWidget {
 }
 
 class _UserTypeScreenState extends State<UserTypeScreen> {
-  int _selectedIndex = 0; 
+  int _selectedIndex = 0;
 
   void _onSelect(int index) {
     setState(() => _selectedIndex = index);
@@ -24,30 +25,30 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 200),
+          SizedBox(height: 200.h),
           Center(
             child: Text(
               'Choose the user type',
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Exo',
-                fontSize: 35,
+                fontSize: 35.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Center(
             child: Text(
               'Are you a regular user or a Daiya admin?',
               style: TextStyle(
                 color: Colors.black.withOpacity(0.4),
                 fontFamily: 'Exo',
-                fontSize: 16,
+                fontSize: 16.sp,
               ),
             ),
           ),
-          const SizedBox(height: 40),
+          SizedBox(height: 40.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -70,44 +71,44 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
           const Spacer(),
           Center(
             child: SizedBox(
-              width: 350,
+              width: 350.w,
               child: OpenContainer(
                 closedShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
+                  borderRadius: BorderRadius.circular(40.r),
                 ),
                 closedElevation: 0,
                 closedBuilder: (context, action) {
                   return ElevatedButton(
                     onPressed: action,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF005A32),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: const Color(0xFF005A32),
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(30.r),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Continue',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   );
                 },
-                 openBuilder: (context, _) {
-                    return _selectedIndex == 0
-                        ? const LanguagesScreen()
-                        : const LoginScreen();
-                  },
+                openBuilder: (context, _) {
+                  return _selectedIndex == 0
+                      ? const LanguagesScreen()
+                      : const LoginScreen();
+                },
                 transitionDuration: const Duration(milliseconds: 600),
                 closedColor: Colors.transparent,
                 openColor: const Color(0xFFF0FAE6),
               ),
             ),
           ),
-          const SizedBox(height: 40),
+          SizedBox(height: 40.h),
         ],
       ),
     );
@@ -138,12 +139,12 @@ class _UserTypeCard extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        height: 210,
-        width: 180,
-        padding: const EdgeInsets.all(16),
+        height: 210.h,
+        width: 180.w,
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 247, 247, 228),
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(25.r),
           border: Border.all(color: borderColor, width: 2),
           boxShadow: [
             if (isSelected)
@@ -157,21 +158,21 @@ class _UserTypeCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(imagePath, height: 100, width: 100),
+            Image.asset(imagePath, height: 100.h, width: 100.w),
             Text(
               title,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Exo',
                 color: textColor,
               ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6.h),
             Text(
               description,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 12.sp,
                 color: textColor.withOpacity(0.5),
               ),
               textAlign: TextAlign.center,

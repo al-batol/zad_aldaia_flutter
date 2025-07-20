@@ -51,7 +51,6 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
 
   listener(context, state) {
     if (state is ErrorState) {
-      print(state.error);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
     }
     if (state is SavedState) {
@@ -79,12 +78,6 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
     if (item.type == ItemType.image && item.imageIdentifier == null) {
       return false;
     }
-    // if (item.type == ItemType.video && item.youtubeUrl == null) {
-    //   return false;
-    // }
-    // if (item.type == ItemType.text && (item.title == null || item.content == null)) {
-    //   return false;
-    // }
     return true;
   }
 
@@ -103,7 +96,13 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text(widget.isEditMode ? 'Edit Item' : 'Create New Item')),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          widget.isEditMode ? 'Edit Item' : 'Create New Item',
+          style: TextStyle(fontSize: 20.sp),
+        ),
+      ),
       body: BlocProvider(
         create: (context) => store,
         child: BlocListener<ItemsCubit, ItemsState>(
@@ -111,7 +110,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
           child: BlocBuilder<ItemsCubit, ItemsState>(
             builder: (context, state) {
               return SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.r),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -122,18 +121,31 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                         child: ToggleButtons(
                           onPressed: onToggle,
                           isSelected: toggleSelections,
-
                           children: [
-                            Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32), child: Text(S.of(context).text)),
-                            Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32), child: Text(S.of(context).image)),
-                            Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32), child: Text(S.of(context).video)),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 32.w),
+                              child: Text(S.of(context).text, style: TextStyle(fontSize: 14.sp)),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 32.w),
+                              child: Text(S.of(context).image, style: TextStyle(fontSize: 14.sp)),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 32.w),
+                              child: Text(S.of(context).video, style: TextStyle(fontSize: 14.sp)),
+                            ),
                           ],
                         ),
                       ),
                       if (item.type == ItemType.text) ...[
+                        SizedBox(height: 20.h),
                         TextFormField(
                           controller: titleController,
-                          decoration: const InputDecoration(labelText: 'Title'),
+                          decoration: InputDecoration(
+                            labelText: 'Title',
+                            labelStyle: TextStyle(fontSize: 16.sp),
+                          ),
+                          style: TextStyle(fontSize: 16.sp),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Please enter a item title';
@@ -141,9 +153,14 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                             return null;
                           },
                         ),
+                        SizedBox(height: 16.h),
                         TextFormField(
                           controller: contentController,
-                          decoration: const InputDecoration(labelText: 'Content'),
+                          decoration: InputDecoration(
+                            labelText: 'Content',
+                            labelStyle: TextStyle(fontSize: 16.sp),
+                          ),
+                          style: TextStyle(fontSize: 16.sp),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Please enter a item content';
@@ -152,15 +169,33 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                           },
                         ),
                       ],
-
-                      TextFormField(controller: noteController, decoration: const InputDecoration(labelText: 'Note')),
-
-                      TextFormField(controller: backgroundColorController, decoration: const InputDecoration(labelText: 'Background color')),
-
-                      if (item.type == ItemType.video)
+                      SizedBox(height: 16.h),
+                      TextFormField(
+                        controller: noteController,
+                        decoration: InputDecoration(
+                          labelText: 'Note',
+                          labelStyle: TextStyle(fontSize: 16.sp),
+                        ),
+                        style: TextStyle(fontSize: 16.sp),
+                      ),
+                      SizedBox(height: 16.h),
+                      TextFormField(
+                        controller: backgroundColorController,
+                        decoration: InputDecoration(
+                          labelText: 'Background color',
+                          labelStyle: TextStyle(fontSize: 16.sp),
+                        ),
+                        style: TextStyle(fontSize: 16.sp),
+                      ),
+                      if (item.type == ItemType.video) ...[
+                        SizedBox(height: 16.h),
                         TextFormField(
                           controller: youtubeUrlController,
-                          decoration: const InputDecoration(labelText: 'Youtube url'),
+                          decoration: InputDecoration(
+                            labelText: 'Youtube url',
+                            labelStyle: TextStyle(fontSize: 16.sp),
+                          ),
+                          style: TextStyle(fontSize: 16.sp),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Please enter a Youtube url';
@@ -168,8 +203,9 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                             return null;
                           },
                         ),
+                      ],
                       if (item.type == ItemType.image) ...[
-                        const SizedBox(height: 30),
+                        SizedBox(height: 30.h),
                         ImageUpload(
                           url: item.imageUrl,
                           onImageUpdated: (identifier, image) {
@@ -180,12 +216,23 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                           },
                         ),
                       ],
-                      const SizedBox(height: 30),
-
+                      SizedBox(height: 30.h),
                       if (state is SavingState)
-                        const Center(child: CircularProgressIndicator())
+                        Center(child: CircularProgressIndicator())
                       else
-                        SizedBox(width: double.infinity, child: ElevatedButton(onPressed: _submitForm, child: Text(widget.isEditMode ? 'Update Item' : 'Create Item'))),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _submitForm,
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 16.h),
+                            ),
+                            child: Text(
+                              widget.isEditMode ? 'Update Item' : 'Create Item',
+                              style: TextStyle(fontSize: 16.sp),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),

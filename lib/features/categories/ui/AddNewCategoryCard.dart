@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
 
 class AddNewCategoryCard extends StatefulWidget {
@@ -39,9 +40,9 @@ class _AddNewCategoryCardState extends State<AddNewCategoryCard> {
               ..rotateY(_isHovered ? 0.05 : 0.0),
             alignment: FractionalOffset.center,
             child: Container(
-              margin: const EdgeInsets.all(12),
+              margin: EdgeInsets.all(12.r),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(24.r),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.green.shade300.withOpacity(0.8),
@@ -52,10 +53,10 @@ class _AddNewCategoryCardState extends State<AddNewCategoryCard> {
                 ],
               ),
               child: Material(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(24.r),
                 color: Colors.transparent,
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(24.r),
                   onTap: () {
                     Navigator.of(context).pushNamed(
                       MyRoutes.addCategoryScreen,
@@ -69,7 +70,7 @@ class _AddNewCategoryCardState extends State<AddNewCategoryCard> {
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(24.r),
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -90,7 +91,7 @@ class _AddNewCategoryCardState extends State<AddNewCategoryCard> {
                       Positioned.fill(
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(24.r),
                             gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
@@ -105,7 +106,7 @@ class _AddNewCategoryCardState extends State<AddNewCategoryCard> {
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(24.r),
                           border: Border.all(
                             color: _isHovered
                                 ? Colors.green.shade800
@@ -114,18 +115,16 @@ class _AddNewCategoryCardState extends State<AddNewCategoryCard> {
                           ),
                         ),
                       ),
-
-                      // Content
                       Positioned.fill(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.add_circle_outline,
-                              size: 48,
+                              size: 48.w,
                               color: Colors.green.shade800,
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12.h),
                             Text(
                               'Add New',
                               textAlign: TextAlign.center,
@@ -133,6 +132,7 @@ class _AddNewCategoryCardState extends State<AddNewCategoryCard> {
                                   .textTheme
                                   .titleLarge
                                   ?.copyWith(
+                                    fontSize: 18.sp,
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
                                     shadows: [

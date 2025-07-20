@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zad_aldaia/core/di/dependency_injection.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
@@ -58,7 +59,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
       floatingActionButton: _showScrollToTop
           ? FloatingActionButton(
               backgroundColor: const Color(0xFF005A32),
-              child: const Icon(Icons.arrow_upward, color: Colors.white),
+              child: Icon(Icons.arrow_upward, color: Colors.white, size: 24.w),
               onPressed: () => _scrollController.animateTo(
                 0,
                 duration: const Duration(milliseconds: 500),
@@ -69,8 +70,8 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
       appBar: AppBar(
         title: Text(
           widget.title,
-          style: const TextStyle(
-            fontSize: 22,
+          style: TextStyle(
+            fontSize: 22.sp,
             fontWeight: FontWeight.bold,
             fontFamily: 'Exo',
             color: Colors.white,
@@ -89,7 +90,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
         actions: [
           if (Supabase.instance.client.auth.currentUser != null)
             IconButton(
-              icon: const Icon(Icons.add, color: Colors.white),
+              icon: Icon(Icons.add, color: Colors.white, size: 24.w),
               onPressed: () => Navigator.of(context).pushNamed(
                 MyRoutes.addArticleScreen,
                 arguments: {
@@ -105,9 +106,10 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
         child: BlocBuilder<ArticlesCubit, ArticlesState>(
           builder: (context, state) {
             if (state is LoadingState) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(
-                  color: Color(0xFF005A32),
+                  color: const Color(0xFF005A32),
+                  strokeWidth: 2.w,
                 ),
               );
             }
@@ -116,7 +118,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
               return Center(
                 child: Text(
                   state.error,
-                  style: const TextStyle(color: Colors.red),
+                  style: TextStyle(color: Colors.red, fontSize: 16.sp),
                 ),
               );
             }
@@ -127,16 +129,16 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.article_outlined,
-                        size: 64,
+                        size: 64.w,
                         color: Colors.grey,
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       Text(
                         'No articles found',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           color: Colors.grey[600],
                         ),
                       ),
@@ -149,11 +151,12 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                               "language": widget.language,
                             },
                           ),
-                          child: const Text(
+                          child: Text(
                             'Create First Article',
                             style: TextStyle(
-                              color: Color(0xFF005A32),
+                              color: const Color(0xFF005A32),
                               fontWeight: FontWeight.bold,
+                              fontSize: 16.sp,
                             ),
                           ),
                         ),
@@ -170,10 +173,10 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                 child: ListView.builder(
                   controller: _scrollController,
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16.r),
                   itemCount: state.items.length,
                   itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
+                    padding: EdgeInsets.only(bottom: 16.h),
                     child: ArticleItem(
                       article: state.items[index],
                       onPressed: (article) => Navigator.of(context).pushNamed(

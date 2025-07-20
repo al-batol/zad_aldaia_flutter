@@ -36,25 +36,26 @@ class _ImageItemState extends State<ImageItem> {
     return Column(
       children: [
         ExpansionTile(
-          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          tilePadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
           title: Text(
-           widget.item.title ?? 'Image',
-            style: const TextStyle(
-              fontSize: 18,
+            widget.item.title ?? 'Image',
+            style: TextStyle(
+              fontSize: 18.sp,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF005A32)),
+              color: const Color(0xFF005A32),
+            ),
           ),
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(8.r),
                 child: CachedNetworkImage(
                   imageUrl: widget.item.imageUrl ?? '',
-                  placeholder: (context, url) => const Center(
+                  placeholder: (context, url) => Center(
                     child: CircularProgressIndicator(),
                   ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  errorWidget: (context, url, error) => Icon(Icons.error, size: 24.w),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -68,7 +69,7 @@ class _ImageItemState extends State<ImageItem> {
 
   Widget _buildActionBar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -76,16 +77,16 @@ class _ImageItemState extends State<ImageItem> {
             children: [
               IconButton(
                 icon: isDownloading 
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
+                  ? SizedBox(
+                      width: 24.w,
+                      height: 24.h,
                       child: CircularProgressIndicator(),
                     )
-                  : const Icon(Icons.download, color: Color(0xFF005A32)),
+                  : Icon(Icons.download, color: const Color(0xFF005A32), size: 24.w),
                 onPressed: isDownloading ? null : _downloadImage,
               ),
               IconButton(
-                icon: const Icon(Icons.share, color: Color(0xFF005A32)),
+                icon: Icon(Icons.share, color: const Color(0xFF005A32), size: 24.w),
                 onPressed: () => Share.item(widget.item),
               ),
             ],
@@ -94,15 +95,15 @@ class _ImageItemState extends State<ImageItem> {
             children: [
               if (Supabase.instance.client.auth.currentUser != null) ...[
                 IconButton(
-                  icon: const Icon(Icons.arrow_upward, color: Color(0xFF005A32)),
+                  icon: Icon(Icons.arrow_upward, color: const Color(0xFF005A32), size: 24.w),
                   onPressed: () => widget.onItemUp?.call(widget.item),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.arrow_downward, color: Color(0xFF005A32)),
+                  icon: Icon(Icons.arrow_downward, color: const Color(0xFF005A32), size: 24.w),
                   onPressed: () => widget.onItemDown?.call(widget.item),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.edit, color: Color(0xFF005A32)),
+                  icon: Icon(Icons.edit, color: const Color(0xFF005A32), size: 24.w),
                   onPressed: () => Navigator.of(context).pushNamed(
                     MyRoutes.addItemScreen, 
                     arguments: {"id": widget.item.id}
@@ -114,6 +115,7 @@ class _ImageItemState extends State<ImageItem> {
                   icon: Icon(
                     widget.isSelected! ? Icons.check_circle : Icons.radio_button_unchecked,
                     color: const Color(0xFF005A32),
+                    size: 24.w,
                   ),
                   onPressed: () => widget.onSelect?.call(widget.item),
                 ),
@@ -129,7 +131,7 @@ class _ImageItemState extends State<ImageItem> {
     try {
       await widget.onDownloadPressed(widget.item.imageUrl ?? '');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Image downloaded successfully')),
+        SnackBar(content: Text('Image downloaded successfully', style: TextStyle(fontSize: 14.sp))),
       );
     } finally {
       setState(() => isDownloading = false);

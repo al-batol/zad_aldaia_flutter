@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:zad_aldaia/core/helpers/language.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
@@ -21,33 +22,31 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: const Color(0xFFF0FAE6),
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 20),
-             Text(
+            SizedBox(height: 20.h),
+            Text(
               'Select Language',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 22.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.green.shade900,
               ),
             ),
             SizedBox(
-              height: size.height * 0.33,
+              height: 0.33.sh,
               child: Image.asset(
                 'assets/images/png/onboarding1.png',
                 fit: BoxFit.contain,
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
                 children: Lang.values.map((lang) {
                   final flagPath = 'assets/images/flags/$lang.png';
                   final isSelected = selectedLang == lang;
@@ -58,35 +57,36 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
                         selectedLang = lang;
                       });
                     },
-                    child: AnimatedOpacity( duration: const Duration(milliseconds: 300),
-                              opacity: isSelected ? 1.0 : 0.9,
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: isSelected ? 1.0 : 0.9,
                       child: Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                        margin: EdgeInsets.only(bottom: 12.h),
+                        padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
                         decoration: BoxDecoration(
                           color: isSelected ? Colors.white : Colors.transparent,
-                          borderRadius: BorderRadius.circular(50),
-                       
+                          borderRadius: BorderRadius.circular(50.r),
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.1),
                                     blurRadius: 5,
                                     offset: const Offset(0, 5),
-                                  ),
+                                  )
                                 ]
                               : [],
                         ),
                         child: Row(
                           children: [
-                             Image.asset(
-                                flagPath,
-                                width: 32,
-                                height: 32,
-                              ),
-                            const SizedBox(width: 12),
+                            Image.asset(
+                              flagPath,
+                              width: 32.w,
+                              height: 32.h,
+                            ),
+                            SizedBox(width: 12.w),
                             Text(
                               lang[0].toUpperCase() + lang.substring(1),
+                              style: TextStyle(fontSize: 16.sp),
                             ),
                             const Spacer(),
                             AnimatedOpacity(
@@ -95,6 +95,7 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
                               child: Icon(
                                 Icons.check,
                                 color: Colors.green.shade900,
+                                size: 24.w,
                               ),
                             ),
                           ],
@@ -106,7 +107,7 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -118,14 +119,14 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green.shade900,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: EdgeInsets.symmetric(vertical: 14.h),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
+                      borderRadius: BorderRadius.circular(50.r),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Continue',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                    style: TextStyle(fontSize: 16.sp, color: Colors.white),
                   ),
                 ),
               ),

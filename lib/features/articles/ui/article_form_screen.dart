@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zad_aldaia/core/di/dependency_injection.dart'; // For getIt
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:zad_aldaia/core/di/dependency_injection.dart';
 import 'package:zad_aldaia/core/routing/routes.dart';
-import 'package:zad_aldaia/features/articles/data/models/article.dart'; // Assuming your Article model
+import 'package:zad_aldaia/features/articles/data/models/article.dart';
 import 'package:zad_aldaia/features/articles/logic/articles_cubit.dart';
 import 'package:zad_aldaia/features/categories/data/models/category.dart';
 import 'package:zad_aldaia/features/categories/logic/categories_cubit.dart' as C;
@@ -39,9 +40,19 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
 
   listener(context, state) {
     if (state is SavedState) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Article ${widget.isEditMode ? "updated" : "created"} successfully!')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Article ${widget.isEditMode ? "updated" : "created"} successfully!'),
+        ),
+      );
       if ((article?.categoryId ?? category?.id) != null) {
-        Navigator.of(context).pushNamed(MyRoutes.articles, arguments: {"category_id": article?.categoryId ?? category?.id, "title": category?.title});
+        Navigator.of(context).pushNamed(
+          MyRoutes.articles,
+          arguments: {
+            "category_id": article?.categoryId ?? category?.id,
+            "title": category?.title
+          },
+        );
       }
     }
     if (state is LoadedState) {
@@ -49,7 +60,9 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
       fillForm();
     }
     if (state is ErrorState) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(state.error)),
+      );
     }
   }
 
@@ -62,7 +75,12 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
   }
 
   Future<void> _selectCategory() async {
-    final Category? result = await Navigator.push<Category?>(context, MaterialPageRoute(builder: (context) => CategorySelectionScreen(forArticles: true)));
+    final Category? result = await Navigator.push<Category?>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CategorySelectionScreen(forArticles: true),
+      ),
+    );
 
     if (result != null) {
       setParent(result);
@@ -80,9 +98,6 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
       final articleData = article ?? Article(id: '');
       articleData.title = _titleController.text.trim();
       articleData.categoryId = category?.id;
-      // articleData.lang = _langController.text.trim().isNotEmpty ? _langController.text.trim() : null;
-      // articleData.isActive = _isActive;
-
       await store.saveArticle(articleData);
     }
   }
@@ -96,7 +111,13 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text(widget.isEditMode ? 'Edit Article' : 'Create New Article')),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          widget.isEditMode ? 'Edit Article' : 'Create New Article',
+          style: TextStyle(fontSize: 20.sp),
+        ),
+      ),
       body: BlocProvider(
         create: (context) => store,
         child: BlocListener<ArticlesCubit, ArticlesState>(
@@ -104,24 +125,49 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
           child: BlocBuilder<ArticlesCubit, ArticlesState>(
             builder: (context, state) {
               return SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.w),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text('Category:', style: Theme.of(context).textTheme.titleMedium),
-                      const SizedBox(height: 8),
+                      Text(
+                        'Category:',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontSize: 16.sp,
+                            ),
+                      ),
+                      SizedBox(height: 8.h),
                       Row(
                         children: [
-                          Expanded(child: ElevatedButton(onPressed: _selectCategory, child: Text(category?.title ?? '(Top Level)'))),
-                          if (category != null) IconButton(icon: const Icon(Icons.clear), onPressed: () => setParent(null), tooltip: "Clear parent"),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _selectCategory,
+                              child: Text(
+                                category?.title ?? '(Top Level)',
+                                style: TextStyle(fontSize: 14.sp),
+                              ),
+                            ),
+                          ),
+                          if (category != null)
+                            IconButton(
+                              icon: Icon(
+                                Icons.clear,
+                                size: 20.w,
+                              ),
+                              onPressed: () => setParent(null),
+                              tooltip: "Clear parent",
+                            ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       TextFormField(
                         controller: _titleController,
-                        decoration: const InputDecoration(labelText: 'Article Title *'),
+                        decoration: InputDecoration(
+                          labelText: 'Article Title *',
+                          labelStyle: TextStyle(fontSize: 14.sp),
+                        ),
+                        style: TextStyle(fontSize: 14.sp),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Please enter a article title';
@@ -129,12 +175,24 @@ class _ArticleFormScreenState extends State<ArticleFormScreen> {
                           return null;
                         },
                       ),
-
-                      const SizedBox(height: 100),
+                      SizedBox(height: 100.h),
                       if (state is SavingState)
-                        const Center(child: CircularProgressIndicator())
+                        Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.w,
+                          ),
+                        )
                       else
-                        SizedBox(width: double.infinity, child: ElevatedButton(onPressed: _submitForm, child: Text(widget.isEditMode ? 'Update Article' : 'Create Article'))),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _submitForm,
+                            child: Text(
+                              widget.isEditMode ? 'Update Article' : 'Create Article',
+                              style: TextStyle(fontSize: 14.sp),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),

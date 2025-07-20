@@ -33,28 +33,28 @@ class _TextItemState extends State<TextItem> {
   late String content;
   bool isTranslating = false;
   late Map<String, String> languageMap;
-@override
-void didChangeDependencies() {
-  super.didChangeDependencies(); 
 
-  languageMap = {
-    S.of(context).original_text: "Original Text",
-    S.of(context).english: "en",
-    S.of(context).spanish: "es",
-    S.of(context).chinese: "zh",
-    S.of(context).hindi: "hi",
-    S.of(context).arabic: "ar",
-    S.of(context).french: "fr",
-    S.of(context).bengali: "bn",
-    S.of(context).russian: "ru",
-    S.of(context).portuguese: "pt",
-    S.of(context).urdu: "ur",
-    S.of(context).german: "de",
-    S.of(context).japanese: "ja",
-    S.of(context).punjabi: "pa",
-    S.of(context).telugu: "te",
-  };
-}
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies(); 
+    languageMap = {
+      S.of(context).original_text: "Original Text",
+      S.of(context).english: "en",
+      S.of(context).spanish: "es",
+      S.of(context).chinese: "zh",
+      S.of(context).hindi: "hi",
+      S.of(context).arabic: "ar",
+      S.of(context).french: "fr",
+      S.of(context).bengali: "bn",
+      S.of(context).russian: "ru",
+      S.of(context).portuguese: "pt",
+      S.of(context).urdu: "ur",
+      S.of(context).german: "de",
+      S.of(context).japanese: "ja",
+      S.of(context).punjabi: "pa",
+      S.of(context).telugu: "te",
+    };
+  }
 
   @override
   void initState() {
@@ -65,20 +65,21 @@ void didChangeDependencies() {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      tilePadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       title: Text(
         widget.item.title ?? 'Text Content',
-        style: const TextStyle(
-          fontSize: 18,
+        style: TextStyle(
+          fontSize: 18.sp,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF005A32),
-      ),),
+          color: const Color(0xFF005A32),
+        ),
+      ),
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.r),
           child: SelectableText(
             content,
-            style: const TextStyle(fontSize: 16, height: 1.5),
+            style: TextStyle(fontSize: 16.sp, height: 1.5),
           ),
         ),
         _buildActionBar(),
@@ -88,19 +89,19 @@ void didChangeDependencies() {
 
   Widget _buildActionBar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.copy, color: Color(0xFF005A32)),
+                icon: Icon(Icons.copy, color: const Color(0xFF005A32), size: 24.w),
                 onPressed: _copyToClipboard,
               ),
               _buildTranslationButton(),
               IconButton(
-                icon: const Icon(Icons.share, color: Color(0xFF005A32)),
+                icon: Icon(Icons.share, color: const Color(0xFF005A32), size: 24.w),
                 onPressed: () => Share.item(widget.item),
               ),
             ],
@@ -109,15 +110,15 @@ void didChangeDependencies() {
             children: [
               if (Supabase.instance.client.auth.currentUser != null) ...[
                 IconButton(
-                  icon: const Icon(Icons.arrow_upward, color: Color(0xFF005A32)),
+                  icon: Icon(Icons.arrow_upward, color: const Color(0xFF005A32), size: 24.w),
                   onPressed: () => widget.onItemUp?.call(widget.item),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.arrow_downward, color: Color(0xFF005A32)),
+                  icon: Icon(Icons.arrow_downward, color: const Color(0xFF005A32), size: 24.w),
                   onPressed: () => widget.onItemDown?.call(widget.item),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.edit, color: Color(0xFF005A32)),
+                  icon: Icon(Icons.edit, color: const Color(0xFF005A32), size: 24.w),
                   onPressed: () => Navigator.of(context).pushNamed(
                     MyRoutes.addItemScreen, 
                     arguments: {"id": widget.item.id}
@@ -129,6 +130,7 @@ void didChangeDependencies() {
                   icon: Icon(
                     widget.isSelected! ? Icons.check_circle : Icons.radio_button_unchecked,
                     color: const Color(0xFF005A32),
+                    size: 24.w,
                   ),
                   onPressed: () => widget.onSelect?.call(widget.item),
                 ),
@@ -143,13 +145,14 @@ void didChangeDependencies() {
     return PopupMenuButton<String>(
       icon: Icon(
         Icons.translate,
-        color: isTranslating ? Colors.grey : const Color(0xFF005A32)),
-      
+        color: isTranslating ? Colors.grey : const Color(0xFF005A32),
+        size: 24.w,
+      ),
       onSelected: _handleTranslation,
       itemBuilder: (context) => languageMap.entries.map((e) => 
         PopupMenuItem(
           value: e.value,
-          child: Text(e.key),
+          child: Text(e.key, style: TextStyle(fontSize: 14.sp)),
         )
       ).toList(),
     );
@@ -172,7 +175,7 @@ void didChangeDependencies() {
   void _copyToClipboard() async {
     await Clipboard.setData(ClipboardData(text: content));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Content copied to clipboard')),
+      SnackBar(content: Text('Content copied to clipboard', style: TextStyle(fontSize: 14.sp))),
     );
   }
 }

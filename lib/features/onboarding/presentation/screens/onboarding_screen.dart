@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intro_screen_onboarding_flutter/introduction.dart';
 import 'package:intro_screen_onboarding_flutter/introscreenonboarding.dart';
 import 'package:zad_aldaia/features/onboarding/presentation/screens/user_type_screen.dart';
@@ -12,13 +13,13 @@ class OnboardingScreen extends StatelessWidget {
       subTitle: 'A comprehensive da\'wah platform for spreading Islam and educating new Muslims',
       imageUrl: 'assets/images/png/onboarding1.png',
       titleTextStyle: TextStyle(
-        fontSize: 26,
-            fontFamily: 'Exo',
+        fontSize: 26.sp,
+        fontFamily: 'Exo',
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
       subTitleTextStyle: TextStyle(
-        fontSize: 16,
+        fontSize: 16.sp,
         color: Colors.black.withOpacity(0.5),
       ),
     ),
@@ -27,13 +28,13 @@ class OnboardingScreen extends StatelessWidget {
       subTitle: 'Lessons, videos, books - everything you need to understand Islam',
       imageUrl: 'assets/images/png/onboarding2.png',
       titleTextStyle: TextStyle(
-        fontSize: 28,
-          fontFamily: 'Exo',
+        fontSize: 28.sp,
+        fontFamily: 'Exo',
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
       subTitleTextStyle: TextStyle(
-        fontSize: 16,
+        fontSize: 16.sp,
         color: Colors.black.withOpacity(0.5),
       ),
     ),
@@ -42,13 +43,13 @@ class OnboardingScreen extends StatelessWidget {
       subTitle: 'Contribute to spreading Islam and impact others\' lives',
       imageUrl: 'assets/images/png/onboarding4.png',
       titleTextStyle: TextStyle(
-        fontSize: 30,
+        fontSize: 30.sp,
         fontFamily: 'Exo',
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
       subTitleTextStyle: TextStyle(
-        fontSize: 16,
+        fontSize: 16.sp,
         color: Colors.black.withOpacity(0.5),
       ),
     ),
@@ -57,9 +58,9 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF0FAE6), 
+      backgroundColor: const Color(0xFFF0FAE6), 
       body: IntroScreenOnboarding(
-        backgroudColor: Color(0xFFF0FAE6),
+        backgroudColor: const Color(0xFFF0FAE6),
         foregroundColor: Colors.green.shade700, 
         introductionList: list,
         onTapSkipButton: () => Navigator.pushReplacement(
@@ -68,9 +69,9 @@ class OnboardingScreen extends StatelessWidget {
             builder: (context) => const UserTypeScreen(),
           ),
         ),
-        skipTextStyle:  TextStyle(
+        skipTextStyle: TextStyle(
           color: Colors.grey.shade500,
-          fontSize: 18,
+          fontSize: 18.sp,
           fontWeight: FontWeight.bold,
         ),
       ),
